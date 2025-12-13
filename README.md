@@ -1,39 +1,42 @@
 <!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Hyper Snackbar
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+A highly customizable, animated, and stackable snackbar package for Flutter.
+Supports features like "Undo" actions, state updates (using ID), log-style stacking, and persistent messages.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+* **Presets**: Easy success, error, warning, and info messages.
+* **Highly Customizable**: Custom borders, margins, fonts, and tap actions.
+* **Stackable**: Control entry direction and stacking order (top or bottom).
+* **Interactive**: Support for action buttons (e.g., Undo) and tap gestures.
+* **Smart Updates**: Update content of existing snackbars by ID without animation glitches.
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Add this to your package's `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  hyper_snack_list: ^0.0.1
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+import 'package:hyper_snack_list/hyper_snack_list.dart';
 
-```dart
-const like = 'sample';
-```
+// Show a simple success message
+HyperManager().showSuccess(context, title: 'Saved successfully');
+
+// Show a custom warning with action
+HyperManager().show(
+  context,
+  HyperConfig(
+    title: 'Item deleted',
+    action: HyperSnackAction(
+      label: 'Undo',
+      onPressed: () => print('Undo clicked'),
+    ),
+  ),
+);
 
 ## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.

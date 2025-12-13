@@ -23,11 +23,11 @@ class HyperManager {
 
     final overlayState = Overlay.maybeOf(context);
     if (overlayState == null) {
-      debugPrint(
-          '⚠️ HyperManager Warning: Overlay not found. Skipping initialization.');
+      debugPrint('⚠️ HyperManager Warning: Overlay not found.');
       return;
     }
 
+    // RTL対応
     final textDirection = Directionality.maybeOf(context) ?? TextDirection.ltr;
 
     _overlayEntry = OverlayEntry(
@@ -84,6 +84,7 @@ class HyperManager {
         ? _topEntries
         : _bottomEntries;
 
+    // IDによる更新チェック
     if (config.id != null) {
       final existingIndex = targetList.indexWhere((w) {
         if (w is HyperSnackBarContainer) {
@@ -97,12 +98,12 @@ class HyperManager {
         final key = container.key as GlobalKey<HyperSnackBarContainerState>;
         if (key.currentState != null && key.currentState!.mounted) {
           key.currentState!.updateConfig(config);
-          return;
+          return; // 新規追加せずに終了
         }
       }
     }
 
-    // 表示数制限: ここで無限ループしないように即時削除を行う
+    // 表示数制限（無限ループ対策済み）
     while (targetList.length >= config.maxVisibleCount) {
       _forceRemoveOldest(config.position, newestOnTop: config.newestOnTop);
     }
@@ -115,6 +116,7 @@ class HyperManager {
       onDismiss: () => removeNotification(config),
     );
 
+    // 追加位置（先頭 or 末尾）
     if (config.newestOnTop) {
       targetList.insert(0, newContainer);
     } else {
@@ -148,7 +150,6 @@ class HyperManager {
 
   void clearAll({bool animated = true}) {
     final allWidgets = [..._topEntries, ..._bottomEntries];
-
     if (allWidgets.isEmpty) return;
 
     if (animated) {
@@ -160,7 +161,6 @@ class HyperManager {
     } else {
       _topEntries.clear();
       _bottomEntries.clear();
-
       if (_overlayEntry != null && _overlayEntry!.mounted) {
         _overlayEntry!.remove();
       }
@@ -168,8 +168,8 @@ class HyperManager {
     }
   }
 
-  // ★修正: immediate 引数を追加
-  void removeNotification(HyperConfig config, {bool immediate = false}) {
+  void removeNotification(HyperConfig config,
+      {bool immediate = false, bool swiped = false}) {
     final targetList = (config.position == HyperSnackPosition.top)
         ? _topEntries
         : _bottomEntries;
@@ -186,8 +186,7 @@ class HyperManager {
       final containerKey =
           containerToRemove.key as GlobalKey<HyperSnackBarContainerState>;
 
-      // ★修正: 即時削除ならアニメーションを待たない
-      if (immediate) {
+      if (immediate || swiped) {
         _finalizeRemoval(targetList, containerToRemove);
         return;
       }
@@ -207,7 +206,7 @@ class HyperManager {
     if (targetList.contains(containerToRemove)) {
       targetList.remove(containerToRemove);
     }
-
+    // 全て消えたらOverlayEntryも削除
     if (_topEntries.isEmpty && _bottomEntries.isEmpty) {
       if (_overlayEntry != null && _overlayEntry!.mounted) {
         _overlayEntry!.remove();
@@ -230,12 +229,13 @@ class HyperManager {
           ? targetList.last as HyperSnackBarContainer
           : targetList.first as HyperSnackBarContainer;
 
-      // ★修正: immediate: true を渡して即時削除する
+      // immediate: true で即時削除
       removeNotification(oldestContainer.config, immediate: true);
     }
   }
 }
 
+// プリセット
 extension HyperManagerPresets on HyperManager {
   void showSuccess(
     BuildContext context, {
@@ -267,6 +267,23 @@ extension HyperManagerPresets on HyperManager {
           message: message,
           backgroundColor: Colors.red.shade600,
           icon: const Icon(Icons.error_outline, color: Colors.white),
+          displayDuration: duration,
+        ));
+  }
+
+  void showWarning(
+    BuildContext context, {
+    required String title,
+    String? message,
+    Duration? duration = const Duration(seconds: 4),
+  }) {
+    show(
+        context,
+        HyperConfig(
+          title: title,
+          message: message,
+          backgroundColor: Colors.amber.shade700,
+          icon: const Icon(Icons.warning_amber_rounded, color: Colors.white),
           displayDuration: duration,
         ));
   }
