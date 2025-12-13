@@ -1,4 +1,5 @@
 # Hyper Snackbar 🚀
+![Demo GIF](https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo.gif)
 
 A highly customizable, animated, and stackable snackbar manager for Flutter.
 Designed for modern apps that need more than just a simple toast.
