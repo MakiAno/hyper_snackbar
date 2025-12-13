@@ -6,3 +6,7 @@
 
 * Update README.md.
 * Add Demo.gif
+
+## 0.0.3
+
+* Initial complete release.
