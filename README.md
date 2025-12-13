@@ -1,9 +1,9 @@
-# Hyper Snack List 🚀
+# Hyper Snackbar 🚀
 
 A highly customizable, animated, and stackable snackbar manager for Flutter.
 Designed for modern apps that need more than just a simple toast.
 
-[![pub package](https://img.shields.io/pub/v/hyper_snack_list.svg)](https://pub.dev/packages/hyper_snack_list)
+[![pub package](https://img.shields.io/pub/v/hyper_Snackbar.svg)](https://pub.dev/packages/hyper_Snackbar)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## ✨ Features
@@ -22,7 +22,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snack_list: ^0.0.1
+  hyper_Snackbar: ^0.0.1
 ```
 
 ## 🚀 Usage
@@ -33,7 +33,7 @@ No special setup (like wrapping `MaterialApp`) is required. Just call `HyperMana
 Simple one-liners for common scenarios.
 
 ```dart
-import 'package:hyper_snack_list/hyper_snack_list.dart';
+import 'package:hyper_Snackbar/hyper_Snackbar.dart';
 
 // Success
 HyperManager().showSuccess(context, title: 'Saved successfully');
