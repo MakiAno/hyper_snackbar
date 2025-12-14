@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'config.dart';
 import 'widget.dart';
 
+/// A container that handles the animation and state of the snackbar.
 class HyperSnackBarContainer extends StatefulWidget {
   final HyperConfig config;
   final VoidCallback onDismiss;

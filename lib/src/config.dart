@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+/// Defines the position where the snackbar will appear.
 enum HyperSnackPosition { top, bottom }
 
+/// Defines the animation type for the snackbar entry.
 enum HyperSnackAnimationType {
   fromTop,
   fromBottom,
@@ -10,15 +12,24 @@ enum HyperSnackAnimationType {
   fadeOnly,
 }
 
+/// Defines the animation type for the snackbar exit.
 enum HyperSnackExitAnimationType { toLeft, toRight, toTop, toBottom, fadeOut }
 
-/// アクションボタンの定義
+/// Defines the action button configuration within the snackbar.
 class HyperSnackAction {
+  /// The text label for the action button.
   final String label;
+
+  /// The callback to be executed when the action button is pressed.
   final VoidCallback onPressed;
+
+  /// The text color of the action button.
   final Color? textColor;
+
+  /// The text color of the action button when disabled.
   final Color? disabledTextColor;
 
+  /// Creates a [HyperSnackAction].
   HyperSnackAction({
     required this.label,
     required this.onPressed,
@@ -27,48 +38,109 @@ class HyperSnackAction {
   });
 }
 
+/// Configuration class for customizing the HyperSnackbar.
+///
+/// This class holds all the design and behavior properties.
 class HyperConfig {
   // --- 識別子 ---
-  final String? id; // 更新・個別削除用
+
+  /// An optional ID to identify the snackbar.
+  /// Used for updating or removing specific snackbars.
+  final String? id;
 
   // --- コンテンツ ---
+
+  /// The title text of the snackbar.
   final String title;
+
+  /// The optional message text.
   final String? message;
+
+  /// The optional icon widget.
   final Widget? icon;
+
+  /// The optional action button.
   final HyperSnackAction? action;
 
-  // --- インタラクション & スタイル (New!) ---
-  final VoidCallback? onTap; // バー全体のタップアクション
-  final TextStyle? titleStyle; // タイトルのスタイル
-  final TextStyle? messageStyle; // メッセージのスタイル
-  final BoxBorder? border; // 枠線
-  final EdgeInsetsGeometry margin; // 外側の余白
-  final EdgeInsetsGeometry padding; // 内側の余白
+  // --- インタラクション & スタイル ---
+
+  /// Callback when the snackbar itself is tapped.
+  final VoidCallback? onTap;
+
+  /// Custom text style for the title.
+  final TextStyle? titleStyle;
+
+  /// Custom text style for the message.
+  final TextStyle? messageStyle;
+
+  /// Border decoration for the snackbar.
+  final BoxBorder? border;
+
+  /// Outer margin of the snackbar.
+  final EdgeInsetsGeometry margin;
+
+  /// Inner padding of the snackbar content.
+  final EdgeInsetsGeometry padding;
 
   // --- 基本デザイン ---
+
+  /// The background color of the snackbar.
   final Color backgroundColor;
+
+  /// The default text color for title and message.
   final Color textColor;
+
+  /// The border radius of the snackbar.
   final double borderRadius;
+
+  /// The elevation (shadow) of the snackbar.
   final double elevation;
 
   // --- 動作設定 ---
-  final Duration? displayDuration; // nullなら永続表示
+
+  /// How long the snackbar should be displayed.
+  /// If null, it will be persistent until manually dismissed.
+  final Duration? displayDuration;
+
+  /// Whether to show the close (X) button.
   final bool showCloseButton;
+
+  /// Whether to allow dismissing the snackbar by swiping.
   final bool enableSwipe;
+
+  /// The maximum number of snackbars visible at once.
   final int maxVisibleCount;
-  final bool newestOnTop; // true: 先頭に追加(押し下げ), false: 末尾に追加(ぶら下げ)
+
+  /// If true, new snackbars are added to the top of the stack.
+  /// If false, they are added to the bottom.
+  final bool newestOnTop;
 
   // --- 位置 ---
+
+  /// The position on the screen (top or bottom).
   final HyperSnackPosition position;
 
   // --- アニメーション設定 ---
+
+  /// Duration of the entry animation.
   final Duration enterAnimationDuration;
+
+  /// Duration of the exit animation.
   final Duration exitAnimationDuration;
+
+  /// Curve for the entry animation.
   final Curve enterCurve;
+
+  /// Curve for the exit animation.
   final Curve exitCurve;
+
+  /// The type of entry animation.
   final HyperSnackAnimationType enterAnimationType;
+
+  /// The type of exit animation.
   final HyperSnackExitAnimationType exitAnimationType;
 
+  /// Creates a [HyperConfig] with the specified properties.
   HyperConfig({
     required this.title,
     this.id,

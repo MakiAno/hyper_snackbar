@@ -8,8 +8,14 @@ import 'package:flutter/material.dart';
 import 'config.dart';
 import 'container.dart';
 
+/// A manager class for displaying and controlling HyperSnackbars.
+///
+/// Use [HyperManager.show] to display a snackbar from anywhere in your app.
+/// This class is implemented as a singleton.
 class HyperManager {
   static final HyperManager _instance = HyperManager._internal();
+
+  /// Returns the singleton instance of [HyperManager].
   factory HyperManager() => _instance;
   HyperManager._internal();
 
@@ -75,6 +81,9 @@ class HyperManager {
     overlayState.insert(_overlayEntry!);
   }
 
+  /// Displays a HyperSnackbar with the given [config].
+  ///
+  /// [context] is required to insert the overlay into the widget tree.
   void show(BuildContext context, HyperConfig config) {
     _initOverlay(context);
 
@@ -138,6 +147,7 @@ class HyperManager {
     }
   }
 
+  /// Dismisses a snackbar by its [id].
   void dismissById(String id) {
     final allWidgets = [..._topEntries, ..._bottomEntries];
     for (var widget in allWidgets) {
@@ -148,6 +158,9 @@ class HyperManager {
     }
   }
 
+  /// Clears all currently displayed snackbars.
+  ///
+  /// If [animated] is true, they will animate out.
   void clearAll({bool animated = true}) {
     final allWidgets = [..._topEntries, ..._bottomEntries];
     if (allWidgets.isEmpty) return;
@@ -168,6 +181,7 @@ class HyperManager {
     }
   }
 
+  /// Removes a specific notification based on its [config].
   void removeNotification(HyperConfig config,
       {bool immediate = false, bool swiped = false}) {
     final targetList = (config.position == HyperSnackPosition.top)
@@ -235,8 +249,9 @@ class HyperManager {
   }
 }
 
-// プリセット
+/// Convenience extensions for common snackbar types.
 extension HyperManagerPresets on HyperManager {
+  /// Shows a success snackbar (green background).
   void showSuccess(
     BuildContext context, {
     required String title,
@@ -254,6 +269,7 @@ extension HyperManagerPresets on HyperManager {
         ));
   }
 
+  /// Shows an error snackbar (red background).
   void showError(
     BuildContext context, {
     required String title,
@@ -271,6 +287,7 @@ extension HyperManagerPresets on HyperManager {
         ));
   }
 
+  /// Shows a warning snackbar (amber background).
   void showWarning(
     BuildContext context, {
     required String title,
@@ -288,6 +305,7 @@ extension HyperManagerPresets on HyperManager {
         ));
   }
 
+  /// Shows an info snackbar (blue background).
   void showInfo(
     BuildContext context, {
     required String title,

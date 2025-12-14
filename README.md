@@ -4,7 +4,7 @@
 A highly customizable, animated, and stackable snackbar manager for Flutter.
 Designed for modern apps that need more than just a simple toast.
 
-[![pub package](https://img.shields.io/pub/v/hyper_Snackbar.svg)](https://pub.dev/packages/hyper_Snackbar)
+[![pub package](https://img.shields.io/pub/v/hyper_snackbar.svg)](https://pub.dev/packages/hyper_snackbar)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## ✨ Features
@@ -23,7 +23,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_Snackbar: ^0.0.1
+  hyper_Snackbar: ^0.0.4
 ```
 
 ## 🚀 Usage
