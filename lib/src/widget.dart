@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'config.dart';
 import 'manager.dart';
 
+/// A widget that displays the content of the snackbar.
 class HyperSnackBarWidget extends StatelessWidget {
   final HyperConfig config;
   final VoidCallback onDismiss;
