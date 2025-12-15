@@ -42,6 +42,7 @@ class HyperSnackAction {
 ///
 /// This class holds all the design and behavior properties.
 class HyperConfig {
+  // --- コンテキスト ---
   // --- 識別子 ---
 
   /// An optional ID to identify the snackbar.

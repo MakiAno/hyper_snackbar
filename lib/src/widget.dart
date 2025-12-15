@@ -120,7 +120,7 @@ class HyperSnackBarWidget extends StatelessWidget {
         key: UniqueKey(),
         direction: DismissDirection.horizontal,
         onDismissed: (_) {
-          HyperManager().removeNotification(config, swiped: true);
+          HyperSnackbar().removeNotification(config, swiped: true);
         },
         child: wrapper,
       );

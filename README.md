@@ -1,4 +1,7 @@
-# Hyper Snackbar 🚀
+import csv
+
+# README.md content (Raw Text)
+readme_content = r"""# Hyper Snackbar 🚀
 ![Demo GIF](https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo.gif)
 
 A highly customizable, animated, and stackable snackbar manager for Flutter.
@@ -23,42 +26,89 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_Snackbar: ^0.0.4
+  hyper_snackbar: ^0.1.0
 ```
 
-## 🚀 Usage
+## 🚀 Setup (Important)
+To use HyperSnackbar without a BuildContext, you must register the navigatorKey in your MaterialApp.
 
-No special setup (like wrapping `MaterialApp`) is required. Just call `HyperManager` from anywhere!
+```dart
+import 'package:hyper_snackbar/hyper_snackbar.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'My App',
+      // ▼ Register the key here
+      navigatorKey: HyperSnackbar.navigatorKey, 
+      home: const HomePage(),
+    );
+  }
+}
+```
+
+## 💡 Usage
+### Basic Usage (No Context required)
+You can now show a snackbar from anywhere (e.g., BLoC, ViewModels, or async callbacks) without passing a BuildContext.
+
+```dart
+final config = HyperConfig(
+  title: 'Success!',
+  message: 'Data has been saved successfully.',
+  backgroundColor: Colors.green,
+);
+
+// Just call show!
+HyperSnackbar().show(config);
+```
+
+### Advanced Usage (With Context)
+If you want to inherit the local theme or Directionality of a specific screen, you can optionally pass the context.
+```dart
+// The snackbar will use the theme from this context
+HyperSnackbar().show(config, context: context);
+```
+
+### Using Extension (Optional)
+You can also use the convenient extension method inside your widgets.
+```dart
+context.showHyperSnackbar(config);
+```
 
 ### 1. Basic Presets
 Simple one-liners for common scenarios.
 
 ```dart
-import 'package:hyper_Snackbar/hyper_Snackbar.dart';
+import 'package:hyper_snackbar/hyper_snackbar.dart';
 
 // Success
-HyperManager().showSuccess(context, title: 'Saved successfully');
+HyperSnackbar().showSuccess(title: 'Saved successfully');
 
 // Error
-HyperManager().showError(
-  context, 
+HyperSnackbar().showError(
   title: 'Connection Failed', 
   message: 'Please check your internet connection.'
 );
 
 // Warning
-HyperManager().showWarning(context, title: 'Low Storage');
+HyperSnackbar().showWarning(title: 'Low Storage');
 
 // Info
-HyperManager().showInfo(context, title: 'New Message Received');
+HyperSnackbar().showInfo(title: 'New Message Received');
 ```
 
 ### 2. Advanced Customization
 You can customize almost everything using `HyperConfig`.
 
 ```dart
-HyperManager().show(
-  context,
+HyperSnackbar().show(
   HyperConfig(
     title: 'Modern Notification',
     message: 'With custom border, font, and tap action.',
@@ -92,8 +142,7 @@ This is the **killer feature**. You can update the state of a snackbar while kee
 const String processId = 'upload_process';
 
 // 1. Show Loading
-HyperManager().show(
-  context,
+HyperSnackbar().show(
   HyperConfig(
     id: processId, // Unique ID
     title: 'Uploading...',
@@ -105,8 +154,7 @@ HyperManager().show(
 // ... do some work ...
 
 // 2. Update to "Done" (Using the same ID)
-HyperManager().show(
-  context,
+HyperSnackbar().show(
   HyperConfig(
     id: processId, // Same ID replaces the content
     title: 'Upload Complete!',
@@ -121,8 +169,7 @@ HyperManager().show(
 By default, new items appear at the top. You can append them to the **bottom** like a chat or log.
 
 ```dart
-HyperManager().show(
-  context,
+HyperSnackbar().show(
   HyperConfig(
     title: 'System Log',
     message: 'Newest item is at the bottom.',
