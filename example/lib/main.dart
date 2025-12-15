@@ -4,10 +4,6 @@ import 'dart:async';
 // Import your package
 import 'package:hyper_snackbar/hyper_snackbar.dart';
 
-// For development (relative path), use this:
-// import 'src/manager.dart';
-// import 'src/config.dart';
-
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -44,14 +40,12 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Success',
               Colors.green,
-              () => HyperManager()
-                  .showSuccess(context, title: 'Operation Successful'),
+              () => HyperSnackbar().showSuccess(title: 'Operation Successful'),
             ),
             _buildButton(
               'Error',
               Colors.red,
-              () => HyperManager().showError(
-                context,
+              () => HyperSnackbar().showError(
                 title: 'Connection Failed',
                 message: 'Please check your internet connection.',
               ),
@@ -61,8 +55,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
               Colors.amber,
               () {
                 // Using .show() directly for tap interactions
-                HyperManager().show(
-                  context,
+                HyperSnackbar().show(
                   HyperConfig(
                     title: 'Low Storage',
                     message: 'Tap here to manage storage.',
@@ -86,8 +79,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Info',
               Colors.blue,
-              () => HyperManager().showInfo(
-                context,
+              () => HyperSnackbar().showInfo(
                 title: 'New Message',
                 message: 'You have received a new notification.',
               ),
@@ -126,7 +118,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Clear All',
               Colors.grey,
-              () => HyperManager().clearAll(animated: true),
+              () => HyperSnackbar().clearAll(animated: true),
             ),
             const SizedBox(height: 40),
           ],
@@ -139,8 +131,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   // Demo Pattern: Advanced Design
   // ----------------------------------------------------------------
   void _showModernStyledSnackBar() {
-    HyperManager().show(
-      context,
+    HyperSnackbar().show(
       HyperConfig(
         title: 'Design Update',
         message: 'Custom border, margin, and fonts applied.',
@@ -176,8 +167,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   // Demo Pattern: Action Button
   // ----------------------------------------------------------------
   void _showUndoSnackBar() {
-    HyperManager().show(
-      context,
+    HyperSnackbar().show(
       HyperConfig(
         title: 'Item deleted',
         icon: const Icon(Icons.delete_outline, color: Colors.white),
@@ -185,7 +175,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
           label: 'UNDO',
           textColor: Colors.yellowAccent,
           onPressed: () {
-            HyperManager().showSuccess(context, title: 'Item restored!');
+            HyperSnackbar().showSuccess(title: 'Item restored!');
           },
         ),
       ),
@@ -200,8 +190,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
 
     // 1. Start (Loading)
     if (!mounted) return;
-    HyperManager().show(
-      context,
+    HyperSnackbar().show(
       HyperConfig(
         id: processId,
         title: 'Uploading...',
@@ -220,8 +209,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
     if (!mounted) return;
 
     // 2. Update Progress (Using same ID)
-    HyperManager().show(
-      context,
+    HyperSnackbar().show(
       HyperConfig(
         id: processId,
         title: 'Processing...',
@@ -240,8 +228,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
     if (!mounted) return;
 
     // 3. Finish (Update & Set duration to auto-dismiss)
-    HyperManager().show(
-      context,
+    HyperSnackbar().show(
       HyperConfig(
         id: processId,
         title: 'Completed!',
@@ -257,8 +244,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   // Demo Pattern: Log Style
   // ----------------------------------------------------------------
   void _showLogStyleSnackBar() {
-    HyperManager().show(
-      context,
+    HyperSnackbar().show(
       HyperConfig(
         title: 'System Log #$_logCount',
         message: 'Newest item is appended to the bottom.',
@@ -287,8 +273,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   // Demo Pattern: Persistent
   // ----------------------------------------------------------------
   void _showPersistentSnackBar() {
-    HyperManager().show(
-      context,
+    HyperSnackbar().show(
       HyperConfig(
         title: 'Maintenance Alert',
         message: 'This notification will not disappear automatically.',
