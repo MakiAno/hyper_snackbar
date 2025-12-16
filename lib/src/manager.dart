@@ -3,12 +3,26 @@ import 'package:flutter/material.dart';
 import 'config.dart';
 import 'container.dart';
 
-/// Singleton Manager for handling overlays.
+/// A singleton manager class for displaying and managing HyperSnackbars.
+///
+/// This class handles the overlay insertion, queuing, and dismissal of snackbars.
+/// You can access the instance via [HyperSnackbar()] factory or static methods.
 class HyperSnackbar {
   static final HyperSnackbar _instance = HyperSnackbar._internal();
+
+  /// Returns the singleton instance of [HyperSnackbar].
   factory HyperSnackbar() => _instance;
   HyperSnackbar._internal();
 
+  /// The global navigator key used to find the overlay context.
+  ///
+  /// Add this key to your [MaterialApp] or [GetMaterialApp]:
+  /// ```dart
+  /// MaterialApp(
+  ///   navigatorKey: HyperSnackbar.navigatorKey,
+  ///   ...
+  /// )
+  /// ```
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
@@ -23,6 +37,10 @@ class HyperSnackbar {
 
   bool _isOverlayMounted = false;
 
+  /// Shows a custom snackbar defined by [HyperConfig].
+  ///
+  /// [config] defines the appearance and behavior of the snackbar.
+  /// [context] is optional if [navigatorKey] is set up correctly.
   void show(HyperConfig config, {BuildContext? context}) {
     _mountOverlayIfNeeded(context);
 
@@ -64,6 +82,7 @@ class HyperSnackbar {
     }
   }
 
+  /// Dismisses a snackbar by its unique [id].
   void dismissById(String id) {
     void findAndDismiss(List<Widget> targetList) {
       for (final widget in targetList) {
@@ -85,6 +104,7 @@ class HyperSnackbar {
     findAndDismiss(_bottomEntries);
   }
 
+  /// Removes all currently displayed snackbars immediately.
   void clearAll() {
     final allWidgets = [..._topEntries, ..._bottomEntries];
     for (final widget in allWidgets) {
@@ -102,6 +122,8 @@ class HyperSnackbar {
   }
 
   // --- Presets ---
+
+  /// Displays a success snackbar (Green background, check icon).
   void showSuccess(
       {required String title, String? message, BuildContext? context}) {
     show(
@@ -114,6 +136,7 @@ class HyperSnackbar {
         context: context);
   }
 
+  /// Displays an error snackbar (Red background, error icon).
   void showError(
       {required String title, String? message, BuildContext? context}) {
     show(
@@ -126,6 +149,7 @@ class HyperSnackbar {
         context: context);
   }
 
+  /// Displays a warning snackbar (Orange background, warning icon).
   void showWarning(
       {required String title, String? message, BuildContext? context}) {
     show(
@@ -138,6 +162,7 @@ class HyperSnackbar {
         context: context);
   }
 
+  /// Displays an info snackbar (Blue background, info icon).
   void showInfo(
       {required String title, String? message, BuildContext? context}) {
     show(
@@ -175,7 +200,6 @@ class HyperSnackbar {
     void finalizeRemoval(List<Widget> list, StreamController stream) {
       list.removeWhere((w) {
         if (w is HyperSnackBarContainer) {
-          // 完全に一致するか、もしくはIDが一致すれば削除対象とする
           if (w.config == config) return true;
           if (config.id != null && w.config.id == config.id) return true;
         }
@@ -234,7 +258,6 @@ class HyperSnackbar {
       builder: (context) => _HyperOverlayManager(
         topStream: _topStream.stream,
         bottomStream: _bottomStream.stream,
-        // ★ 修正ポイント: 現在のリストを初期データとして渡す
         initialTopData: _topEntries,
         initialBottomData: _bottomEntries,
       ),
@@ -248,7 +271,6 @@ class _HyperOverlayManager extends StatelessWidget {
   final Stream<List<Widget>> topStream;
   final Stream<List<Widget>> bottomStream;
 
-  // ★ 追加: 初期データを受け取るフィールド
   final List<Widget> initialTopData;
   final List<Widget> initialBottomData;
 
@@ -271,7 +293,6 @@ class _HyperOverlayManager extends StatelessWidget {
             bottom: false,
             child: StreamBuilder<List<Widget>>(
               stream: topStream,
-              // ★ 修正ポイント: 初期データを空ではなく、現在のリストにする
               initialData: initialTopData,
               builder: (context, s) => Column(
                   mainAxisSize: MainAxisSize.min, children: s.data ?? []),
@@ -286,7 +307,6 @@ class _HyperOverlayManager extends StatelessWidget {
             top: false,
             child: StreamBuilder<List<Widget>>(
               stream: bottomStream,
-              // ★ 修正ポイント: 初期データを空ではなく、現在のリストにする
               initialData: initialBottomData,
               builder: (context, s) => Column(
                   mainAxisSize: MainAxisSize.min, children: s.data ?? []),
@@ -298,6 +318,7 @@ class _HyperOverlayManager extends StatelessWidget {
   }
 }
 
+/// Extension methods for [BuildContext] to easily show snackbars.
 extension HyperSnackbarExtensions on BuildContext {
   void showHyperSnackbar(HyperConfig config) {
     HyperSnackbar().show(config, context: this);
