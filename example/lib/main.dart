@@ -1,15 +1,28 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
-
-// Import your package
+import 'package:flutter/material.dart';
 import 'package:hyper_snackbar/hyper_snackbar.dart';
 
 void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'Hyper Snack List Demo',
-    home: HyperDemoPage(),
-  ));
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      // ★ Contextなしで表示するためにNavigatorKeyを登録
+      navigatorKey: HyperSnackbar.navigatorKey,
+      debugShowCheckedModeBanner: false,
+      title: 'Hyper Snack Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: const HyperDemoPage(),
+    );
+  }
 }
 
 class HyperDemoPage extends StatefulWidget {
@@ -36,6 +49,9 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // -------------------------------------------------------
+            // 1. Basic Presets
+            // -------------------------------------------------------
             _buildHeader('1. Basic Presets'),
             _buildButton(
               'Success',
@@ -54,25 +70,27 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
               'Warning + Tap Action',
               Colors.amber,
               () {
-                // Using .show() directly for tap interactions
+                // contextを渡すことで、タップ時の画面遷移などがスムーズに行えます
                 HyperSnackbar().show(
                   HyperConfig(
                     title: 'Low Storage',
                     message: 'Tap here to manage storage.',
                     backgroundColor: Colors.amber.shade700,
-                    icon: const Icon(Icons.warning_amber_rounded,
-                        color: Colors.white),
-                    // Tap to navigate
+                    icon: const Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.white,
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) =>
-                              const DetailPage(title: 'Low Storage'),
+                              const DetailPage(title: 'Storage Settings'),
                         ),
                       );
                     },
                   ),
+                  context: context,
                 );
               },
             ),
@@ -84,42 +102,173 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 message: 'You have received a new notification.',
               ),
             ),
+
+            // -------------------------------------------------------
+            // 2. Advanced Design
+            // -------------------------------------------------------
             _buildHeader('2. Advanced Design'),
             _buildButton(
               'Modern Card Style',
               Colors.indigo,
               () => _showModernStyledSnackBar(),
             ),
+
+            // -------------------------------------------------------
+            // 3. With Actions
+            // -------------------------------------------------------
             _buildHeader('3. With Actions'),
             _buildButton(
               'Delete with "Undo"',
-              Colors.orange,
+              Colors.deepOrange,
               () => _showUndoSnackBar(),
             ),
+
+            // -------------------------------------------------------
+            // 4. State Update (Using ID)
+            // -------------------------------------------------------
             _buildHeader('4. State Update (Using ID)'),
             _buildButton(
               'Process (Loading -> Done)',
               Colors.blueGrey,
               () => _showProcessSnackBar(),
             ),
-            _buildHeader('5. Log Style (Bottom Append)'),
+
+            // -------------------------------------------------------
+            // 5. Log Style (Bottom Append)
+            // -------------------------------------------------------
+            _buildHeader('5. Log Style (Console)'),
             _buildButton(
-              'Add Log (Newest on Bottom)',
+              'Add Log (Max Visible: 5)',
               Colors.teal,
               () => _showLogStyleSnackBar(),
             ),
-            _buildHeader('6. Control & Persistent'),
+
+            // -------------------------------------------------------
+            // 6. Control & Management
+            // -------------------------------------------------------
+            _buildHeader('6. Control & Management'),
+
+            // 新機能: 固定IDで表示 (Persistent)
             _buildButton(
-              'Persistent Notification',
-              Colors.deepPurple,
-              () => _showPersistentSnackBar(),
+              'Show Static ID ("static_1")',
+              Colors.purple,
+              () => HyperSnackbar().show(
+                HyperConfig(
+                  id: 'static_1',
+                  title: 'Persistent Notification',
+                  message: 'This will stay until you dismiss it by ID.',
+                  displayDuration: null, // 自動で消えない
+                  backgroundColor: Colors.purple.shade700,
+                  icon: const Icon(Icons.fingerprint, color: Colors.white),
+                  showCloseButton: false, // ユーザーに閉じさせない
+                ),
+              ),
             ),
-            const SizedBox(height: 8),
+
+            // 新機能: 指定IDのみ閉じる
+            _buildButton(
+              'Dismiss by ID ("static_1")',
+              Colors.purple.shade300,
+              () => HyperSnackbar().dismissById('static_1'),
+            ),
+
+            const SizedBox(height: 16),
+
+            // 新機能: 全て閉じる
             _buildButton(
               'Clear All',
               Colors.grey,
-              () => HyperSnackbar().clearAll(animated: true),
+              () => HyperSnackbar().clearAll(),
             ),
+
+            const SizedBox(height: 16),
+
+            // -------------------------------------------------------
+            // 7. Animation Playground
+            // -------------------------------------------------------
+            _buildHeader('7. Animation Playground'),
+
+            // 1. Slide Horizontal (左から出て、右へ消える)
+            _buildButton(
+              'Left In -> Right Out',
+              Colors.brown,
+              () => HyperSnackbar().show(
+                HyperConfig(
+                  title: 'Horizontal Slide',
+                  message: 'Enter: fromLeft, Exit: toRight',
+                  backgroundColor: Colors.brown.shade700,
+                  icon: const Icon(Icons.swap_horiz, color: Colors.white),
+
+                  // ★ アニメーション設定
+                  enterAnimationType: HyperSnackAnimationType.fromLeft,
+                  exitAnimationType: HyperSnackAnimationType.toRight,
+                ),
+              ),
+            ),
+
+            // 2. Scale / Elastic (ポヨンと出てくる)
+            _buildButton(
+              'Scale (Elastic) -> Fade',
+              Colors.pink,
+              () => HyperSnackbar().show(
+                HyperConfig(
+                  title: 'Pop Notification',
+                  message: 'Enter: Scale (Elastic), Exit: Fade',
+                  backgroundColor: Colors.pink.shade600,
+                  icon: const Icon(Icons.star, color: Colors.white),
+
+                  // ★ アニメーション設定
+                  enterAnimationType: HyperSnackAnimationType.scale,
+                  exitAnimationType: HyperSnackAnimationType.fade,
+                  enterCurve: Curves.elasticOut, // 弾むような動き
+                  enterAnimationDuration: const Duration(milliseconds: 800),
+                ),
+              ),
+            ),
+
+            // 3. From Bottom (下から出てくる)
+            _buildButton(
+              'From Bottom -> Slide Left',
+              Colors.blueGrey,
+              () => HyperSnackbar().show(
+                HyperConfig(
+                  title: 'Bottom Sheet Style',
+                  message: 'Position: Bottom, Enter: fromBottom',
+                  backgroundColor: Colors.blueGrey.shade800,
+                  icon: const Icon(Icons.vertical_align_bottom,
+                      color: Colors.white),
+
+                  // ★ 位置とアニメーション設定
+                  position: HyperSnackPosition.bottom, // 下に表示
+                  enterAnimationType: HyperSnackAnimationType.fromBottom,
+                  exitAnimationType: HyperSnackAnimationType.toLeft,
+                ),
+              ),
+            ),
+
+            // 4. Fade Only (ふわっと出る)
+            _buildButton(
+              'Fade In -> Fade Out',
+              Colors.black54,
+              () => HyperSnackbar().show(
+                HyperConfig(
+                  title: 'Subtle Message',
+                  message: 'Enter: Fade, Exit: Fade',
+                  backgroundColor: Colors.black,
+                  icon: const Icon(Icons.blur_on, color: Colors.white),
+
+                  // ★ アニメーション設定
+                  enterAnimationType: HyperSnackAnimationType.fade,
+                  exitAnimationType: HyperSnackAnimationType.fade,
+                  enterAnimationDuration: Duration(milliseconds: 600),
+                  enterCurve: Curves.easeIn,
+                  exitCurve: Curves.easeIn,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 60), // 最下部の余白
+
             const SizedBox(height: 40),
           ],
         ),
@@ -138,7 +287,8 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
         backgroundColor: const Color(0xFF212121),
 
         // Custom Border
-        border: Border.all(color: Colors.white.withAlpha(2), width: 1.0),
+        border:
+            Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.0),
 
         // Floating Margin
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -154,12 +304,13 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
           letterSpacing: 1.2,
         ),
         messageStyle: TextStyle(
-          color: Colors.white.withAlpha(7),
+          color: Colors.white.withValues(alpha: 0.7),
           fontStyle: FontStyle.italic,
         ),
 
         icon: const Icon(Icons.brush, color: Colors.lightBlueAccent),
       ),
+      context: context,
     );
   }
 
@@ -167,7 +318,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   // Demo Pattern: Action Button
   // ----------------------------------------------------------------
   void _showUndoSnackBar() {
-    HyperSnackbar().show(
+    context.showHyperSnackbar(
       HyperConfig(
         title: 'Item deleted',
         icon: const Icon(Icons.delete_outline, color: Colors.white),
@@ -195,7 +346,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
         id: processId,
         title: 'Uploading...',
         message: 'Sending data (20%)',
-        displayDuration: null, // Keep it visible
+        displayDuration: null, // Sticky
         backgroundColor: Colors.blue[800]!,
         icon: const SizedBox(
           width: 20,
@@ -203,6 +354,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
           child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
         ),
       ),
+      context: context,
     );
 
     await Future.delayed(const Duration(seconds: 2));
@@ -222,21 +374,23 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
           child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
         ),
       ),
+      context: context,
     );
 
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
-    // 3. Finish (Update & Set duration to auto-dismiss)
+    // 3. Finish (Update & Auto-dismiss)
     HyperSnackbar().show(
       HyperConfig(
         id: processId,
         title: 'Completed!',
         message: 'All tasks finished successfully.',
-        displayDuration: const Duration(seconds: 3),
+        displayDuration: const Duration(seconds: 3), // 3秒後に消える
         backgroundColor: Colors.green[700]!,
         icon: const Icon(Icons.check_circle, color: Colors.white),
       ),
+      context: context,
     );
   }
 
@@ -250,41 +404,26 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
         message: 'Newest item is appended to the bottom.',
 
         position: HyperSnackPosition.top,
-        newestOnTop: false, // Append to bottom
+        newestOnTop: false, // 下に追加していく
         enterAnimationType: HyperSnackAnimationType.fromTop,
 
-        // Console-like appearance
+        // コンソール風のデザイン
         backgroundColor: Colors.black87,
         borderRadius: 4.0,
         margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
         icon: const Icon(Icons.terminal, size: 16, color: Colors.greenAccent),
         titleStyle: const TextStyle(
-            fontFamily: 'Courier',
-            color: Colors.greenAccent,
-            fontWeight: FontWeight.bold),
+          fontFamily: 'Courier',
+          color: Colors.greenAccent,
+          fontWeight: FontWeight.bold,
+        ),
 
+        // ★ 最大表示数を5に制限（6個目が出ると1個目が消える）
         maxVisibleCount: 5,
       ),
+      context: context,
     );
     _logCount++;
-  }
-
-  // ----------------------------------------------------------------
-  // Demo Pattern: Persistent
-  // ----------------------------------------------------------------
-  void _showPersistentSnackBar() {
-    HyperSnackbar().show(
-      HyperConfig(
-        title: 'Maintenance Alert',
-        message: 'This notification will not disappear automatically.',
-        displayDuration: null, // Persistent
-        backgroundColor: const Color(0xFFC62828),
-        icon: const Icon(Icons.notifications_active, color: Colors.white),
-        position: HyperSnackPosition.bottom,
-        margin: const EdgeInsets.all(12),
-        borderRadius: 16,
-      ),
-    );
   }
 
   // ----------------------------------------------------------------
@@ -300,10 +439,12 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          elevation: 2,
+          elevation: 5,
         ),
-        child: Text(label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        child: Text(
+          label,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
@@ -314,9 +455,10 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const Divider(),
         ],
       ),

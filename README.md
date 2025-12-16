@@ -23,11 +23,12 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.1.1
+  hyper_snackbar: ^0.1.2
 ```
 
 ## 🚀 Setup (Important)
-To use HyperSnackbar without a BuildContext, you must register the navigatorKey in your MaterialApp.
+
+To use `HyperSnackbar` without a `BuildContext`, you must register the `navigatorKey` in your `MaterialApp`.
 
 ```dart
 import 'package:hyper_snackbar/hyper_snackbar.dart';
@@ -52,8 +53,9 @@ class MyApp extends StatelessWidget {
 ```
 
 ## 💡 Usage
+
 ### Basic Usage (No Context required)
-You can now show a snackbar from anywhere (e.g., BLoC, ViewModels, or async callbacks) without passing a BuildContext.
+You can now show a snackbar from anywhere (e.g., BLoC, ViewModels, or async callbacks) without passing a `BuildContext`.
 
 ```dart
 final config = HyperConfig(
@@ -68,6 +70,7 @@ HyperSnackbar().show(config);
 
 ### Advanced Usage (With Context)
 If you want to inherit the local theme or Directionality of a specific screen, you can optionally pass the context.
+
 ```dart
 // The snackbar will use the theme from this context
 HyperSnackbar().show(config, context: context);
@@ -75,6 +78,7 @@ HyperSnackbar().show(config, context: context);
 
 ### Using Extension (Optional)
 You can also use the convenient extension method inside your widgets.
+
 ```dart
 context.showHyperSnackbar(config);
 ```
@@ -132,6 +136,7 @@ HyperSnackbar().show(
   ),
 );
 ```
+
 ### 3. Update by ID (Loading -> Done) ⚡
 This is the **killer feature**. You can update the state of a snackbar while keeping it on screen.
 
@@ -177,6 +182,40 @@ HyperSnackbar().show(
 );
 ```
 
+### 5. Manually Dismissing
+You can dismiss a specific snackbar by ID, or clear all of them at once.
+
+```dart
+// Dismiss specific snackbar
+HyperSnackbar().dismissById('upload_process');
+
+// Clear all snackbars
+HyperSnackbar().clearAll();
+```
+
+### 6. Fine-tuning Animations
+You can control the speed, direction, and curve for entry and exit, especially useful for fade or scale effects.
+
+```dart
+HyperSnackbar().show(
+  HyperConfig(
+    title: 'Custom Fade Effect',
+    message: 'Using linear curve for smooth fade.',
+    backgroundColor: Colors.black,
+
+    // Time: 0.6 seconds
+    enterAnimationDuration: const Duration(milliseconds: 600),
+    
+    // Type: Fade In (Overrides default slide)
+    enterAnimationType: HyperSnackAnimationType.fade, 
+    exitAnimationType: HyperSnackAnimationType.fade, 
+
+    // Curve: Slow start, ideal for visibility during short fades
+    enterCurve: Curves.easeIn, 
+  ),
+);
+```
+
 ## ⚙️ Configuration (`HyperConfig`)
 
 | Property | Type | Default | Description |
@@ -210,6 +249,18 @@ HyperSnackbar().show(
 | `exitAnimationDuration` | `Duration` | `500ms` | Duration of exit animation. |
 | `enterCurve` | `Curve` | `easeOutQuart`| Animation curve for entry. |
 | `exitCurve` | `Curve` | `easeOut` | Animation curve for exit. |
+
+### 🛠 Methods
+
+| Method | Description |
+| :--- | :--- |
+| `show(HyperConfig config)` | Shows a new snackbar or updates an existing one if IDs match. |
+| `showSuccess(...)` | Preset for success messages (Green). |
+| `showError(...)` | Preset for error messages (Red). |
+| `showWarning(...)` | Preset for warning messages (Orange). |
+| `showInfo(...)` | Preset for info messages (Blue). |
+| `dismissById(String id)` | Dismisses the snackbar with the specified ID with animation. |
+| `clearAll()` | Dismisses **all** currently visible snackbars. |
 
 ## ❤️ Contributing
 
