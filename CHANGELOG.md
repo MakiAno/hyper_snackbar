@@ -1,3 +1,6 @@
+## 0.1.3
+* Improved documentation comments.
+
 ## 0.1.2 - 2025-12-16
 
 ### ✨ Features
