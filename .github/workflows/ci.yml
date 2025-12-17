@@ -1,0 +1,36 @@
+name: Dart/Flutter CI
+
+on:
+  push:
+    branches: [ main, master ] # mainにpushされた時
+  pull_request:
+    branches: [ main, master ] # PRが作られた時
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Flutterの環境をセットアップ
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true # キャッシュを有効にして高速化
+
+      # 依存パッケージの取得
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 静的解析（警告やエラーがないか）
+      - name: Analyze project
+        run: flutter analyze
+
+      # テストの実行（テストファイルがある場合のみ実行されます）
+      - name: Run tests
+        run: flutter test
+
+      # pub.devに公開可能な状態かチェック（実際に公開はされません）
+      - name: Check publish readiness
+        run: dart pub publish --dry-run
