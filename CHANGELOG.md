@@ -1,3 +1,7 @@
+<!-- ## 0.1.4     -->
+<!-- Next version -->
+* Updated README
+
 ## 0.1.3
 * Improved documentation comments.
 

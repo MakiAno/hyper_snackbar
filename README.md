@@ -1,11 +1,13 @@
 # Hyper Snackbar 🚀
-![Demo GIF](https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo.gif)
+
+[![pub package](https://img.shields.io/pub/v/hyper_snackbar.svg)](https://pub.dev/packages/hyper_snackbar)
+[![likes](https://img.shields.io/pub/likes/hyper_snackbar)](https://pub.dev/packages/hyper_snackbar/score)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 A highly customizable, animated, and stackable snackbar manager for Flutter.
 Designed for modern apps that need more than just a simple toast.
 
-[![pub package](https://img.shields.io/pub/v/hyper_snackbar.svg)](https://pub.dev/packages/hyper_snackbar)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Demo GIF](https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo.gif)
 
 ## ✨ Features
 
