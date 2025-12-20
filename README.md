@@ -1,4 +1,5 @@
-<!-- GitHubのフィードバック用リンクを適切な位置に追加する -->
+[![GitHub issues](https://img.shields.io/github/issues/MakiAno/hyper_snackbar?style=flat-square)](https://github.com/MakiAno/hyper_snackbar/issues)
+
 # Hyper Snackbar 🚀
 
 [![pub package](https://img.shields.io/pub/v/hyper_snackbar.svg)](https://pub.dev/packages/hyper_snackbar)

@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // ★ Contextなしで表示するためにNavigatorKeyを登録
+      // ★ Register NavigatorKey to show without context
       navigatorKey: HyperSnackbar.navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Hyper Snack Demo',
@@ -70,7 +70,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
               'Warning + Tap Action',
               Colors.amber,
               () {
-                // contextを渡すことで、タップ時の画面遷移などがスムーズに行えます
+                // By passing the context, you can smoothly perform screen transitions on tap.
                 HyperSnackbar.show(
                   title: 'Low Storage',
                   message: 'Tap here to manage storage.',
@@ -146,7 +146,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             // -------------------------------------------------------
             _buildHeader('6. Control & Management'),
 
-            // 新機能: 固定IDで表示 (Persistent)
+            // New Feature: Show with a fixed ID (Persistent)
             _buildButton(
               'Show Static ID ("static_1")',
               Colors.purple,
@@ -154,14 +154,14 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 id: 'static_1',
                 title: 'Persistent Notification',
                 message: 'This will stay until you dismiss it by ID.',
-                displayDuration: null, // 自動で消えない
+                displayDuration: null, // Does not disappear automatically
                 backgroundColor: Colors.purple.shade700,
                 icon: const Icon(Icons.fingerprint, color: Colors.white),
-                showCloseButton: false, // ユーザーに閉じさせない
+                showCloseButton: false, // Do not allow user to close
               ),
             ),
 
-            // 新機能: 指定IDのみ閉じる
+            // New Feature: Close only the specified ID
             _buildButton(
               'Dismiss by ID ("static_1")',
               Colors.purple.shade300,
@@ -170,7 +170,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
 
             const SizedBox(height: 16),
 
-            // 新機能: 全て閉じる
+            // New Feature: Close all
             _buildButton(
               'Clear All',
               Colors.grey,
@@ -184,7 +184,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             // -------------------------------------------------------
             _buildHeader('7. Animation Playground'),
 
-            // 1. Slide Horizontal (左から出て、右へ消える)
+            // 1. Slide Horizontal (comes in from the left, disappears to the right)
             _buildButton(
               'Left In -> Right Out',
               Colors.brown,
@@ -194,13 +194,13 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 backgroundColor: Colors.brown.shade700,
                 icon: const Icon(Icons.swap_horiz, color: Colors.white),
 
-                // ★ アニメーション設定
+                // ★ Animation settings
                 enterAnimationType: HyperSnackAnimationType.fromLeft,
                 exitAnimationType: HyperSnackAnimationType.toRight,
               ),
             ),
 
-            // 2. Scale / Elastic (ポヨンと出てくる)
+            // 2. Scale / Elastic (pops in)
             _buildButton(
               'Scale (Elastic) -> Fade',
               Colors.pink,
@@ -210,15 +210,15 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 backgroundColor: Colors.pink.shade600,
                 icon: const Icon(Icons.star, color: Colors.white),
 
-                // ★ アニメーション設定
+                // ★ Animation settings
                 enterAnimationType: HyperSnackAnimationType.scale,
                 exitAnimationType: HyperSnackAnimationType.fade,
-                enterCurve: Curves.elasticOut, // 弾むような動き
+                enterCurve: Curves.elasticOut, // Bouncy movement
                 enterAnimationDuration: const Duration(milliseconds: 800),
               ),
             ),
 
-            // 3. From Bottom (下から出てくる)
+            // 3. From Bottom (comes up from the bottom)
             _buildButton(
               'From Bottom -> Slide Left',
               Colors.blueGrey,
@@ -229,14 +229,14 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 icon: const Icon(Icons.vertical_align_bottom,
                     color: Colors.white),
 
-                // ★ 位置とアニメーション設定
-                position: HyperSnackPosition.bottom, // 下に表示
+                // ★ Position and animation settings
+                position: HyperSnackPosition.bottom, // Show at the bottom
                 enterAnimationType: HyperSnackAnimationType.fromBottom,
                 exitAnimationType: HyperSnackAnimationType.toLeft,
               ),
             ),
 
-            // 4. Fade Only (ふわっと出る)
+            // 4. Fade Only (fades in)
             _buildButton(
               'Fade In -> Fade Out',
               Colors.black54,
@@ -246,7 +246,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 backgroundColor: Colors.black,
                 icon: const Icon(Icons.blur_on, color: Colors.white),
 
-                // ★ アニメーション設定
+                // ★ Animation settings
                 enterAnimationType: HyperSnackAnimationType.fade,
                 exitAnimationType: HyperSnackAnimationType.fade,
                 enterAnimationDuration: const Duration(milliseconds: 600),
@@ -255,7 +255,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
               ),
             ),
 
-            const SizedBox(height: 60), // 最下部の余白
+            const SizedBox(height: 60), // Bottom margin
 
             const SizedBox(height: 40),
           ],
@@ -371,7 +371,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
       id: processId,
       title: 'Completed!',
       message: 'All tasks finished successfully.',
-      displayDuration: const Duration(seconds: 3), // 3秒後に消える
+      displayDuration: const Duration(seconds: 3), // Disappears after 3 seconds
       backgroundColor: Colors.green[700]!,
       icon: const Icon(Icons.check_circle, color: Colors.white),
       context: context,
@@ -387,10 +387,10 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
       message: 'Newest item is appended to the bottom.',
 
       position: HyperSnackPosition.top,
-      newestOnTop: false, // 下に追加していく
+      newestOnTop: false, // Append to the bottom
       enterAnimationType: HyperSnackAnimationType.fromTop,
 
-      // コンソール風のデザイン
+      // Console-style design
       backgroundColor: Colors.black87,
       borderRadius: 4.0,
       margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
@@ -401,7 +401,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
         fontWeight: FontWeight.bold,
       ),
 
-      // ★ 最大表示数を5に制限（6個目が出ると1個目が消える）
+      // ★ Limit the maximum number of visible items to 5 (the first one disappears when the 6th one appears)
       maxVisibleCount: 5,
       context: context,
     );
