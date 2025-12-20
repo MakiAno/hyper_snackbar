@@ -68,7 +68,7 @@ class HyperConfig {
   final bool showCloseButton;
   final bool enableSwipe;
   final bool newestOnTop;
-  final int maxVisibleCount; // ★ Added
+  final int maxVisibleCount;
   final HyperSnackPosition position;
 
   /// Animation.
@@ -99,7 +99,7 @@ class HyperConfig {
     this.showCloseButton = true,
     this.enableSwipe = true,
     this.newestOnTop = true,
-    this.maxVisibleCount = 3, // ★ Added (default 3)
+    this.maxVisibleCount = 3,
     this.position = HyperSnackPosition.top,
     this.enterAnimationDuration = const Duration(milliseconds: 300),
     this.exitAnimationDuration = const Duration(milliseconds: 500),
@@ -171,4 +171,3 @@ class HyperConfig {
     );
   }
 }
-

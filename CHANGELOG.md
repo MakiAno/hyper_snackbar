@@ -1,3 +1,14 @@
+## 0.2.1
+
+### ✨ Features
+
+*   **Enhanced HyperConfig.copyWith**: The `HyperConfig.copyWith` method now supports all properties, significantly improving reusability and flexibility when updating snackbar configurations.
+
+### 📝 Documentation
+
+*   **Internationalization**: All Japanese comments across the codebase (`pubspec.yaml`, `lib/src/*`, `example/lib/main.dart`) have been translated to English.
+*   **GitHub Feedback Link**: The `README.md` has been updated to include a GitHub Issues badge, making it easier for users to provide feedback and contribute.
+
 ## 0.2.0
 
 ### ⚠️ BREAKING CHANGES
@@ -67,8 +78,8 @@
 ## 0.1.2 - 2025-12-16
 
 ### ✨ Features
-* **Manual Dismissal:** Added `dismissById(String id)` to close specific snackbars programmatically.
-* **Clear All:** Added `clearAll()` to close all visible snackbars at once.
+*   **Manual Dismissal:** Added `dismissById(String id)` to close specific snackbars programmatically.
+*   **Clear All:** Added `clearAll()` to close all visible snackbars at once.
 
 ## 0.1.1
 
@@ -77,13 +88,13 @@
 ## 0.1.0
 
 ### ⚠️ Breaking Changes
-* **Renamed Main Class:** `HyperManager` has been renamed to `HyperSnackbar` to be more intuitive.
+*   **Renamed Main Class:** `HyperManager` has been renamed to `HyperSnackbar` to be more intuitive.
 
 ### ✨ Features
-* **Context-less Usage:** Added support for showing snackbars without a `BuildContext`.
-    * *Note:* To use this feature, you must assign `HyperSnackbar.navigatorKey` to the `navigatorKey` property of your `MaterialApp`.
-* **Hybrid Support:** The `show` method now accepts an optional `context`. If provided, it uses the local context (ideal for inheriting themes); otherwise, it falls back to the global navigator key.
-* **Extension Method:** Added `context.showHyperSnackbar(config)` for easier usage within widgets.
+*   **Context-less Usage:** Added support for showing snackbars without a `BuildContext`.
+    *   *Note:* To use this feature, you must assign `HyperSnackbar.navigatorKey` to the `navigatorKey` property of your `MaterialApp`.
+*   **Hybrid Support:** The `show` method now accepts an optional `context`. If provided, it uses the local context (ideal for inheriting themes); otherwise, it falls back to the global navigator key.
+*   **Extension Method:** Added `context.showHyperSnackbar(config)` for easier usage within widgets.
 
 ## 0.0.4
 
@@ -101,4 +112,3 @@
 ## 0.0.1
 
 * Initial release.
-

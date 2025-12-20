@@ -22,7 +22,8 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     with SingleTickerProviderStateMixin {
   late HyperConfig config;
   late AnimationController _controller;
-  late Animation<double> _animation; // Curve for entry animation is already applied
+  late Animation<double>
+      _animation; // Curve for entry animation is already applied
   Timer? _timer;
 
   // Whether it is in the middle of exit animation
