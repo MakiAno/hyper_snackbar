@@ -3,16 +3,12 @@ import 'package:flutter/material.dart';
 import 'config.dart';
 import 'container.dart';
 
-/// A singleton manager class for displaying and managing HyperSnackbars.
+/// A static manager class for displaying and managing HyperSnackbars.
 ///
 /// This class handles the overlay insertion, queuing, and dismissal of snackbars.
-/// You can access the instance via [HyperSnackbar()] factory or static methods.
+/// You can access the methods via static calls.
 class HyperSnackbar {
-  static final HyperSnackbar _instance = HyperSnackbar._internal();
-
-  /// Returns the singleton instance of [HyperSnackbar].
-  factory HyperSnackbar() => _instance;
-  HyperSnackbar._internal();
+  HyperSnackbar._();
 
   /// The global navigator key used to find the overlay context.
   ///
@@ -26,22 +22,86 @@ class HyperSnackbar {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
-  OverlayEntry? _overlayEntry;
-  final List<Widget> _topEntries = [];
-  final List<Widget> _bottomEntries = [];
+  static OverlayEntry? _overlayEntry;
+  static final List<Widget> _topEntries = [];
+  static final List<Widget> _bottomEntries = [];
 
-  final StreamController<List<Widget>> _topStream =
+  static final StreamController<List<Widget>> _topStream =
       StreamController<List<Widget>>.broadcast();
-  final StreamController<List<Widget>> _bottomStream =
+  static final StreamController<List<Widget>> _bottomStream =
       StreamController<List<Widget>>.broadcast();
 
-  bool _isOverlayMounted = false;
+  static bool _isOverlayMounted = false;
 
-  /// Shows a custom snackbar defined by [HyperConfig].
-  ///
-  /// [config] defines the appearance and behavior of the snackbar.
-  /// [context] is optional if [navigatorKey] is set up correctly.
-  void show(HyperConfig config, {BuildContext? context}) {
+  /// Shows a custom snackbar with detailed configuration as named parameters.
+  /// For reusing configurations, consider creating a [HyperConfig] object and
+  /// using [showFromConfig] instead.
+  static void show({
+    required String title,
+    String? id,
+    String? message,
+    Widget? icon,
+    HyperSnackAction? action,
+    VoidCallback? onTap,
+    TextStyle? titleStyle,
+    TextStyle? messageStyle,
+    BoxBorder? border,
+    EdgeInsetsGeometry margin = EdgeInsets.zero,
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    Color? backgroundColor,
+    Color? textColor,
+    double borderRadius = 12.0,
+    double elevation = 4.0,
+    Duration? displayDuration = const Duration(seconds: 4),
+    bool showCloseButton = true,
+    bool enableSwipe = true,
+    bool newestOnTop = true,
+    int maxVisibleCount = 3,
+    HyperSnackPosition position = HyperSnackPosition.top,
+    Duration enterAnimationDuration = const Duration(milliseconds: 300),
+    Duration exitAnimationDuration = const Duration(milliseconds: 500),
+    Curve enterCurve = Curves.easeOutQuart,
+    Curve exitCurve = Curves.easeOut,
+    HyperSnackAnimationType enterAnimationType = HyperSnackAnimationType.fromTop,
+    HyperSnackAnimationType exitAnimationType = HyperSnackAnimationType.toLeft,
+    BuildContext? context,
+  }) {
+    final config = HyperConfig(
+      title: title,
+      id: id,
+      message: message,
+      icon: icon,
+      action: action,
+      onTap: onTap,
+      titleStyle: titleStyle,
+      messageStyle: messageStyle,
+      border: border,
+      margin: margin,
+      padding: padding,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      borderRadius: borderRadius,
+      elevation: elevation,
+      displayDuration: displayDuration,
+      showCloseButton: showCloseButton,
+      enableSwipe: enableSwipe,
+      newestOnTop: newestOnTop,
+      maxVisibleCount: maxVisibleCount,
+      position: position,
+      enterAnimationDuration: enterAnimationDuration,
+      exitAnimationDuration: exitAnimationDuration,
+      enterCurve: enterCurve,
+      exitCurve: exitCurve,
+      enterAnimationType: enterAnimationType,
+      exitAnimationType: exitAnimationType,
+    );
+    showFromConfig(config, context: context);
+  }
+
+  /// Shows a snackbar using a pre-configured [HyperConfig] object.
+  /// This is useful for reusing the same design across different parts of your app.
+  static void showFromConfig(HyperConfig config, {BuildContext? context}) {
     _mountOverlayIfNeeded(context);
 
     // ID重複チェック & 更新
@@ -83,7 +143,7 @@ class HyperSnackbar {
   }
 
   /// Dismisses a snackbar by its unique [id].
-  void dismissById(String id) {
+  static void dismissById(String id) {
     void findAndDismiss(List<Widget> targetList) {
       for (final widget in targetList) {
         if (widget is HyperSnackBarContainer && widget.config.id == id) {
@@ -105,7 +165,7 @@ class HyperSnackbar {
   }
 
   /// Removes all currently displayed snackbars immediately.
-  void clearAll() {
+  static void clearAll() {
     final allWidgets = [..._topEntries, ..._bottomEntries];
     for (final widget in allWidgets) {
       if (widget is HyperSnackBarContainer) {
@@ -125,65 +185,62 @@ class HyperSnackbar {
   ///
   /// Returns `true` if there is at least one snackbar being shown,
   /// otherwise returns `false`.
-  bool get isSnackbarOpen => _topEntries.isNotEmpty || _bottomEntries.isNotEmpty;
+  static bool get isSnackbarOpen =>
+      _topEntries.isNotEmpty || _bottomEntries.isNotEmpty;
 
   // --- Presets ---
 
   /// Displays a success snackbar (Green background, check icon).
-  void showSuccess(
+  static void showSuccess(
       {required String title, String? message, BuildContext? context}) {
     show(
-        HyperConfig(
-          title: title,
-          message: message,
-          backgroundColor: Colors.green.shade600,
-          icon: const Icon(Icons.check_circle, color: Colors.white),
-        ),
-        context: context);
+      title: title,
+      message: message,
+      backgroundColor: Colors.green.shade600,
+      icon: const Icon(Icons.check_circle, color: Colors.white),
+      context: context,
+    );
   }
 
   /// Displays an error snackbar (Red background, error icon).
-  void showError(
+  static void showError(
       {required String title, String? message, BuildContext? context}) {
     show(
-        HyperConfig(
-          title: title,
-          message: message,
-          backgroundColor: Colors.red.shade600,
-          icon: const Icon(Icons.error, color: Colors.white),
-        ),
-        context: context);
+      title: title,
+      message: message,
+      backgroundColor: Colors.red.shade600,
+      icon: const Icon(Icons.error, color: Colors.white),
+      context: context,
+    );
   }
 
   /// Displays a warning snackbar (Orange background, warning icon).
-  void showWarning(
+  static void showWarning(
       {required String title, String? message, BuildContext? context}) {
     show(
-        HyperConfig(
-          title: title,
-          message: message,
-          backgroundColor: Colors.orange.shade700,
-          icon: const Icon(Icons.warning, color: Colors.white),
-        ),
-        context: context);
+      title: title,
+      message: message,
+      backgroundColor: Colors.orange.shade700,
+      icon: const Icon(Icons.warning, color: Colors.white),
+      context: context,
+    );
   }
 
   /// Displays an info snackbar (Blue background, info icon).
-  void showInfo(
+  static void showInfo(
       {required String title, String? message, BuildContext? context}) {
     show(
-        HyperConfig(
-          title: title,
-          message: message,
-          backgroundColor: Colors.blue.shade600,
-          icon: const Icon(Icons.info, color: Colors.white),
-        ),
-        context: context);
+      title: title,
+      message: message,
+      backgroundColor: Colors.blue.shade600,
+      icon: const Icon(Icons.info, color: Colors.white),
+      context: context,
+    );
   }
 
   // --- Internal Logic ---
 
-  bool _tryUpdate(
+  static bool _tryUpdate(
       HyperConfig newConfig, List<Widget> list, StreamController stream) {
     final index = list.indexWhere(
         (w) => (w is HyperSnackBarContainer) && w.config.id == newConfig.id);
@@ -202,7 +259,7 @@ class HyperSnackbar {
     return false;
   }
 
-  void removeNotification(HyperConfig config, {bool immediate = false}) {
+  static void removeNotification(HyperConfig config, {bool immediate = false}) {
     void finalizeRemoval(List<Widget> list, StreamController stream) {
       list.removeWhere((w) {
         if (w is HyperSnackBarContainer) {
@@ -230,7 +287,7 @@ class HyperSnackbar {
     }
   }
 
-  void _forceRemoveOldest(HyperSnackPosition position,
+  static void _forceRemoveOldest(HyperSnackPosition position,
       {bool newestOnTop = true}) {
     final targetList =
         (position == HyperSnackPosition.top) ? _topEntries : _bottomEntries;
@@ -243,7 +300,7 @@ class HyperSnackbar {
     }
   }
 
-  void _mountOverlayIfNeeded(BuildContext? context) {
+  static void _mountOverlayIfNeeded(BuildContext? context) {
     if (_isOverlayMounted) return;
     OverlayState? overlayState;
 
@@ -300,8 +357,8 @@ class _HyperOverlayManager extends StatelessWidget {
             child: StreamBuilder<List<Widget>>(
               stream: topStream,
               initialData: initialTopData,
-              builder: (context, s) => Column(
-                  mainAxisSize: MainAxisSize.min, children: s.data ?? []),
+              builder: (context, s) =>
+                  Column(mainAxisSize: MainAxisSize.min, children: s.data ?? []),
             ),
           ),
         ),
@@ -314,8 +371,8 @@ class _HyperOverlayManager extends StatelessWidget {
             child: StreamBuilder<List<Widget>>(
               stream: bottomStream,
               initialData: initialBottomData,
-              builder: (context, s) => Column(
-                  mainAxisSize: MainAxisSize.min, children: s.data ?? []),
+              builder: (context, s) =>
+                  Column(mainAxisSize: MainAxisSize.min, children: s.data ?? []),
             ),
           ),
         ),
@@ -326,7 +383,67 @@ class _HyperOverlayManager extends StatelessWidget {
 
 /// Extension methods for [BuildContext] to easily show snackbars.
 extension HyperSnackbarExtensions on BuildContext {
-  void showHyperSnackbar(HyperConfig config) {
-    HyperSnackbar().show(config, context: this);
+  void showHyperSnackbar({
+    required String title,
+    String? id,
+    String? message,
+    Widget? icon,
+    HyperSnackAction? action,
+    VoidCallback? onTap,
+    TextStyle? titleStyle,
+    TextStyle? messageStyle,
+    BoxBorder? border,
+    EdgeInsetsGeometry margin = EdgeInsets.zero,
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    Color? backgroundColor,
+    Color? textColor,
+    double borderRadius = 12.0,
+    double elevation = 4.0,
+    Duration? displayDuration = const Duration(seconds: 4),
+    bool showCloseButton = true,
+    bool enableSwipe = true,
+    bool newestOnTop = true,
+    int maxVisibleCount = 3,
+    HyperSnackPosition position = HyperSnackPosition.top,
+    Duration enterAnimationDuration = const Duration(milliseconds: 300),
+    Duration exitAnimationDuration = const Duration(milliseconds: 500),
+    Curve enterCurve = Curves.easeOutQuart,
+    Curve exitCurve = Curves.easeOut,
+    HyperSnackAnimationType enterAnimationType =
+        HyperSnackAnimationType.fromTop,
+    HyperSnackAnimationType exitAnimationType =
+        HyperSnackAnimationType.toLeft,
+  }) {
+    HyperSnackbar.show(
+      title: title,
+      id: id,
+      message: message,
+      icon: icon,
+      action: action,
+      onTap: onTap,
+      titleStyle: titleStyle,
+      messageStyle: messageStyle,
+      border: border,
+      margin: margin,
+      padding: padding,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      borderRadius: borderRadius,
+      elevation: elevation,
+      displayDuration: displayDuration,
+      showCloseButton: showCloseButton,
+      enableSwipe: enableSwipe,
+      newestOnTop: newestOnTop,
+      maxVisibleCount: maxVisibleCount,
+      position: position,
+      enterAnimationDuration: enterAnimationDuration,
+      exitAnimationDuration: exitAnimationDuration,
+      enterCurve: enterCurve,
+      exitCurve: exitCurve,
+      enterAnimationType: enterAnimationType,
+      exitAnimationType: exitAnimationType,
+      context: this,
+    );
   }
 }

@@ -8,16 +8,17 @@ A highly customizable, animated, and stackable snackbar manager for Flutter.
 Designed for modern apps that need more than just a simple toast.
 
 ![Demo GIF](https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo.gif)
+![Demo GIF](https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo2.gif)
 
 ## ✨ Features
 
-* **Stackable**: Display multiple notifications simultaneously without overlap.
-* **Highly Customizable**: Custom borders, margins, fonts, shadows, and tap actions.
-* **Smart Updates**: **Update the content** (text, icon, color) of an existing snackbar by ID without animation glitches.
-* **Interactive**: Support for action buttons (e.g., "Undo") and tap gestures on the bar itself.
-* **Flexible Positioning**: Show at the **Top** or **Bottom** of the screen.
-* **Log Style**: Option to append new notifications to the **bottom** of the list (console log style).
-* **Presets**: Ready-to-use methods for Success, Error, Warning, and Info.
+*   **Stackable**: Display multiple notifications simultaneously without overlap.
+*   **Highly Customizable**: Custom borders, margins, fonts, shadows, and tap actions.
+*   **Smart Updates**: **Update the content** (text, icon, color) of an existing snackbar by ID without animation glitches.
+*   **Interactive**: Support for action buttons (e.g., "Undo") and tap gestures on the bar itself.
+*   **Flexible Positioning**: Show at the **Top** or **Bottom** of the screen.
+*   **Log Style**: Option to append new notifications to the **bottom** of the list (console log style).
+*   **Presets**: Ready-to-use methods for Success, Error, Warning, and Info.
 
 ## 📦 Installation
 
@@ -25,12 +26,12 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.1.3
+  hyper_snackbar: ^0.2.0
 ```
 
 ## 🚀 Setup (Important)
 
-To use `HyperSnackbar` without a `BuildContext`, you must register the `navigatorKey` in your `MaterialApp`.
+To use `HyperSnackbar` from anywhere in your code (e.g., ViewModels, BLoCs), you must register the `navigatorKey` in your `MaterialApp`.
 
 ```dart
 import 'package:hyper_snackbar/hyper_snackbar.dart';
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My App',
-      // ▼ Register the key here
+      // ▼ If you want to show snackbars without `BuildContext`, register the key here.
       navigatorKey: HyperSnackbar.navigatorKey, 
       home: const HomePage(),
     );
@@ -56,33 +57,41 @@ class MyApp extends StatelessWidget {
 
 ## 💡 Usage
 
-### Basic Usage (No Context required)
-You can now show a snackbar from anywhere (e.g., BLoC, ViewModels, or async callbacks) without passing a `BuildContext`.
+### Basic Usage
+The API is now static, so you can call it directly without creating an instance. The `show` method uses named parameters for a more intuitive experience.
 
 ```dart
-final config = HyperConfig(
+// Simply call the static method `show`!
+HyperSnackbar.show(
   title: 'Success!',
   message: 'Data has been saved successfully.',
   backgroundColor: Colors.green,
 );
-
-// Just call show!
-HyperSnackbar().show(config);
 ```
 
-### Advanced Usage (With Context)
-If you want to inherit the local theme or Directionality of a specific screen, you can optionally pass the context.
+### Using `BuildContext`
+For cases where you need to use a local `BuildContext` (e.g., to navigate from a snackbar tap), you can pass it as an optional parameter.
 
 ```dart
 // The snackbar will use the theme from this context
-HyperSnackbar().show(config, context: context);
+HyperSnackbar.show(
+  title: 'Tap Me!',
+  onTap: () {
+    // This navigation requires the local context
+    Navigator.of(context).push(...);
+  },
+  context: context, // Pass the context here
+);
 ```
 
 ### Using Extension (Optional)
-You can also use the convenient extension method inside your widgets.
+The convenient extension method on `BuildContext` has also been updated.
 
 ```dart
-context.showHyperSnackbar(config);
+context.showHyperSnackbar(
+  title: 'Hello from a Widget!',
+  message: 'This is easy, right?',
+);
 ```
 
 ### 1. Basic Presets
@@ -92,80 +101,91 @@ Simple one-liners for common scenarios.
 import 'package:hyper_snackbar/hyper_snackbar.dart';
 
 // Success
-HyperSnackbar().showSuccess(title: 'Saved successfully');
+HyperSnackbar.showSuccess(title: 'Saved successfully');
 
 // Error
-HyperSnackbar().showError(
+HyperSnackbar.showError(
   title: 'Connection Failed', 
   message: 'Please check your internet connection.'
 );
 
 // Warning
-HyperSnackbar().showWarning(title: 'Low Storage');
+HyperSnackbar.showWarning(title: 'Low Storage');
 
 // Info
-HyperSnackbar().showInfo(title: 'New Message Received');
+HyperSnackbar.showInfo(title: 'New Message Received');
 ```
 
-### 2. Advanced Customization
-You can customize almost everything using `HyperConfig`.
+### 2. Advanced Customization & Reusability
+
+#### Option A: Direct Customization (Recommended for one-offs)
+Customize everything directly in the `show` method.
 
 ```dart
-HyperSnackbar().show(
-  HyperConfig(
-    title: 'Modern Notification',
-    message: 'With custom border, font, and tap action.',
-    backgroundColor: Color(0xFF212121),
-    
-    // Custom Design
-    border: Border.all(color: Colors.white24, width: 1),
-    borderRadius: 8,
-    margin: EdgeInsets.all(16),
-    titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-    
-    // Tap Interaction
-    onTap: () {
-      print('Notification tapped!');
-      Navigator.push(context, MaterialPageRoute(builder: (_) => DetailPage()));
-    },
-    
-    // Action Button
-    action: HyperSnackAction(
-      label: 'UNDO',
-      textColor: Colors.amber,
-      onPressed: () => print('Undo pressed'),
-    ),
+HyperSnackbar.show(
+  title: 'Modern Notification',
+  message: 'With custom border, font, and tap action.',
+  backgroundColor: Color(0xFF212121),
+
+  // Custom Design
+  border: Border.all(color: Colors.white24, width: 1),
+  borderRadius: 8,
+  margin: EdgeInsets.all(16),
+  titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+
+  // Action Button
+  action: HyperSnackAction(
+    label: 'UNDO',
+    textColor: Colors.amber,
+    onPressed: () => print('Undo pressed'),
+  ),
+  context: context,
+);
+```
+
+#### Option B: Reusing Configuration (For consistent styling)
+If you need to reuse a style across your app, define a `HyperConfig` object and use the `showFromConfig` method.
+
+```dart
+// 1. Define your base style
+final warningStyle = HyperConfig(
+  backgroundColor: Colors.orange,
+  icon: Icon(Icons.warning, color: Colors.white),
+  position: HyperSnackPosition.bottom,
+);
+
+// 2. Use it anywhere, overriding only what you need
+HyperSnackbar.showFromConfig(
+  warningStyle.copyWith(
+    title: 'Low Battery',
+    message: 'Only 15% remaining.',
   ),
 );
 ```
 
 ### 3. Update by ID (Loading -> Done) ⚡
-This is the **killer feature**. You can update the state of a snackbar while keeping it on screen.
+This is the **killer feature**. You can update the state of a snackbar by providing a unique `id`.
 
 ```dart
 const String processId = 'upload_process';
 
-// 1. Show Loading
-HyperSnackbar().show(
-  HyperConfig(
-    id: processId, // Unique ID
-    title: 'Uploading...',
-    displayDuration: null, // Keep it visible
-    icon: CircularProgressIndicator(color: Colors.white),
-  ),
+// 1. Show Loading state
+HyperSnackbar.show(
+  id: processId, // Unique ID
+  title: 'Uploading...',
+  displayDuration: null, // Keep it visible
+  icon: CircularProgressIndicator(color: Colors.white),
 );
 
 // ... do some work ...
 
-// 2. Update to "Done" (Using the same ID)
-HyperSnackbar().show(
-  HyperConfig(
-    id: processId, // Same ID replaces the content
-    title: 'Upload Complete!',
-    backgroundColor: Colors.green,
-    icon: Icon(Icons.check_circle, color: Colors.white),
-    displayDuration: Duration(seconds: 3), // Auto-dismiss after 3s
-  ),
+// 2. Update to "Done" state (using the same ID)
+HyperSnackbar.show(
+  id: processId, // Same ID replaces the content
+  title: 'Upload Complete!',
+  backgroundColor: Colors.green,
+  icon: Icon(Icons.check_circle, color: Colors.white),
+  displayDuration: Duration(seconds: 3), // Auto-dismiss after 3s
 );
 ```
 
@@ -173,14 +193,12 @@ HyperSnackbar().show(
 By default, new items appear at the top. You can append them to the **bottom** like a chat or log.
 
 ```dart
-HyperSnackbar().show(
-  HyperConfig(
-    title: 'System Log',
-    message: 'Newest item is at the bottom.',
-    position: HyperSnackPosition.top,
-    newestOnTop: false, // <--- Append to bottom
-    enterAnimationType: HyperSnackAnimationType.fromTop,
-  ),
+HyperSnackbar.show(
+  title: 'System Log',
+  message: 'Newest item is at the bottom.',
+  position: HyperSnackPosition.top,
+  newestOnTop: false, // <--- Append to bottom
+  enterAnimationType: HyperSnackAnimationType.fromTop,
 );
 ```
 
@@ -189,32 +207,30 @@ You can dismiss a specific snackbar by ID, or clear all of them at once.
 
 ```dart
 // Dismiss specific snackbar
-HyperSnackbar().dismissById('upload_process');
+HyperSnackbar.dismissById('upload_process');
 
 // Clear all snackbars
-HyperSnackbar().clearAll();
+HyperSnackbar.clearAll();
 ```
 
 ### 6. Fine-tuning Animations
 You can control the speed, direction, and curve for entry and exit, especially useful for fade or scale effects.
 
 ```dart
-HyperSnackbar().show(
-  HyperConfig(
-    title: 'Custom Fade Effect',
-    message: 'Using linear curve for smooth fade.',
-    backgroundColor: Colors.black,
+HyperSnackbar.show(
+  title: 'Custom Fade Effect',
+  message: 'Using linear curve for smooth fade.',
+  backgroundColor: Colors.black,
 
-    // Time: 0.6 seconds
-    enterAnimationDuration: const Duration(milliseconds: 600),
-    
-    // Type: Fade In (Overrides default slide)
-    enterAnimationType: HyperSnackAnimationType.fade, 
-    exitAnimationType: HyperSnackAnimationType.fade, 
+  // Time: 0.6 seconds
+  enterAnimationDuration: const Duration(milliseconds: 600),
+  
+  // Type: Fade In (Overrides default slide)
+  enterAnimationType: HyperSnackAnimationType.fade, 
+  exitAnimationType: HyperSnackAnimationType.fade, 
 
-    // Curve: Slow start, ideal for visibility during short fades
-    enterCurve: Curves.easeIn, 
-  ),
+  // Curve: Slow start, ideal for visibility during short fades
+  enterCurve: Curves.easeIn, 
 );
 ```
 
@@ -256,13 +272,15 @@ HyperSnackbar().show(
 
 | Method | Description |
 | :--- | :--- |
-| `show(HyperConfig config)` | Shows a new snackbar or updates an existing one if IDs match. |
+| `show(...)` | Shows a new snackbar using named parameters. |
+| `showFromConfig(HyperConfig config)` | Shows a snackbar from a pre-defined `HyperConfig` object. |
 | `showSuccess(...)` | Preset for success messages (Green). |
 | `showError(...)` | Preset for error messages (Red). |
 | `showWarning(...)` | Preset for warning messages (Orange). |
 | `showInfo(...)` | Preset for info messages (Blue). |
-| `dismissById(String id)` | Dismisses the snackbar with the specified ID with animation. |
+| `dismissById(String id)` | Dismisses the snackbar with the specified ID. |
 | `clearAll()` | Dismisses **all** currently visible snackbars. |
+| `isSnackbarOpen` | `bool` getter. Returns `true` if any snackbar is currently visible. |
 
 ## ❤️ Contributing
 

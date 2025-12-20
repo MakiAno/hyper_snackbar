@@ -1,6 +1,65 @@
-<!-- ## 0.1.4     -->
-<!-- Next version -->
-* Updated README
+## 0.2.0
+
+### ⚠️ BREAKING CHANGES
+
+*   **Static API by Default**: The `HyperSnackbar` class is now fully static. This makes the API more intuitive and similar to popular packages like `GetX`. You no longer need to instantiate it.
+
+    **Before:**
+    ```dart
+    HyperSnackbar().show(config);
+    ```
+
+    **After:**
+    ```dart
+    HyperSnackbar.show(...); // With named parameters
+    // Old usage style (with HyperConfig object) is now available via `HyperSnackbar.showFromConfig(config);`
+    ```
+
+*   **Simplified `show` Method**: The primary `show` method no longer takes a `HyperConfig` object. Instead, it now accepts named parameters directly, significantly improving ease of use for one-off snackbars.
+
+    **Before:**
+    ```dart
+    HyperSnackbar().show(HyperConfig(
+      title: 'Success',
+      message: 'Your file was saved.'
+    ));
+    ```
+
+    **After:**
+    ```dart
+    HyperSnackbar.show(
+      title: 'Success',
+      message: 'Your file was saved.'
+    );
+    // Old usage style (with HyperConfig object) is now available via `HyperSnackbar.showFromConfig(config);`
+    ```
+
+### ✨ Features
+
+*   **Intuitive API**: The new static API (`HyperSnackbar.show(...)`) is cleaner, requires less boilerplate, and is easier to discover.
+    ```dart
+    // The simplest way to show a snackbar:
+    HyperSnackbar.show(title: 'Hello World!');
+    ```
+*   **Configuration Reusability**: Added the `HyperSnackbar.showFromConfig(config)` method. This allows you to create a reusable `HyperConfig` object for styles that you use frequently, offering the best of both worlds.
+
+    ```dart
+    // Define a reusable style
+    final myErrorStyle = HyperConfig(
+      backgroundColor: Colors.red,
+      // ... other properties
+    );
+
+    // Reuse it anywhere
+    HyperSnackbar.showFromConfig(
+      myErrorStyle.copyWith(title: 'Error 1')
+    );
+    HyperSnackbar.showFromConfig(
+      myErrorStyle.copyWith(title: 'Error 2')
+    );
+    ```
+
+*   **Updated BuildContext Extension**: The `context.showHyperSnackbar()` extension has also been updated to use named parameters for a consistent and convenient API.
 
 ## 0.1.3
 * Improved documentation comments.
@@ -42,3 +101,4 @@
 ## 0.0.1
 
 * Initial release.
+
