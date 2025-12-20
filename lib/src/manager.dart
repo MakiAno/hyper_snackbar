@@ -121,6 +121,12 @@ class HyperSnackbar {
     }
   }
 
+  /// Checks if any snackbar is currently visible on the screen.
+  ///
+  /// Returns `true` if there is at least one snackbar being shown,
+  /// otherwise returns `false`.
+  bool get isSnackbarOpen => _topEntries.isNotEmpty || _bottomEntries.isNotEmpty;
+
   // --- Presets ---
 
   /// Displays a success snackbar (Green background, check icon).
