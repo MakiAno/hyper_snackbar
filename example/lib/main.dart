@@ -56,12 +56,12 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Success',
               Colors.green,
-              () => HyperSnackbar().showSuccess(title: 'Operation Successful'),
+              () => HyperSnackbar.showSuccess(title: 'Operation Successful'),
             ),
             _buildButton(
               'Error',
               Colors.red,
-              () => HyperSnackbar().showError(
+              () => HyperSnackbar.showError(
                 title: 'Connection Failed',
                 message: 'Please check your internet connection.',
               ),
@@ -71,25 +71,23 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
               Colors.amber,
               () {
                 // contextを渡すことで、タップ時の画面遷移などがスムーズに行えます
-                HyperSnackbar().show(
-                  HyperConfig(
-                    title: 'Low Storage',
-                    message: 'Tap here to manage storage.',
-                    backgroundColor: Colors.amber.shade700,
-                    icon: const Icon(
-                      Icons.warning_amber_rounded,
-                      color: Colors.white,
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              const DetailPage(title: 'Storage Settings'),
-                        ),
-                      );
-                    },
+                HyperSnackbar.show(
+                  title: 'Low Storage',
+                  message: 'Tap here to manage storage.',
+                  backgroundColor: Colors.amber.shade700,
+                  icon: const Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.white,
                   ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const DetailPage(title: 'Storage Settings'),
+                      ),
+                    );
+                  },
                   context: context,
                 );
               },
@@ -97,7 +95,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Info',
               Colors.blue,
-              () => HyperSnackbar().showInfo(
+              () => HyperSnackbar.showInfo(
                 title: 'New Message',
                 message: 'You have received a new notification.',
               ),
@@ -152,16 +150,14 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Show Static ID ("static_1")',
               Colors.purple,
-              () => HyperSnackbar().show(
-                HyperConfig(
-                  id: 'static_1',
-                  title: 'Persistent Notification',
-                  message: 'This will stay until you dismiss it by ID.',
-                  displayDuration: null, // 自動で消えない
-                  backgroundColor: Colors.purple.shade700,
-                  icon: const Icon(Icons.fingerprint, color: Colors.white),
-                  showCloseButton: false, // ユーザーに閉じさせない
-                ),
+              () => HyperSnackbar.show(
+                id: 'static_1',
+                title: 'Persistent Notification',
+                message: 'This will stay until you dismiss it by ID.',
+                displayDuration: null, // 自動で消えない
+                backgroundColor: Colors.purple.shade700,
+                icon: const Icon(Icons.fingerprint, color: Colors.white),
+                showCloseButton: false, // ユーザーに閉じさせない
               ),
             ),
 
@@ -169,7 +165,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Dismiss by ID ("static_1")',
               Colors.purple.shade300,
-              () => HyperSnackbar().dismissById('static_1'),
+              () => HyperSnackbar.dismissById('static_1'),
             ),
 
             const SizedBox(height: 16),
@@ -178,7 +174,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Clear All',
               Colors.grey,
-              () => HyperSnackbar().clearAll(),
+              () => HyperSnackbar.clearAll(),
             ),
 
             const SizedBox(height: 16),
@@ -192,17 +188,15 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Left In -> Right Out',
               Colors.brown,
-              () => HyperSnackbar().show(
-                HyperConfig(
-                  title: 'Horizontal Slide',
-                  message: 'Enter: fromLeft, Exit: toRight',
-                  backgroundColor: Colors.brown.shade700,
-                  icon: const Icon(Icons.swap_horiz, color: Colors.white),
+              () => HyperSnackbar.show(
+                title: 'Horizontal Slide',
+                message: 'Enter: fromLeft, Exit: toRight',
+                backgroundColor: Colors.brown.shade700,
+                icon: const Icon(Icons.swap_horiz, color: Colors.white),
 
-                  // ★ アニメーション設定
-                  enterAnimationType: HyperSnackAnimationType.fromLeft,
-                  exitAnimationType: HyperSnackAnimationType.toRight,
-                ),
+                // ★ アニメーション設定
+                enterAnimationType: HyperSnackAnimationType.fromLeft,
+                exitAnimationType: HyperSnackAnimationType.toRight,
               ),
             ),
 
@@ -210,19 +204,17 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Scale (Elastic) -> Fade',
               Colors.pink,
-              () => HyperSnackbar().show(
-                HyperConfig(
-                  title: 'Pop Notification',
-                  message: 'Enter: Scale (Elastic), Exit: Fade',
-                  backgroundColor: Colors.pink.shade600,
-                  icon: const Icon(Icons.star, color: Colors.white),
+              () => HyperSnackbar.show(
+                title: 'Pop Notification',
+                message: 'Enter: Scale (Elastic), Exit: Fade',
+                backgroundColor: Colors.pink.shade600,
+                icon: const Icon(Icons.star, color: Colors.white),
 
-                  // ★ アニメーション設定
-                  enterAnimationType: HyperSnackAnimationType.scale,
-                  exitAnimationType: HyperSnackAnimationType.fade,
-                  enterCurve: Curves.elasticOut, // 弾むような動き
-                  enterAnimationDuration: const Duration(milliseconds: 800),
-                ),
+                // ★ アニメーション設定
+                enterAnimationType: HyperSnackAnimationType.scale,
+                exitAnimationType: HyperSnackAnimationType.fade,
+                enterCurve: Curves.elasticOut, // 弾むような動き
+                enterAnimationDuration: const Duration(milliseconds: 800),
               ),
             ),
 
@@ -230,19 +222,17 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'From Bottom -> Slide Left',
               Colors.blueGrey,
-              () => HyperSnackbar().show(
-                HyperConfig(
-                  title: 'Bottom Sheet Style',
-                  message: 'Position: Bottom, Enter: fromBottom',
-                  backgroundColor: Colors.blueGrey.shade800,
-                  icon: const Icon(Icons.vertical_align_bottom,
-                      color: Colors.white),
+              () => HyperSnackbar.show(
+                title: 'Bottom Sheet Style',
+                message: 'Position: Bottom, Enter: fromBottom',
+                backgroundColor: Colors.blueGrey.shade800,
+                icon: const Icon(Icons.vertical_align_bottom,
+                    color: Colors.white),
 
-                  // ★ 位置とアニメーション設定
-                  position: HyperSnackPosition.bottom, // 下に表示
-                  enterAnimationType: HyperSnackAnimationType.fromBottom,
-                  exitAnimationType: HyperSnackAnimationType.toLeft,
-                ),
+                // ★ 位置とアニメーション設定
+                position: HyperSnackPosition.bottom, // 下に表示
+                enterAnimationType: HyperSnackAnimationType.fromBottom,
+                exitAnimationType: HyperSnackAnimationType.toLeft,
               ),
             ),
 
@@ -250,20 +240,18 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Fade In -> Fade Out',
               Colors.black54,
-              () => HyperSnackbar().show(
-                HyperConfig(
-                  title: 'Subtle Message',
-                  message: 'Enter: Fade, Exit: Fade',
-                  backgroundColor: Colors.black,
-                  icon: const Icon(Icons.blur_on, color: Colors.white),
+              () => HyperSnackbar.show(
+                title: 'Subtle Message',
+                message: 'Enter: Fade, Exit: Fade',
+                backgroundColor: Colors.black,
+                icon: const Icon(Icons.blur_on, color: Colors.white),
 
-                  // ★ アニメーション設定
-                  enterAnimationType: HyperSnackAnimationType.fade,
-                  exitAnimationType: HyperSnackAnimationType.fade,
-                  enterAnimationDuration: Duration(milliseconds: 600),
-                  enterCurve: Curves.easeIn,
-                  exitCurve: Curves.easeIn,
-                ),
+                // ★ アニメーション設定
+                enterAnimationType: HyperSnackAnimationType.fade,
+                exitAnimationType: HyperSnackAnimationType.fade,
+                enterAnimationDuration: const Duration(milliseconds: 600),
+                enterCurve: Curves.easeIn,
+                exitCurve: Curves.easeIn,
               ),
             ),
 
@@ -280,36 +268,33 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   // Demo Pattern: Advanced Design
   // ----------------------------------------------------------------
   void _showModernStyledSnackBar() {
-    HyperSnackbar().show(
-      HyperConfig(
-        title: 'Design Update',
-        message: 'Custom border, margin, and fonts applied.',
-        backgroundColor: const Color(0xFF212121),
+    HyperSnackbar.show(
+      title: 'Design Update',
+      message: 'Custom border, margin, and fonts applied.',
+      backgroundColor: const Color(0xFF212121),
 
-        // Custom Border
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.0),
+      // Custom Border
+      border: Border.all(color: Colors.white.withAlpha(1), width: 1.0),
 
-        // Floating Margin
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      // Floating Margin
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 
-        // Inner Padding
-        padding: const EdgeInsets.all(20),
+      // Inner Padding
+      padding: const EdgeInsets.all(20),
 
-        // Custom Font Styles
-        titleStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w900,
-          letterSpacing: 1.2,
-        ),
-        messageStyle: TextStyle(
-          color: Colors.white.withValues(alpha: 0.7),
-          fontStyle: FontStyle.italic,
-        ),
-
-        icon: const Icon(Icons.brush, color: Colors.lightBlueAccent),
+      // Custom Font Styles
+      titleStyle: const TextStyle(
+        color: Colors.white,
+        fontSize: 18,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 1.2,
       ),
+      messageStyle: TextStyle(
+        color: Colors.white.withAlpha(7),
+        fontStyle: FontStyle.italic,
+      ),
+
+      icon: const Icon(Icons.brush, color: Colors.lightBlueAccent),
       context: context,
     );
   }
@@ -319,16 +304,14 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   // ----------------------------------------------------------------
   void _showUndoSnackBar() {
     context.showHyperSnackbar(
-      HyperConfig(
-        title: 'Item deleted',
-        icon: const Icon(Icons.delete_outline, color: Colors.white),
-        action: HyperSnackAction(
-          label: 'UNDO',
-          textColor: Colors.yellowAccent,
-          onPressed: () {
-            HyperSnackbar().showSuccess(title: 'Item restored!');
-          },
-        ),
+      title: 'Item deleted',
+      icon: const Icon(Icons.delete_outline, color: Colors.white),
+      action: HyperSnackAction(
+        label: 'UNDO',
+        textColor: Colors.yellowAccent,
+        onPressed: () {
+          HyperSnackbar.showSuccess(title: 'Item restored!');
+        },
       ),
     );
   }
@@ -339,20 +322,25 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   Future<void> _showProcessSnackBar() async {
     const String processId = 'process_123';
 
+    // To ensure this demo is clearly visible, clear other snackbars first.
+    if (HyperSnackbar.isSnackbarOpen) {
+      HyperSnackbar.clearAll();
+      // Wait a short moment for the clear animation to start.
+      await Future.delayed(const Duration(milliseconds: 300));
+    }
+
     // 1. Start (Loading)
     if (!mounted) return;
-    HyperSnackbar().show(
-      HyperConfig(
-        id: processId,
-        title: 'Uploading...',
-        message: 'Sending data (20%)',
-        displayDuration: null, // Sticky
-        backgroundColor: Colors.blue[800]!,
-        icon: const SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-        ),
+    HyperSnackbar.show(
+      id: processId,
+      title: 'Uploading...',
+      message: 'Sending data (20%)',
+      displayDuration: null, // Sticky
+      backgroundColor: Colors.blue[800]!,
+      icon: const SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
       ),
       context: context,
     );
@@ -361,18 +349,16 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
     if (!mounted) return;
 
     // 2. Update Progress (Using same ID)
-    HyperSnackbar().show(
-      HyperConfig(
-        id: processId,
-        title: 'Processing...',
-        message: 'Converting on server (80%)',
-        displayDuration: null,
-        backgroundColor: Colors.orange[800]!,
-        icon: const SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-        ),
+    HyperSnackbar.show(
+      id: processId,
+      title: 'Processing...',
+      message: 'Converting on server (80%)',
+      displayDuration: null,
+      backgroundColor: Colors.orange[800]!,
+      icon: const SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
       ),
       context: context,
     );
@@ -381,15 +367,13 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
     if (!mounted) return;
 
     // 3. Finish (Update & Auto-dismiss)
-    HyperSnackbar().show(
-      HyperConfig(
-        id: processId,
-        title: 'Completed!',
-        message: 'All tasks finished successfully.',
-        displayDuration: const Duration(seconds: 3), // 3秒後に消える
-        backgroundColor: Colors.green[700]!,
-        icon: const Icon(Icons.check_circle, color: Colors.white),
-      ),
+    HyperSnackbar.show(
+      id: processId,
+      title: 'Completed!',
+      message: 'All tasks finished successfully.',
+      displayDuration: const Duration(seconds: 3), // 3秒後に消える
+      backgroundColor: Colors.green[700]!,
+      icon: const Icon(Icons.check_circle, color: Colors.white),
       context: context,
     );
   }
@@ -398,29 +382,27 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   // Demo Pattern: Log Style
   // ----------------------------------------------------------------
   void _showLogStyleSnackBar() {
-    HyperSnackbar().show(
-      HyperConfig(
-        title: 'System Log #$_logCount',
-        message: 'Newest item is appended to the bottom.',
+    HyperSnackbar.show(
+      title: 'System Log #$_logCount',
+      message: 'Newest item is appended to the bottom.',
 
-        position: HyperSnackPosition.top,
-        newestOnTop: false, // 下に追加していく
-        enterAnimationType: HyperSnackAnimationType.fromTop,
+      position: HyperSnackPosition.top,
+      newestOnTop: false, // 下に追加していく
+      enterAnimationType: HyperSnackAnimationType.fromTop,
 
-        // コンソール風のデザイン
-        backgroundColor: Colors.black87,
-        borderRadius: 4.0,
-        margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-        icon: const Icon(Icons.terminal, size: 16, color: Colors.greenAccent),
-        titleStyle: const TextStyle(
-          fontFamily: 'Courier',
-          color: Colors.greenAccent,
-          fontWeight: FontWeight.bold,
-        ),
-
-        // ★ 最大表示数を5に制限（6個目が出ると1個目が消える）
-        maxVisibleCount: 5,
+      // コンソール風のデザイン
+      backgroundColor: Colors.black87,
+      borderRadius: 4.0,
+      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+      icon: const Icon(Icons.terminal, size: 16, color: Colors.greenAccent),
+      titleStyle: const TextStyle(
+        fontFamily: 'Courier',
+        color: Colors.greenAccent,
+        fontWeight: FontWeight.bold,
       ),
+
+      // ★ 最大表示数を5に制限（6個目が出ると1個目が消える）
+      maxVisibleCount: 5,
       context: context,
     );
     _logCount++;
