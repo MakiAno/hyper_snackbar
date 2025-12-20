@@ -109,6 +109,7 @@ class HyperConfig {
     this.exitAnimationType = HyperSnackAnimationType.toLeft,
   });
 
+  // TODO: Make this `copyWith` method support all properties of HyperConfig for better reusability and flexibility.
   HyperConfig copyWith({
     String? title,
     String? message,

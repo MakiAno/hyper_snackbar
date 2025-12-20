@@ -1,3 +1,4 @@
+<!-- GitHubのフィードバック用リンクを適切な位置に追加する -->
 # Hyper Snackbar 🚀
 
 [![pub package](https://img.shields.io/pub/v/hyper_snackbar.svg)](https://pub.dev/packages/hyper_snackbar)
