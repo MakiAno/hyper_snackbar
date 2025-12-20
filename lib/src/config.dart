@@ -3,6 +3,15 @@ import 'package:flutter/material.dart';
 /// Defines the vertical position where the snackbar will appear.
 enum HyperSnackPosition { top, bottom }
 
+/// Defines the display mode of the snackbar.
+enum HyperSnackDisplayMode {
+  /// Stacks snackbars on top of each other.
+  stack,
+
+  /// Queues snackbars and displays them one after another.
+  queue,
+}
+
 /// Defines the entrance and exit animation styles.
 enum HyperSnackAnimationType {
   fromTop,
@@ -70,6 +79,7 @@ class HyperConfig {
   final bool newestOnTop;
   final int maxVisibleCount;
   final HyperSnackPosition position;
+  final HyperSnackDisplayMode displayMode;
 
   /// Animation.
   final Duration enterAnimationDuration;
@@ -101,6 +111,7 @@ class HyperConfig {
     this.newestOnTop = true,
     this.maxVisibleCount = 3,
     this.position = HyperSnackPosition.top,
+    this.displayMode = HyperSnackDisplayMode.stack,
     this.enterAnimationDuration = const Duration(milliseconds: 300),
     this.exitAnimationDuration = const Duration(milliseconds: 500),
     this.enterCurve = Curves.easeOutQuart,
@@ -131,6 +142,7 @@ class HyperConfig {
     bool? newestOnTop,
     int? maxVisibleCount,
     HyperSnackPosition? position,
+    HyperSnackDisplayMode? displayMode,
     Duration? enterAnimationDuration,
     Duration? exitAnimationDuration,
     Curve? enterCurve,
@@ -160,6 +172,7 @@ class HyperConfig {
       newestOnTop: newestOnTop ?? this.newestOnTop,
       maxVisibleCount: maxVisibleCount ?? this.maxVisibleCount,
       position: position ?? this.position,
+      displayMode: displayMode ?? this.displayMode,
       enterAnimationDuration:
           enterAnimationDuration ?? this.enterAnimationDuration,
       exitAnimationDuration:
