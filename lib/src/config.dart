@@ -9,8 +9,8 @@ enum HyperSnackAnimationType {
   fromBottom,
   fromLeft,
   fromRight,
-  toLeft, // 退出用
-  toRight, // 退出用
+  toLeft, // For exit
+  toRight, // For exit
   fade,
   scale,
 }
@@ -68,7 +68,7 @@ class HyperConfig {
   final bool showCloseButton;
   final bool enableSwipe;
   final bool newestOnTop;
-  final int maxVisibleCount; // ★ 追加
+  final int maxVisibleCount; // ★ Added
   final HyperSnackPosition position;
 
   /// Animation.
@@ -99,7 +99,7 @@ class HyperConfig {
     this.showCloseButton = true,
     this.enableSwipe = true,
     this.newestOnTop = true,
-    this.maxVisibleCount = 3, // ★ 追加 (デフォルト3)
+    this.maxVisibleCount = 3, // ★ Added (default 3)
     this.position = HyperSnackPosition.top,
     this.enterAnimationDuration = const Duration(milliseconds: 300),
     this.exitAnimationDuration = const Duration(milliseconds: 500),
@@ -109,46 +109,66 @@ class HyperConfig {
     this.exitAnimationType = HyperSnackAnimationType.toLeft,
   });
 
-  // TODO: Make this `copyWith` method support all properties of HyperConfig for better reusability and flexibility.
   HyperConfig copyWith({
+    String? id,
     String? title,
     String? message,
     Widget? icon,
     HyperSnackAction? action,
+    VoidCallback? onTap,
+    TextStyle? titleStyle,
+    TextStyle? messageStyle,
+    BoxBorder? border,
+    EdgeInsetsGeometry? margin,
+    EdgeInsetsGeometry? padding,
     Color? backgroundColor,
     Color? textColor,
+    double? borderRadius,
+    double? elevation,
     Duration? displayDuration,
-    int? maxVisibleCount, // ★ 追加
+    bool? showCloseButton,
+    bool? enableSwipe,
+    bool? newestOnTop,
+    int? maxVisibleCount,
+    HyperSnackPosition? position,
+    Duration? enterAnimationDuration,
+    Duration? exitAnimationDuration,
+    Curve? enterCurve,
+    Curve? exitCurve,
+    HyperSnackAnimationType? enterAnimationType,
+    HyperSnackAnimationType? exitAnimationType,
   }) {
     return HyperConfig(
+      id: id ?? this.id,
       title: title ?? this.title,
       message: message ?? this.message,
       icon: icon ?? this.icon,
       action: action ?? this.action,
+      onTap: onTap ?? this.onTap,
+      titleStyle: titleStyle ?? this.titleStyle,
+      messageStyle: messageStyle ?? this.messageStyle,
+      border: border ?? this.border,
+      margin: margin ?? this.margin,
+      padding: padding ?? this.padding,
       backgroundColor: backgroundColor ?? this.backgroundColor,
       textColor: textColor ?? this.textColor,
+      borderRadius: borderRadius ?? this.borderRadius,
+      elevation: elevation ?? this.elevation,
       displayDuration: displayDuration ?? this.displayDuration,
-      maxVisibleCount: maxVisibleCount ?? this.maxVisibleCount, // ★ 追加
-      // 以下維持
-      id: id,
-      onTap: onTap,
-      titleStyle: titleStyle,
-      messageStyle: messageStyle,
-      border: border,
-      margin: margin,
-      padding: padding,
-      borderRadius: borderRadius,
-      elevation: elevation,
-      showCloseButton: showCloseButton,
-      enableSwipe: enableSwipe,
-      newestOnTop: newestOnTop,
-      position: position,
-      enterAnimationDuration: enterAnimationDuration,
-      exitAnimationDuration: exitAnimationDuration,
-      enterCurve: enterCurve,
-      exitCurve: exitCurve,
-      enterAnimationType: enterAnimationType,
-      exitAnimationType: exitAnimationType,
+      showCloseButton: showCloseButton ?? this.showCloseButton,
+      enableSwipe: enableSwipe ?? this.enableSwipe,
+      newestOnTop: newestOnTop ?? this.newestOnTop,
+      maxVisibleCount: maxVisibleCount ?? this.maxVisibleCount,
+      position: position ?? this.position,
+      enterAnimationDuration:
+          enterAnimationDuration ?? this.enterAnimationDuration,
+      exitAnimationDuration:
+          exitAnimationDuration ?? this.exitAnimationDuration,
+      enterCurve: enterCurve ?? this.enterCurve,
+      exitCurve: exitCurve ?? this.exitCurve,
+      enterAnimationType: enterAnimationType ?? this.enterAnimationType,
+      exitAnimationType: exitAnimationType ?? this.exitAnimationType,
     );
   }
 }
+

@@ -63,7 +63,8 @@ class HyperSnackbar {
     Duration exitAnimationDuration = const Duration(milliseconds: 500),
     Curve enterCurve = Curves.easeOutQuart,
     Curve exitCurve = Curves.easeOut,
-    HyperSnackAnimationType enterAnimationType = HyperSnackAnimationType.fromTop,
+    HyperSnackAnimationType enterAnimationType =
+        HyperSnackAnimationType.fromTop,
     HyperSnackAnimationType exitAnimationType = HyperSnackAnimationType.toLeft,
     BuildContext? context,
   }) {
@@ -104,13 +105,13 @@ class HyperSnackbar {
   static void showFromConfig(HyperConfig config, {BuildContext? context}) {
     _mountOverlayIfNeeded(context);
 
-    // ID重複チェック & 更新
+    // Check for duplicate ID & update
     if (config.id != null) {
       if (_tryUpdate(config, _topEntries, _topStream)) return;
       if (_tryUpdate(config, _bottomEntries, _bottomStream)) return;
     }
 
-    // 表示数制限のロジック
+    // Logic for limiting the number of visible snackbars
     final targetList = (config.position == HyperSnackPosition.top)
         ? _topEntries
         : _bottomEntries;
@@ -357,8 +358,8 @@ class _HyperOverlayManager extends StatelessWidget {
             child: StreamBuilder<List<Widget>>(
               stream: topStream,
               initialData: initialTopData,
-              builder: (context, s) =>
-                  Column(mainAxisSize: MainAxisSize.min, children: s.data ?? []),
+              builder: (context, s) => Column(
+                  mainAxisSize: MainAxisSize.min, children: s.data ?? []),
             ),
           ),
         ),
@@ -371,8 +372,8 @@ class _HyperOverlayManager extends StatelessWidget {
             child: StreamBuilder<List<Widget>>(
               stream: bottomStream,
               initialData: initialBottomData,
-              builder: (context, s) =>
-                  Column(mainAxisSize: MainAxisSize.min, children: s.data ?? []),
+              builder: (context, s) => Column(
+                  mainAxisSize: MainAxisSize.min, children: s.data ?? []),
             ),
           ),
         ),
@@ -412,8 +413,7 @@ extension HyperSnackbarExtensions on BuildContext {
     Curve exitCurve = Curves.easeOut,
     HyperSnackAnimationType enterAnimationType =
         HyperSnackAnimationType.fromTop,
-    HyperSnackAnimationType exitAnimationType =
-        HyperSnackAnimationType.toLeft,
+    HyperSnackAnimationType exitAnimationType = HyperSnackAnimationType.toLeft,
   }) {
     HyperSnackbar.show(
       title: title,

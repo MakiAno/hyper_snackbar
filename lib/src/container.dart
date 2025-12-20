@@ -22,10 +22,10 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     with SingleTickerProviderStateMixin {
   late HyperConfig config;
   late AnimationController _controller;
-  late Animation<double> _animation; // 入場用カーブ適用済み
+  late Animation<double> _animation; // Curve for entry animation is already applied
   Timer? _timer;
 
-  // 退出アニメーション中かどうか
+  // Whether it is in the middle of exit animation
   bool _isExiting = false;
 
   @override
@@ -37,7 +37,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
       duration: config.enterAnimationDuration,
     );
 
-    // 入場用のカーブを適用
+    // Apply curve for entry animation
     _animation = CurvedAnimation(parent: _controller, curve: config.enterCurve);
 
     _controller.forward();
@@ -53,7 +53,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     setState(() {
       config = newConfig;
 
-      // 退出中に更新が来たら復活させる処理
+      // Process to restore if an update comes during exit
       if (_isExiting) {
         _isExiting = false;
         _controller.stop();
@@ -84,7 +84,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     _controller.reset();
 
     _controller.forward().then((_) {
-      // 完了時にまだ退出モードなら削除実行
+      // If it is still in exit mode upon completion, execute deletion
       if (mounted && _isExiting) {
         widget.onDismiss();
       }
@@ -128,10 +128,10 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   }
 
   // ---------------------------------------------------------------------------
-  // 入場アニメーション (Enter)
+  // Enter animation
   // ---------------------------------------------------------------------------
   Widget _applyEnterAnimation(Widget child) {
-    // _animation には既に config.enterCurve が適用されています
+    // config.enterCurve is already applied to _animation
 
     switch (config.enterAnimationType) {
       case HyperSnackAnimationType.scale:
@@ -161,14 +161,14 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
       case HyperSnackAnimationType.fromTop:
         return SizeTransition(
           sizeFactor: _animation,
-          axisAlignment: -1.0, // 上端基準
+          axisAlignment: -1.0, // Based on the top edge
           child: FadeTransition(opacity: _animation, child: child),
         );
 
       case HyperSnackAnimationType.fromBottom:
         return SizeTransition(
           sizeFactor: _animation,
-          axisAlignment: 1.0, // 下端基準
+          axisAlignment: 1.0, // Based on the bottom edge
           child: FadeTransition(opacity: _animation, child: child),
         );
 
@@ -179,26 +179,26 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   }
 
   // ---------------------------------------------------------------------------
-  // 退出アニメーション (Exit)
+  // Exit animation
   // ---------------------------------------------------------------------------
   Widget _applyExitAnimation(Widget child) {
-    // 退出時は 0.0 -> 1.0 へ進むコントローラーを使うが、
-    // アニメーションの意味的には "Current -> Gone" なので、
-    // Tween等で調整する。
+    // Use a controller that goes from 0.0 -> 1.0 for exit,
+    // but in terms of animation, it means "Current -> Gone",
+    // so adjust with Tween etc.
 
     final exitAnim =
         CurvedAnimation(parent: _controller, curve: config.exitCurve);
 
     switch (config.exitAnimationType) {
       case HyperSnackAnimationType.scale:
-        // 1.0 -> 0.0 へ縮小
+        // Scale down from 1.0 -> 0.0
         return ScaleTransition(
           scale: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
           child: child,
         );
 
       case HyperSnackAnimationType.toLeft:
-        // 左へ消える
+        // Disappear to the left
         return SlideTransition(
           position: Tween<Offset>(
             begin: Offset.zero,
@@ -211,7 +211,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
         );
 
       case HyperSnackAnimationType.toRight:
-        // 右へ消える
+        // Disappear to the right
         return SlideTransition(
           position: Tween<Offset>(
             begin: Offset.zero,
@@ -223,7 +223,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           ),
         );
 
-      // 入場用のタイプが指定された場合のフォールバック（逆再生的な挙動）
+      // Fallback for when an entry animation type is specified (reverse-like behavior)
       case HyperSnackAnimationType.fromTop:
       case HyperSnackAnimationType.fromBottom:
         return SizeTransition(

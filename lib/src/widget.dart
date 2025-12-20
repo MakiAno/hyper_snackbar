@@ -18,7 +18,7 @@ class HyperSnackBarContent extends StatelessWidget {
     final bgColor = config.backgroundColor ?? Colors.grey[800];
     final txtColor = config.textColor ?? Colors.white;
 
-    // 枠線（Shape）があるかどうか
+    // Whether there is a border (Shape)
     final hasBorder = config.border != null;
 
     return Container(
@@ -26,11 +26,8 @@ class HyperSnackBarContent extends StatelessWidget {
       child: Material(
         elevation: config.elevation,
         color: bgColor,
-
-        // ★ 修正ポイント: shape がある場合、borderRadius は null にしなければならない
         borderRadius:
             hasBorder ? null : BorderRadius.circular(config.borderRadius),
-
         shape: hasBorder
             ? RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(config.borderRadius),
@@ -40,7 +37,6 @@ class HyperSnackBarContent extends StatelessWidget {
                 ),
               )
             : null,
-
         child: InkWell(
           onTap: config.onTap,
           borderRadius: BorderRadius.circular(config.borderRadius),
@@ -73,7 +69,7 @@ class HyperSnackBarContent extends StatelessWidget {
                           config.message!,
                           style: config.messageStyle ??
                               TextStyle(
-                                // Flutter 3.27+ withValues対応
+                                // Compatible with Flutter 3.27+ withValues
                                 color: txtColor.withValues(alpha: 0.9),
                                 fontSize: 14,
                               ),
@@ -113,3 +109,4 @@ class HyperSnackBarContent extends StatelessWidget {
     );
   }
 }
+
