@@ -305,10 +305,11 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   // Demo Pattern: Advanced Design
   // ----------------------------------------------------------------
   void _showModernStyledSnackBar() {
-    HyperSnackbar.show(
+    HyperConfig config = HyperConfig(
       title: 'Design Update',
       message: 'Custom border, margin, and fonts applied.',
       backgroundColor: const Color(0xFF212121),
+      icon: const Icon(Icons.brush, color: Colors.lightBlueAccent),
 
       // Custom Border
       border: Border.all(color: Colors.white.withAlpha(1), width: 1.0),
@@ -330,10 +331,9 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
         color: Colors.white.withAlpha(7),
         fontStyle: FontStyle.italic,
       ),
-
-      icon: const Icon(Icons.brush, color: Colors.lightBlueAccent),
-      context: context,
     );
+
+    HyperSnackbar.showFromConfig(config, context: context);
   }
 
   // ----------------------------------------------------------------
