@@ -28,7 +28,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.2.1
+  hyper_snackbar: ^0.2.2
 ```
 
 ## 🚀 Setup (Important)
@@ -211,8 +211,11 @@ You can dismiss a specific snackbar by ID, or clear all of them at once.
 // Dismiss specific snackbar
 HyperSnackbar.dismissById('upload_process');
 
-// Clear all snackbars
+// Clear all snackbars with animation (default)
 HyperSnackbar.clearAll();
+
+// Clear all snackbars immediately without animation
+HyperSnackbar.clearAll(animated: false);
 ```
 
 ### 6. Fine-tuning Animations
@@ -281,8 +284,9 @@ HyperSnackbar.show(
 | `showWarning(...)` | Preset for warning messages (Orange). |
 | `showInfo(...)` | Preset for info messages (Blue). |
 | `dismissById(String id)` | Dismisses the snackbar with the specified ID. |
-| `clearAll()` | Dismisses **all** currently visible snackbars. |
+| `clearAll({bool animated = true})` | Dismisses **all** currently visible snackbars. Defaults to animated dismissal. |
 | `isSnackbarOpen` | `bool` getter. Returns `true` if any snackbar is currently visible. |
+| `isSnackbarOpenById(String id)` | Returns `true` if the snackbar with the specified ID is currently visible. |
 
 ## ❤️ Contributing
 
