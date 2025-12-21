@@ -231,6 +231,16 @@ class HyperSnackbar {
   static bool get isSnackbarOpen =>
       _topEntries.isNotEmpty || _bottomEntries.isNotEmpty;
 
+  /// Checks if a specific snackbar is currently visible on the screen by its ID.
+  ///
+  /// Returns `true` if the snackbar with the given ID is found and visible,
+  /// otherwise returns `false`.
+  static bool isSnackbarOpenById(String id) {
+    final allEntries = [..._topEntries, ..._bottomEntries];
+    return allEntries.any(
+        (widget) => widget is HyperSnackBarContainer && widget.config.id == id);
+  }
+
   // --- Presets ---
 
   /// Displays a success snackbar (Green background, check icon).
