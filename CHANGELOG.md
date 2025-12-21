@@ -1,7 +1,5 @@
 ## 0.2.1
 
-### ✨ Features
-
 ### 🧹 Refactoring
 * Consolidated `HyperSnackAnimationType` enum to use unified types (e.g., `top` instead of `fromTop` or `toTop`) for both entry and exit animations. This simplifies animation configuration.
 
