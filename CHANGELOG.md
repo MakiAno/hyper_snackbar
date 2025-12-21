@@ -1,3 +1,20 @@
+## [0.2.2] - 2025-12-21
+
+### Added
+- Added `isSnackbarOpenById(String id)` to check if a snackbar with a specific ID is currently visible.
+- Added an `animated` parameter to the `clearAll()` method to allow choosing whether to dismiss snackbars with an animation. Defaults to `true`.
+- Added an example of using `HyperConfig` to the sample app.
+
+### Changed
+- The default behavior of `clearAll()` has been changed from immediate removal to animated dismissal.
+
+### Fixed
+- Stabilized tests related to animations by using `pumpAndSettle` to ensure animations are complete before making assertions.
+
+### Chore
+- Removed unnecessary dependencies.
+- Updated `SECURITY.md` to reflect the currently supported version.
+
 ## 0.2.1
 
 ### 🧹 Refactoring
