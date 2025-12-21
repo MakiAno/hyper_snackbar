@@ -69,29 +69,28 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildButton(
               'Warning + Tap Action',
               Colors.amber,
-              () {
-                // By passing the context, you can smoothly perform screen transitions on tap.
-                HyperSnackbar.show(
-                  title: 'Low Storage',
-                  message: 'Tap here to manage storage.',
-                  backgroundColor: Colors.amber.shade700,
-                  icon: const Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.white,
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            const DetailPage(title: 'Storage Settings'),
-                      ),
-                    );
-                  },
-                  context: context,
-                );
-              },
+              // By passing the context, you can smoothly perform screen transitions on tap.
+              () => HyperSnackbar.show(
+                title: 'Low Storage',
+                message: 'Tap here to manage storage.',
+                backgroundColor: Colors.amber.shade700,
+                icon: const Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.white,
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          const DetailPage(title: 'Storage Settings'),
+                    ),
+                  );
+                },
+                context: context,
+              ),
             ),
+
             _buildButton(
               'Info',
               Colors.blue,
@@ -102,9 +101,45 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             ),
 
             // -------------------------------------------------------
-            // 2. Advanced Design
+            // 2. Queue (Standard Snackbar Behavior)
             // -------------------------------------------------------
-            _buildHeader('2. Advanced Design'),
+            _buildHeader('2. Queue (Standard Snackbar Behavior)'),
+
+            _buildButton('Queue', Colors.brown, () {
+              HyperSnackbar.show(
+                title: 'Queue 1',
+                backgroundColor: Colors.orangeAccent,
+                exitAnimationType: HyperSnackAnimationType.top,
+                displayDuration: Duration(seconds: 1),
+                displayMode: HyperSnackDisplayMode.queue,
+              );
+              HyperSnackbar.show(
+                title: 'Queue 2',
+                backgroundColor: Colors.orangeAccent,
+                exitAnimationType: HyperSnackAnimationType.top,
+                displayDuration: Duration(seconds: 1),
+                displayMode: HyperSnackDisplayMode.queue,
+              );
+              HyperSnackbar.show(
+                title: 'Queue 3',
+                backgroundColor: Colors.orangeAccent,
+                exitAnimationType: HyperSnackAnimationType.top,
+                displayDuration: Duration(seconds: 1),
+                displayMode: HyperSnackDisplayMode.queue,
+              );
+              HyperSnackbar.show(
+                title: 'Queue 4',
+                backgroundColor: Colors.orangeAccent,
+                exitAnimationType: HyperSnackAnimationType.top,
+                displayDuration: Duration(seconds: 1),
+                displayMode: HyperSnackDisplayMode.queue,
+              );
+            }),
+
+            // -------------------------------------------------------
+            // 3. Advanced Design
+            // -------------------------------------------------------
+            _buildHeader('3. Advanced Design'),
             _buildButton(
               'Modern Card Style',
               Colors.indigo,
@@ -112,9 +147,9 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             ),
 
             // -------------------------------------------------------
-            // 3. With Actions
+            // 4. With Actions
             // -------------------------------------------------------
-            _buildHeader('3. With Actions'),
+            _buildHeader('4. With Actions'),
             _buildButton(
               'Delete with "Undo"',
               Colors.deepOrange,
@@ -122,9 +157,9 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             ),
 
             // -------------------------------------------------------
-            // 4. State Update (Using ID)
+            // 5. State Update (Using ID)
             // -------------------------------------------------------
-            _buildHeader('4. State Update (Using ID)'),
+            _buildHeader('5. State Update (Using ID)'),
             _buildButton(
               'Process (Loading -> Done)',
               Colors.blueGrey,
@@ -132,9 +167,9 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             ),
 
             // -------------------------------------------------------
-            // 5. Log Style (Bottom Append)
+            // 6. Log Style (Bottom Append)
             // -------------------------------------------------------
-            _buildHeader('5. Log Style (Console)'),
+            _buildHeader('6. Log Style (Console)'),
             _buildButton(
               'Add Log (Max Visible: 5)',
               Colors.teal,
@@ -142,9 +177,9 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             ),
 
             // -------------------------------------------------------
-            // 6. Control & Management
+            // 7. Control & Management
             // -------------------------------------------------------
-            _buildHeader('6. Control & Management'),
+            _buildHeader('7. Control & Management'),
 
             // New Feature: Show with a fixed ID (Persistent)
             _buildButton(
@@ -180,9 +215,9 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             const SizedBox(height: 16),
 
             // -------------------------------------------------------
-            // 7. Animation Playground
+            // 8. Animation Playground
             // -------------------------------------------------------
-            _buildHeader('7. Animation Playground'),
+            _buildHeader('8. Animation Playground'),
 
             // 1. Slide Horizontal (comes in from the left, disappears to the right)
             _buildButton(
@@ -195,8 +230,8 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 icon: const Icon(Icons.swap_horiz, color: Colors.white),
 
                 // ★ Animation settings
-                enterAnimationType: HyperSnackAnimationType.fromLeft,
-                exitAnimationType: HyperSnackAnimationType.toRight,
+                enterAnimationType: HyperSnackAnimationType.left,
+                exitAnimationType: HyperSnackAnimationType.right,
               ),
             ),
 
@@ -226,13 +261,15 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 title: 'Bottom Sheet Style',
                 message: 'Position: Bottom, Enter: fromBottom',
                 backgroundColor: Colors.blueGrey.shade800,
-                icon: const Icon(Icons.vertical_align_bottom,
-                    color: Colors.white),
+                icon: const Icon(
+                  Icons.vertical_align_bottom,
+                  color: Colors.white,
+                ),
 
                 // ★ Position and animation settings
                 position: HyperSnackPosition.bottom, // Show at the bottom
-                enterAnimationType: HyperSnackAnimationType.fromBottom,
-                exitAnimationType: HyperSnackAnimationType.toLeft,
+                enterAnimationType: HyperSnackAnimationType.bottom,
+                exitAnimationType: HyperSnackAnimationType.left,
               ),
             ),
 
@@ -388,7 +425,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
 
       position: HyperSnackPosition.top,
       newestOnTop: false, // Append to the bottom
-      enterAnimationType: HyperSnackAnimationType.fromTop,
+      enterAnimationType: HyperSnackAnimationType.top,
 
       // Console-style design
       backgroundColor: Colors.black87,

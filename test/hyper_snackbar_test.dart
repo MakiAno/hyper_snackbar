@@ -4,12 +4,14 @@ import 'package:hyper_snackbar/hyper_snackbar.dart';
 
 void main() {
   group('HyperSnackbar', () {
-    // Ensure that all snackbars are cleared after each test to maintain a clean state.
+    setUp(() {
+      HyperSnackbar.resetForTest();
+    });
+
     tearDown(() {
       HyperSnackbar.clearAll();
     });
 
-    // A helper function to create a MaterialApp with a scaffold for tests.
     Widget createTestApp(Widget child) {
       return MaterialApp(
         navigatorKey: HyperSnackbar.navigatorKey,
@@ -19,34 +21,20 @@ void main() {
 
     testWidgets('isSnackbarOpen reflects the visibility of a snackbar',
         (WidgetTester tester) async {
-      // Build an app where the snackbar can be displayed.
       await tester.pumpWidget(createTestApp(Container()));
-
-      // Initially, no snackbar should be open.
       expect(HyperSnackbar.isSnackbarOpen, isFalse);
 
-      // Show a snackbar.
-      HyperSnackbar.show(title: 'Test', displayDuration: null);
+      HyperSnackbar.show(title: 'Test', id: 'test_id', displayDuration: null);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
-      // Let the snackbar animation finish.
-      await tester.pumpAndSettle();
-
-      // Now a snackbar should be open.
       expect(HyperSnackbar.isSnackbarOpen, isTrue);
-
-      // Find the snackbar to ensure it's on screen.
       expect(find.text('Test'), findsOneWidget);
 
-      // Clear all snackbars.
       HyperSnackbar.clearAll();
+      await tester.pump();
 
-      // Let the dismiss animation finish.
-      await tester.pumpAndSettle();
-
-      // Now no snackbar should be open.
       expect(HyperSnackbar.isSnackbarOpen, isFalse);
-
-      // Ensure the snackbar is gone.
       expect(find.text('Test'), findsNothing);
     });
 
@@ -54,68 +42,107 @@ void main() {
         (WidgetTester tester) async {
       await tester.pumpWidget(createTestApp(Container()));
 
-      // Show two snackbars in queue mode.
+      const display = Duration(milliseconds: 500);
+      const anim = Duration(milliseconds: 50);
+
       HyperSnackbar.show(
         title: 'Snackbar 1',
         displayMode: HyperSnackDisplayMode.queue,
-        displayDuration: const Duration(seconds: 1),
+        displayDuration: display,
+        enterAnimationDuration: anim,
+        exitAnimationDuration: anim,
       );
+      await tester.pump();
+
       HyperSnackbar.show(
         title: 'Snackbar 2',
         displayMode: HyperSnackDisplayMode.queue,
-        displayDuration: const Duration(seconds: 1),
+        displayDuration: display,
+        enterAnimationDuration: anim,
+        exitAnimationDuration: anim,
       );
+      await tester.pump();
 
-      // At first, only the first snackbar should be visible.
-      await tester.pump(); // Start enter animation
-      await tester.pump(const Duration(milliseconds: 500)); // Finish enter animation
+      // Snackbar 1 登場
+      await tester.pump(anim + const Duration(milliseconds: 10));
       expect(find.text('Snackbar 1'), findsOneWidget);
-      expect(find.text('Snackbar 2'), findsNothing);
 
-      // Wait for the first snackbar to disappear.
-      await tester.pump(const Duration(seconds: 1)); // displayDuration
-      await tester.pump(); // Start exit animation
-      await tester.pump(const Duration(milliseconds: 500)); // Finish exit animation
-      await tester.pump(); // Frame for microtask to run
+      // Snackbar 1 退場まで待つ
+      await tester.pump(display + anim + const Duration(milliseconds: 50));
+      await tester.pump(); // Queue処理用の隙間
 
-      // Now the second snackbar should appear.
-      await tester.pump(); // Start enter animation for second snackbar
-      await tester.pump(const Duration(milliseconds: 500)); // Finish enter animation
+      // Snackbar 2 登場
+      await tester.pump(anim + const Duration(milliseconds: 10));
       expect(find.text('Snackbar 1'), findsNothing);
       expect(find.text('Snackbar 2'), findsOneWidget);
     });
 
-    testWidgets('clearAll clears the queue', (WidgetTester tester) async {
+    testWidgets('clearAll clears the queue and screen',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createTestApp(Container()));
 
-      // Queue up multiple snackbars.
-      HyperSnackbar.show(
-        title: 'Snackbar 1',
-        displayMode: HyperSnackDisplayMode.queue,
-        displayDuration: const Duration(seconds: 1),
-      );
-      HyperSnackbar.show(
-        title: 'Snackbar 2',
-        displayMode: HyperSnackDisplayMode.queue,
-        displayDuration: const Duration(seconds: 1),
-      );
+      for (var i = 1; i <= 3; i++) {
+        HyperSnackbar.show(
+          title: 'Snackbar $i',
+          displayMode: HyperSnackDisplayMode.queue,
+          displayDuration: const Duration(milliseconds: 500),
+        );
+        await tester.pump();
+      }
 
-      // The first snackbar is visible.
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 100));
       expect(find.text('Snackbar 1'), findsOneWidget);
 
-      // Clear all.
       HyperSnackbar.clearAll();
+      await tester.pump();
 
-      // Pump through dismiss animation.
-      await tester.pump(); // Start dismiss animation
-      await tester.pump(const Duration(seconds: 1)); // Finish dismiss animation
-      await tester.pump(); // Final frame
-
-      // No snackbar should be visible.
       expect(find.text('Snackbar 1'), findsNothing);
       expect(find.text('Snackbar 2'), findsNothing);
+      expect(find.text('Snackbar 3'), findsNothing);
+      expect(HyperSnackbar.isSnackbarOpen, isFalse);
+    });
+
+    testWidgets('Queue mode handles multiple items correctly',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createTestApp(Container()));
+
+      const display = Duration(milliseconds: 500);
+      const anim = Duration(milliseconds: 50);
+
+      HyperSnackbar.show(
+        title: 'A',
+        displayMode: HyperSnackDisplayMode.queue,
+        displayDuration: display,
+        enterAnimationDuration: anim,
+        exitAnimationDuration: anim,
+      );
+      await tester.pump();
+      await tester.pump(anim + const Duration(milliseconds: 10));
+      expect(find.text('A'), findsOneWidget);
+
+      HyperSnackbar.show(
+        title: 'B',
+        displayMode: HyperSnackDisplayMode.queue,
+        displayDuration: display,
+        enterAnimationDuration: anim,
+        exitAnimationDuration: anim,
+      );
+      await tester.pump();
+      await tester.pump(anim + const Duration(milliseconds: 10));
+
+      expect(find.text('B'), findsNothing);
+
+      await tester.pump(const Duration(milliseconds: 800));
+      await tester.pumpAndSettle();
+
+      expect(find.text('A'), findsNothing);
+      expect(find.text('B'), findsOneWidget);
+
+      HyperSnackbar.clearAll();
+      await tester.pump();
+
+      expect(find.text('B'), findsNothing);
+      expect(HyperSnackbar.isSnackbarOpen, isFalse);
     });
   });
 }
