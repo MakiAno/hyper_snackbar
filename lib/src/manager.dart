@@ -206,20 +206,41 @@ class HyperSnackbar {
     findAndDismiss(_bottomEntries);
   }
 
-  /// Removes all currently displayed snackbars immediately.
-  static void clearAll() {
+  /// Removes all currently displayed snackbars.
+  ///
+  /// By default, it dismisses them with their configured exit animation.
+  /// If [animated] is set to `false`, it will remove them immediately without animation.
+  static void clearAll({bool animated = true}) {
     _isQueueProcessing = false;
     _queue.clear();
-    _topEntries.clear();
-    _bottomEntries.clear();
-    _topStream.add([]);
-    _bottomStream.add([]);
-    if (_overlayEntry != null) {
-      try {
-        _overlayEntry?.remove();
-      } catch (_) {}
-      _overlayEntry = null;
-      _isOverlayMounted = false;
+
+    if (animated) {
+      final allEntries = [..._topEntries, ..._bottomEntries];
+      for (final widget in allEntries) {
+        if (widget is HyperSnackBarContainer) {
+          final key = widget.key as GlobalKey<HyperSnackBarContainerState>?;
+          if (key != null &&
+              key.currentState != null &&
+              key.currentState!.mounted) {
+            key.currentState!.dismiss();
+          } else {
+            // If the widget is not mounted, remove it directly.
+            removeNotification(widget.config);
+          }
+        }
+      }
+    } else {
+      _topEntries.clear();
+      _bottomEntries.clear();
+      _topStream.add([]);
+      _bottomStream.add([]);
+      if (_overlayEntry != null) {
+        try {
+          _overlayEntry?.remove();
+        } catch (_) {}
+        _overlayEntry = null;
+        _isOverlayMounted = false;
+      }
     }
   }
 

@@ -214,6 +214,15 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
 
             const SizedBox(height: 16),
 
+            // New Feature: Close all
+            _buildButton(
+              'Clear All (No animation)',
+              Colors.grey,
+              () => HyperSnackbar.clearAll(animated: false),
+            ),
+
+            const SizedBox(height: 16),
+
             // -------------------------------------------------------
             // 8. Animation Playground
             // -------------------------------------------------------
