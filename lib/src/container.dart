@@ -41,6 +41,10 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
 
     _animation = CurvedAnimation(parent: _controller, curve: config.enterCurve);
 
+    _startEntryAnimation();
+  }
+
+  void _startEntryAnimation() {
     _controller.forward();
 
     if (config.displayDuration != null) {

@@ -208,19 +208,18 @@ class HyperSnackbar {
 
   /// Removes all currently displayed snackbars immediately.
   static void clearAll() {
+    _isQueueProcessing = false;
     _queue.clear();
-    final allWidgets = [..._topEntries, ..._bottomEntries];
-    for (final widget in allWidgets) {
-      if (widget is HyperSnackBarContainer) {
-        final key = widget.key as GlobalKey<HyperSnackBarContainerState>?;
-        if (key != null &&
-            key.currentState != null &&
-            key.currentState!.mounted) {
-          key.currentState!.dismiss();
-        } else {
-          removeNotification(widget.config);
-        }
-      }
+    _topEntries.clear();
+    _bottomEntries.clear();
+    _topStream.add([]);
+    _bottomStream.add([]);
+    if (_overlayEntry != null) {
+      try {
+        _overlayEntry?.remove();
+      } catch (_) {}
+      _overlayEntry = null;
+      _isOverlayMounted = false;
     }
   }
 
@@ -326,18 +325,10 @@ class HyperSnackbar {
         return false;
       });
       stream.add(list);
-      if (onComplete != null) {
-        Future.microtask(onComplete);
-      }
-    }
 
-    if (immediate) {
-      if (config.position == HyperSnackPosition.top) {
-        finalizeRemoval(_topEntries, _topStream);
-      } else {
-        finalizeRemoval(_bottomEntries, _bottomStream);
+      if (onComplete != null && _isQueueProcessing) {
+        onComplete();
       }
-      return;
     }
 
     if (config.position == HyperSnackPosition.top) {
@@ -372,7 +363,7 @@ class HyperSnackbar {
             'HyperSnackbar: Context was not provided and navigatorKey is not registered.\n'
             'Please Add `navigatorKey: HyperSnackbar.navigatorKey` to your MaterialApp.');
       }
-      overlayState = navigatorKey.currentState!.overlay;
+      overlayState = navigatorKey.currentState?.overlay;
     }
 
     if (overlayState == null) return;
@@ -387,6 +378,29 @@ class HyperSnackbar {
     );
     overlayState.insert(_overlayEntry!);
     _isOverlayMounted = true;
+  }
+
+  /// Resets the manager to its initial state.
+  ///
+  /// This method is intended for use in tests to ensure a clean state between
+  /// test cases. It clears all snackbars, queues, and internal flags.
+  static void resetForTest() {
+    if (_overlayEntry != null) {
+      try {
+        _overlayEntry?.remove();
+      } catch (_) {}
+      _overlayEntry = null;
+    }
+
+    _topEntries.clear();
+    _bottomEntries.clear();
+    _queue.clear();
+
+    _isOverlayMounted = false;
+    _isQueueProcessing = false;
+
+    _topStream.add([]);
+    _bottomStream.add([]);
   }
 }
 
