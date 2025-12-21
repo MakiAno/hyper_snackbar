@@ -66,10 +66,8 @@ class HyperSnackbar {
       Duration exitAnimationDuration = const Duration(milliseconds: 500),
       Curve enterCurve = Curves.easeOutQuart,
       Curve exitCurve = Curves.easeOut,
-      HyperSnackAnimationType enterAnimationType =
-          HyperSnackAnimationType.fromTop,
-      HyperSnackAnimationType exitAnimationType =
-          HyperSnackAnimationType.toLeft,
+      HyperSnackAnimationType enterAnimationType = HyperSnackAnimationType.top,
+      HyperSnackAnimationType exitAnimationType = HyperSnackAnimationType.left,
       BuildContext? context}) {
     final config = HyperConfig(
       title: title,
@@ -463,10 +461,9 @@ extension HyperSnackbarExtensions on BuildContext {
       Duration exitAnimationDuration = const Duration(milliseconds: 500),
       Curve enterCurve = Curves.easeOutQuart,
       Curve exitCurve = Curves.easeOut,
-      HyperSnackAnimationType enterAnimationType =
-          HyperSnackAnimationType.fromTop,
+      HyperSnackAnimationType enterAnimationType = HyperSnackAnimationType.top,
       HyperSnackAnimationType exitAnimationType =
-          HyperSnackAnimationType.toLeft}) {
+          HyperSnackAnimationType.left}) {
     HyperSnackbar.show(
       title: title,
       id: id,

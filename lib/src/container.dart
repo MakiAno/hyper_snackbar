@@ -141,7 +141,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           child: child,
         );
 
-      case HyperSnackAnimationType.fromLeft:
+      case HyperSnackAnimationType.left:
         return SlideTransition(
           position: Tween<Offset>(
             begin: const Offset(-1.0, 0.0),
@@ -150,7 +150,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           child: child,
         );
 
-      case HyperSnackAnimationType.fromRight:
+      case HyperSnackAnimationType.right:
         return SlideTransition(
           position: Tween<Offset>(
             begin: const Offset(1.0, 0.0),
@@ -159,14 +159,14 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           child: child,
         );
 
-      case HyperSnackAnimationType.fromTop:
+      case HyperSnackAnimationType.top:
         return SizeTransition(
           sizeFactor: _animation,
           axisAlignment: -1.0, // Based on the top edge
           child: FadeTransition(opacity: _animation, child: child),
         );
 
-      case HyperSnackAnimationType.fromBottom:
+      case HyperSnackAnimationType.bottom:
         return SizeTransition(
           sizeFactor: _animation,
           axisAlignment: 1.0, // Based on the bottom edge
@@ -198,7 +198,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           child: child,
         );
 
-      case HyperSnackAnimationType.toLeft:
+      case HyperSnackAnimationType.left:
         // Disappear to the left
         return SlideTransition(
           position: Tween<Offset>(
@@ -211,7 +211,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           ),
         );
 
-      case HyperSnackAnimationType.toRight:
+      case HyperSnackAnimationType.right:
         // Disappear to the right
         return SlideTransition(
           position: Tween<Offset>(
@@ -224,13 +224,12 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           ),
         );
 
-      // Fallback for when an entry animation type is specified (reverse-like behavior)
-      case HyperSnackAnimationType.fromTop:
-      case HyperSnackAnimationType.fromBottom:
+      case HyperSnackAnimationType.top:
+      case HyperSnackAnimationType.bottom:
         return SizeTransition(
           sizeFactor: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
           axisAlignment:
-              (config.exitAnimationType == HyperSnackAnimationType.fromTop)
+              (config.exitAnimationType == HyperSnackAnimationType.top)
                   ? -1.0
                   : 1.0,
           child: FadeTransition(
