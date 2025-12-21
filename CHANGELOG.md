@@ -2,6 +2,9 @@
 
 ### ✨ Features
 
+### 🧹 Refactoring
+* Consolidated `HyperSnackAnimationType` enum to use unified types (e.g., `top` instead of `fromTop` or `toTop`) for both entry and exit animations. This simplifies animation configuration.
+
 *   **Enhanced HyperConfig.copyWith**: The `HyperConfig.copyWith` method now supports all properties, significantly improving reusability and flexibility when updating snackbar configurations.
 
 ### 📝 Documentation
@@ -75,7 +78,7 @@
 ## 0.1.3
 * Improved documentation comments.
 
-## 0.1.2 - 2025-12-16
+## 0.1.2
 
 ### ✨ Features
 *   **Manual Dismissal:** Added `dismissById(String id)` to close specific snackbars programmatically.

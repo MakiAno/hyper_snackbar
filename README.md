@@ -200,7 +200,7 @@ HyperSnackbar.show(
   message: 'Newest item is at the bottom.',
   position: HyperSnackPosition.top,
   newestOnTop: false, // <--- Append to bottom
-  enterAnimationType: HyperSnackAnimationType.fromTop,
+  enterAnimationType: HyperSnackAnimationType.top, // Use 'top' as unified animation type
 );
 ```
 
@@ -263,8 +263,8 @@ HyperSnackbar.show(
 | `showCloseButton`| `bool` | `true` | Show 'X' button on the right. |
 | `newestOnTop` | `bool` | `true` | `false` appends new items to the bottom. |
 | **Animation** | | | |
-| `enterAnimationType`| `Enum` | `.fromTop` | Slide direction or Fade for entry. |
-| `exitAnimationType` | `Enum` | `.toLeft` | Slide direction or Fade for exit. |
+| `enterAnimationType`| `Enum` | `.top` | Animation type for entry (e.g., slide from top, fade in). |
+| `exitAnimationType` | `Enum` | `.left` | Animation type for exit (e.g., slide to left, fade out). |
 | `enterAnimationDuration`| `Duration` | `300ms` | Duration of entry animation. |
 | `exitAnimationDuration` | `Duration` | `500ms` | Duration of exit animation. |
 | `enterCurve` | `Curve` | `easeOutQuart`| Animation curve for entry. |
