@@ -3,7 +3,10 @@ import 'config.dart';
 
 /// Pure UI Widget for the Snackbar content.
 class HyperSnackBarContent extends StatelessWidget {
+  /// The configuration for the snackbar's appearance and content.
   final HyperConfig config;
+
+  /// A callback function that is called when the snackbar is dismissed.
   final VoidCallback onDismiss;
 
   const HyperSnackBarContent({

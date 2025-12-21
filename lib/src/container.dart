@@ -20,6 +20,7 @@ class HyperSnackBarContainer extends StatefulWidget {
 
 class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     with SingleTickerProviderStateMixin {
+  /// The current configuration of the snackbar.
   late HyperConfig config;
   late AnimationController _controller;
   late Animation<double>
@@ -38,7 +39,6 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
       duration: config.enterAnimationDuration,
     );
 
-    // Apply curve for entry animation
     _animation = CurvedAnimation(parent: _controller, curve: config.enterCurve);
 
     _controller.forward();
@@ -50,6 +50,11 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     }
   }
 
+  /// Updates the snackbar's content and appearance.
+  ///
+  /// If the snackbar is in the middle of an exit animation, this method
+  /// will cancel the exit and start a new entry animation with the updated
+  /// configuration.
   void updateConfig(HyperConfig newConfig) {
     setState(() {
       config = newConfig;
@@ -71,6 +76,9 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     }
   }
 
+  /// Starts the exit animation for the snackbar.
+  ///
+  /// Once the animation is complete, the `onDismiss` callback is called.
   void dismiss() {
     if (!mounted || _isExiting) return;
 
@@ -174,7 +182,6 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
         );
 
       case HyperSnackAnimationType.fade:
-      default:
         return FadeTransition(opacity: _animation, child: child);
     }
   }
@@ -238,7 +245,6 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
         );
 
       case HyperSnackAnimationType.fade:
-      default:
         return FadeTransition(
             opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
             child: child);

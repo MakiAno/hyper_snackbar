@@ -29,7 +29,11 @@ class HyperSnackAction {
 
   /// The callback function executed when the button is pressed.
   final VoidCallback onPressed;
+
+  /// The color of the action button's text.
   final Color? textColor;
+
+  /// The background color of the action button.
   final Color? backgroundColor;
 
   const HyperSnackAction({
@@ -55,36 +59,90 @@ class HyperConfig {
 
   /// The detailed message body text.
   final String? message;
+
+  /// An optional icon to display on the left side of the snackbar.
   final Widget? icon;
+
+  /// An optional action button to display on the right side of the snackbar.
   final HyperSnackAction? action;
 
-  /// Interaction & Style.
+  /// Interaction & Style. ------------------------------
+
+  /// A callback function to be executed when the snackbar is tapped.
   final VoidCallback? onTap;
+
+  /// The text style for the title.
   final TextStyle? titleStyle;
+
+  /// The text style for the message.
   final TextStyle? messageStyle;
+
+  /// The border of the snackbar.
   final BoxBorder? border;
+
+  /// The margin around the snackbar.
   final EdgeInsetsGeometry margin;
+
+  /// The padding within the snackbar.
   final EdgeInsetsGeometry padding;
+
+  /// The background color of the snackbar.
   final Color? backgroundColor;
+
+  /// The color for the title and message text.
   final Color? textColor;
+
+  /// The border radius of the snackbar's corners.
   final double borderRadius;
+
+  /// The elevation of the snackbar (shadow).
   final double elevation;
 
-  /// Behavior.
+  /// Behavior.---------------------------------------
+
+  /// The duration for which the snackbar is displayed.
+  ///
+  /// If `null`, the snackbar will be persistent until manually dismissed.
   final Duration? displayDuration;
+
+  /// Whether to show a close button on the right side of the snackbar.
   final bool showCloseButton;
+
+  /// Whether the snackbar can be dismissed by swiping.
   final bool enableSwipe;
+
+  /// Determines the stacking order of new snackbars.
+  ///
+  /// If `true`, the newest snackbar appears on top. If `false`, it's appended to the bottom.
   final bool newestOnTop;
+
+  /// The maximum number of snackbars that can be visible at the same time in stack mode.
   final int maxVisibleCount;
+
+  /// The position of the snackbar on the screen.
   final HyperSnackPosition position;
+
+  /// The display mode of the snackbar (stack or queue).
   final HyperSnackDisplayMode displayMode;
 
-  /// Animation.
+  /// Animation. ---------------------------------------
+
+  /// The duration of the entry animation.
   final Duration enterAnimationDuration;
+
+  /// The duration of the exit animation.
   final Duration exitAnimationDuration;
+
+  /// The curve for the entry animation.
   final Curve enterCurve;
+
+  /// The curve for the exit animation.
   final Curve exitCurve;
+
+  /// The type of animation for entry.
   final HyperSnackAnimationType enterAnimationType;
+
+  /// The type of animation for exit.
   final HyperSnackAnimationType exitAnimationType;
 
   const HyperConfig({
@@ -118,6 +176,7 @@ class HyperConfig {
     this.exitAnimationType = HyperSnackAnimationType.left,
   });
 
+  /// Creates a copy of this [HyperConfig] but with the given fields replaced with the new values.
   HyperConfig copyWith({
     String? id,
     String? title,
