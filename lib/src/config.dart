@@ -14,12 +14,10 @@ enum HyperSnackDisplayMode {
 
 /// Defines the entrance and exit animation styles.
 enum HyperSnackAnimationType {
-  fromTop,
-  fromBottom,
-  fromLeft,
-  fromRight,
-  toLeft, // For exit
-  toRight, // For exit
+  top,
+  bottom,
+  left,
+  right,
   fade,
   scale,
 }
@@ -116,8 +114,8 @@ class HyperConfig {
     this.exitAnimationDuration = const Duration(milliseconds: 500),
     this.enterCurve = Curves.easeOutQuart,
     this.exitCurve = Curves.easeOut,
-    this.enterAnimationType = HyperSnackAnimationType.fromTop,
-    this.exitAnimationType = HyperSnackAnimationType.toLeft,
+    this.enterAnimationType = HyperSnackAnimationType.top,
+    this.exitAnimationType = HyperSnackAnimationType.left,
   });
 
   HyperConfig copyWith({
