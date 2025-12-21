@@ -32,7 +32,7 @@ void main() {
       expect(find.text('Test'), findsOneWidget);
 
       HyperSnackbar.clearAll();
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(HyperSnackbar.isSnackbarOpen, isFalse);
       expect(find.text('Test'), findsNothing);
@@ -94,7 +94,7 @@ void main() {
       expect(find.text('Snackbar 1'), findsOneWidget);
 
       HyperSnackbar.clearAll();
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.text('Snackbar 1'), findsNothing);
       expect(find.text('Snackbar 2'), findsNothing);
@@ -139,7 +139,7 @@ void main() {
       expect(find.text('B'), findsOneWidget);
 
       HyperSnackbar.clearAll();
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.text('B'), findsNothing);
       expect(HyperSnackbar.isSnackbarOpen, isFalse);
