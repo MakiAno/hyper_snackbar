@@ -1,4 +1,5 @@
 [![GitHub issues](https://img.shields.io/github/issues/MakiAno/hyper_snackbar?style=flat-square)](https://github.com/MakiAno/hyper_snackbar/issues)
+[![Discussions](https://img.shields.io/badge/GitHub-Discussions-orange?logo=github)](https://github.com/MakiAno/hyper_snackbar/discussions)
 
 # Hyper Snackbar 🚀
 
