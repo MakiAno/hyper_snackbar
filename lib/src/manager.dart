@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'config.dart';
 import 'container.dart';
 
@@ -389,7 +390,7 @@ class HyperSnackbar {
 
     if (overlayState == null) return;
 
-    _overlayEntry = OverlayEntry(
+    final newEntry = OverlayEntry(
       builder: (context) => _HyperOverlayManager(
         topStream: _topStream.stream,
         bottomStream: _bottomStream.stream,
@@ -397,7 +398,19 @@ class HyperSnackbar {
         initialBottomData: _bottomEntries,
       ),
     );
-    overlayState.insert(_overlayEntry!);
+
+    _overlayEntry = newEntry;
+
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (overlayState?.mounted == true) {
+          overlayState!.insert(newEntry);
+        }
+      });
+    } else {
+      overlayState.insert(_overlayEntry!);
+    }
     _isOverlayMounted = true;
   }
 
