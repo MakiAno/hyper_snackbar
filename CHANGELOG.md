@@ -1,4 +1,10 @@
-## [0.2.2] - 2025-12-21
+## [0.2.3] - 2025-12-29
+
+* **Fixed:** Resolved a `setState() called during build` runtime error that could occur when triggering a snackbar during a navigation transition (e.g., using `go_router` without a `BuildContext`).
+* **Improvement:** Added `SchedulerBinding` phase checks to ensure the overlay is inserted safely after the current frame build is completed.
+* **Tests:** Added compatibility tests and examples for `go_router`.
+
+## [0.2.2]
 
 ### Added
 - Added `isSnackbarOpenById(String id)` to check if a snackbar with a specific ID is currently visible.

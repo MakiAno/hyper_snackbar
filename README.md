@@ -29,7 +29,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.2.2
+  hyper_snackbar: ^0.2.3
 ```
 
 ## 🚀 Setup (Important)
@@ -237,6 +237,17 @@ HyperSnackbar.show(
 
   // Curve: Slow start, ideal for visibility during short fades
   enterCurve: Curves.easeIn, 
+);
+```
+
+### Using with GoRouter
+
+If you are using `go_router`, simply assign `HyperSnackbar.navigatorKey` to the `navigatorKey` property of your `GoRouter` configuration. This allows you to show snackbars even during navigation transitions.
+
+```dart
+final _router = GoRouter(
+  navigatorKey: HyperSnackbar.navigatorKey, // Add this line
+  routes: [ ... ],
 );
 ```
 
