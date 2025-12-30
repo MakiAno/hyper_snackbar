@@ -47,6 +47,7 @@ class HyperSnackBarContent extends StatelessWidget {
             padding: config.padding,
             child: Row(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (config.icon != null) ...[
                   config.icon!,
