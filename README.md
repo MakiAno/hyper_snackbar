@@ -30,7 +30,7 @@ Designed for modern apps that need more than just a simple toast.
 Add this to your package's `pubspec.yaml` file:
 ```dart
 dependencies:
-  hyper_snackbar: ^0.2.3
+  hyper_snackbar: ^0.2.4
 ```
 ## 🚀 Setup (Important)
 
