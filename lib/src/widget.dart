@@ -78,24 +78,37 @@ class HyperSnackBarContent extends StatelessWidget {
                                 // Compatible with Flutter 3.27+ withValues
                                 color: txtColor.withValues(alpha: 0.9),
                                 fontSize: 14,
-                              ),
+                      if (config.action != null) ...[
+                        const SizedBox(width: 8),
+                        Align(
+                          alignment: AlignmentGeometry.centerLeft,
+                          child: TextButton(
+                            onPressed: () {
+                              config.action!.onPressed();
+                              if (config.action!.autoDismiss) {
+                                onDismiss();
+                              }
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: config.action!.textColor ??
+                                  theme.colorScheme.primary,
+                              backgroundColor: config.action!.backgroundColor,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text(
+                              config.action!.label,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
                         ),
                       ],
                     ],
                   ),
                 ),
-                if (config.action != null) ...[
-                  const SizedBox(width: 8),
-                  TextButton(
-                    onPressed: config.action!.onPressed,
-                    style: TextButton.styleFrom(
-                      foregroundColor:
-                          config.action!.textColor ?? theme.colorScheme.primary,
-                      backgroundColor: config.action!.backgroundColor,
-                    ),
-                    child: Text(config.action!.label),
-                  ),
-                ],
                 if (config.showCloseButton) ...[
                   const SizedBox(width: 8),
                   IconButton(
