@@ -36,11 +36,15 @@ class HyperSnackAction {
   /// The background color of the action button.
   final Color? backgroundColor;
 
+  /// Whether to close the snackbar automatically when the action is pressed.
+  final bool autoDismiss;
+
   const HyperSnackAction({
     required this.label,
     required this.onPressed,
     this.textColor,
     this.backgroundColor,
+    this.autoDismiss = true,
   });
 }
 
