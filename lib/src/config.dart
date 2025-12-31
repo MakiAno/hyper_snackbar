@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// Sentinel
+const _undefined = Object();
+
 /// Defines the vertical position where the snackbar will appear.
 enum HyperSnackPosition { top, bottom }
 
@@ -129,6 +132,9 @@ class HyperConfig {
   /// The display mode of the snackbar (stack or queue).
   final HyperSnackDisplayMode displayMode;
 
+  /// The max lines of esaage.
+  final int? maxLines;
+
   /// Animation. ---------------------------------------
 
   /// The duration of the entry animation.
@@ -172,6 +178,7 @@ class HyperConfig {
     this.maxVisibleCount = 3,
     this.position = HyperSnackPosition.top,
     this.displayMode = HyperSnackDisplayMode.stack,
+    this.maxLines = 5,
     this.enterAnimationDuration = const Duration(milliseconds: 300),
     this.exitAnimationDuration = const Duration(milliseconds: 500),
     this.enterCurve = Curves.easeOutQuart,
@@ -184,7 +191,7 @@ class HyperConfig {
   HyperConfig copyWith({
     String? id,
     String? title,
-    String? message,
+    Object? message = _undefined,
     Widget? icon,
     HyperSnackAction? action,
     VoidCallback? onTap,
@@ -204,6 +211,7 @@ class HyperConfig {
     int? maxVisibleCount,
     HyperSnackPosition? position,
     HyperSnackDisplayMode? displayMode,
+    Object? maxLines = _undefined,
     Duration? enterAnimationDuration,
     Duration? exitAnimationDuration,
     Curve? enterCurve,
@@ -214,7 +222,7 @@ class HyperConfig {
     return HyperConfig(
       id: id ?? this.id,
       title: title ?? this.title,
-      message: message ?? this.message,
+      message: message == _undefined ? this.message : message as String?,
       icon: icon ?? this.icon,
       action: action ?? this.action,
       onTap: onTap ?? this.onTap,
@@ -234,6 +242,7 @@ class HyperConfig {
       maxVisibleCount: maxVisibleCount ?? this.maxVisibleCount,
       position: position ?? this.position,
       displayMode: displayMode ?? this.displayMode,
+      maxLines: maxLines == _undefined ? this.maxLines : maxLines as int?,
       enterAnimationDuration:
           enterAnimationDuration ?? this.enterAnimationDuration,
       exitAnimationDuration:
