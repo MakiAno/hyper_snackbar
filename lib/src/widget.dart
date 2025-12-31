@@ -66,6 +66,8 @@ class HyperSnackBarContent extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       if (config.message != null) ...[
                         const SizedBox(height: 4),
