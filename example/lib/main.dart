@@ -301,6 +301,49 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
               ),
             ),
 
+            const SizedBox(height: 16),
+
+            // -------------------------------------------------------
+            // 9. Long title & message
+            // -------------------------------------------------------
+            _buildHeader('9. Long title & message'),
+
+            _buildButton(
+              'Long message. maxLines:5(defualt)',
+              Colors.yellow.shade700,
+              () => HyperSnackbar.show(
+                title:
+                    'This title is long, very long, too longk, so long, much? long',
+                message:
+                    'The meessage is long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long ',
+                backgroundColor: Colors.yellow.shade700,
+                textColor: Colors.black,
+                icon: const Icon(Icons.login_outlined, color: Colors.red),
+
+                // ★ Animation settings
+                enterAnimationType: HyperSnackAnimationType.top,
+                exitAnimationType: HyperSnackAnimationType.right,
+              ),
+            ),
+
+            _buildButton(
+              'Long message. maxLines:null(unlimited)',
+              Colors.yellow.shade700,
+              () => HyperSnackbar.show(
+                title:
+                    'This title is long, very long, too longk, so long, much? long',
+                message:
+                    'The meessage is long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long strings.',
+                maxLines: null,
+                backgroundColor: Colors.yellow.shade700,
+                textColor: Colors.black,
+                icon: const Icon(Icons.login_outlined, color: Colors.red),
+
+                // ★ Animation settings
+                enterAnimationType: HyperSnackAnimationType.top,
+                exitAnimationType: HyperSnackAnimationType.right,
+              ),
+            ),
             const SizedBox(height: 60), // Bottom margin
 
             const SizedBox(height: 40),

@@ -39,7 +39,7 @@ packages:
     dependency: "direct main"
     description:
       name: hyper_snackbar
-      sha256: b21ada2e3f7215a0244c2616193a3adec611b2f99f3c9472aa65db5f108f035d
+      sha256: "61c84ddc492e3866590054f36d25ec263bde82f894b4ff686108359526d2ab1b"
       url: "https://pub.dev"
     source: hosted
     version: "0.2.3"
