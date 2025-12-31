@@ -9,5 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  hyper_snackbar: ^0.2.4
+  hyper_snackbar:
+    path: ../
   go_router: ^17.0.1
