@@ -1,11 +1,9 @@
-[![GitHub issues](https://img.shields.io/github/issues/MakiAno/hyper_snackbar?style=flat-square)](https://github.com/MakiAno/hyper_snackbar/issues)
-[![Discussions](https://img.shields.io/badge/GitHub-Discussions-orange?logo=github)](https://github.com/MakiAno/hyper_snackbar/discussions)
-
-# Hyper Snackbar 🚀
-
 [![pub package](https://img.shields.io/pub/v/hyper_snackbar.svg)](https://pub.dev/packages/hyper_snackbar)
 [![likes](https://img.shields.io/pub/likes/hyper_snackbar)](https://pub.dev/packages/hyper_snackbar/score)
+[![GitHub issues](https://img.shields.io/github/issues/MakiAno/hyper_snackbar?style=flat-square)](https://github.com/MakiAno/hyper_snackbar/issues)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+# Hyper Snackbar 🚀
 
 A highly customizable, animated, and stackable snackbar manager for Flutter.
 Designed for modern apps that need more than just a simple toast.
@@ -15,23 +13,25 @@ Designed for modern apps that need more than just a simple toast.
 
 ## ✨ Features
 
-*   **Stackable**: Display multiple notifications simultaneously without overlap.
-*   **Highly Customizable**: Custom borders, margins, fonts, shadows, and tap actions.
-*   **Smart Updates**: **Update the content** (text, icon, color) of an existing snackbar by ID without animation glitches.
-*   **Interactive**: Support for action buttons (e.g., "Undo") and tap gestures on the bar itself.
-*   **Flexible Positioning**: Show at the **Top** or **Bottom** of the screen.
-*   **Log Style**: Option to append new notifications to the **bottom** of the list (console log style).
-*   **Presets**: Ready-to-use methods for Success, Error, Warning, and Info.
+* **Stackable**: Display multiple notifications simultaneously without overlap.
+* **Highly Customizable**: Custom borders, margins, fonts, shadows, and tap actions.
+* **Smart Updates**: **Update the content** (text, icon, color) of an existing snackbar by ID without animation glitches.
+* **Interactive**: Support for action buttons (e.g., "Undo") and tap gestures on the bar itself.
+* **Flexible Positioning**: Show at the **Top** or **Bottom** of the screen.
+* **Log Style**: Option to append new notifications to the **bottom** of the list (console log style).
+* **Presets**: Ready-to-use methods for Success, Error, Warning, and Info.
+* **Smart Layout**: Optimized for both short and long messages. The action button is placed below the text to ensure readability on all screen sizes.
+* **Flexible Text Handling**: Titles are automatically truncated to one line, while messages support configurable line limits (or full display via `maxLines: null`).
+* **Auto-Dismiss Actions**: Actions automatically close the snackbar by default, simplifying your interaction logic.
+* **Polished UI**: Supports bold action text, custom colors, and top-aligned close buttons for a modern look.
 
 ## 📦 Installation
 
 Add this to your package's `pubspec.yaml` file:
-
-```yaml
+```dart
 dependencies:
   hyper_snackbar: ^0.2.3
 ```
-
 ## 🚀 Setup (Important)
 
 To use `HyperSnackbar` from anywhere in your code (e.g., ViewModels, BLoCs), you must register the `navigatorKey` in your `MaterialApp`.
@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
 ## 💡 Usage
 
 ### Basic Usage
-The API is now static, so you can call it directly without creating an instance. The `show` method uses named parameters for a more intuitive experience.
+The API is static, so you can call it directly without creating an instance. The `show` method uses named parameters for a more intuitive experience.
 
 ```dart
 // Simply call the static method `show`!
@@ -88,7 +88,7 @@ HyperSnackbar.show(
 ```
 
 ### Using Extension (Optional)
-The convenient extension method on `BuildContext` has also been updated.
+The convenient extension method on `BuildContext` is also available.
 
 ```dart
 context.showHyperSnackbar(
@@ -201,7 +201,7 @@ HyperSnackbar.show(
   message: 'Newest item is at the bottom.',
   position: HyperSnackPosition.top,
   newestOnTop: false, // <--- Append to bottom
-  enterAnimationType: HyperSnackAnimationType.top, // Use 'top' as unified animation type
+  enterAnimationType: HyperSnackAnimationType.top, // Animate from top
 );
 ```
 
@@ -220,7 +220,7 @@ HyperSnackbar.clearAll(animated: false);
 ```
 
 ### 6. Fine-tuning Animations
-You can control the speed, direction, and curve for entry and exit, especially useful for fade or scale effects.
+You can control the speed, direction, and curve for entry and exit.
 
 ```dart
 HyperSnackbar.show(
@@ -240,9 +240,41 @@ HyperSnackbar.show(
 );
 ```
 
+### Advanced Usage
+
+#### Displaying Long Messages
+By default, the message is limited to 5 lines to keep the UI clean. To display the full content without truncation (e.g., for error logs), set `maxLines` to `null`.
+
+```dart
+HyperSnackbar.show(
+  context: context,
+  title: 'System Log',
+  message: 'Connection failed.\nRetrying...\nError code: 503\n(See console for details)',
+  maxLines: null, // Show full text
+  backgroundColor: Colors.grey[900],
+);
+```
+
+#### Keep Snackbar Open After Action
+Actions automatically dismiss the notification when tapped. If you need the snackbar to remain visible after an interaction (e.g., for repeated actions), set `autoDismiss` to `false`.
+
+```dart
+HyperSnackbar.show(
+  context: context,
+  title: 'Upload Paused',
+  action: HyperSnackAction(
+    label: 'Resume',
+    autoDismiss: false, // Keep open
+    onPressed: () {
+      // Resume upload logic...
+    },
+  ),
+);
+```
+
 ### Using with GoRouter
 
-If you are using `go_router`, simply assign `HyperSnackbar.navigatorKey` to the `navigatorKey` property of your `GoRouter` configuration. This allows you to show snackbars even during navigation transitions.
+If you are using `go_router`, simply assign `HyperSnackbar.navigatorKey` to the `navigatorKey` property of your `GoRouter` configuration.
 
 ```dart
 final _router = GoRouter(
@@ -258,8 +290,9 @@ final _router = GoRouter(
 | **Content** | | | |
 | `title` | `String` | Required | The main title text. |
 | `message` | `String?` | `null` | The subtitle text. |
+| `maxLines` | `int?` | `5` | Max lines for message. Set `null` for unlimited. |
 | `icon` | `Widget?` | `null` | Icon widget displayed on the left. |
-| `action` | `HyperSnackAction?` | `null` | Action button definition (label & callback). |
+| `action` | `HyperSnackAction?` | `null` | Action definition (label, callback, & `autoDismiss`). |
 | **Style** | | | |
 | `backgroundColor` | `Color` | `Grey[800]` | Background color of the snackbar. |
 | `textColor` | `Color` | `White` | Color for title and message. |
@@ -296,8 +329,8 @@ final _router = GoRouter(
 | `showWarning(...)` | Preset for warning messages (Orange). |
 | `showInfo(...)` | Preset for info messages (Blue). |
 | `dismissById(String id)` | Dismisses the snackbar with the specified ID. |
-| `clearAll({bool animated = true})` | Dismisses **all** currently visible snackbars. Defaults to animated dismissal. |
-| `isSnackbarOpen` | `bool` getter. Returns `true` if any snackbar is currently visible. |
+| `clearAll({bool animated = true})` | Dismisses **all** currently visible snackbars. |
+| `isSnackbarOpen` | Returns `true` if any snackbar is currently visible. |
 | `isSnackbarOpenById(String id)` | Returns `true` if the snackbar with the specified ID is currently visible. |
 
 ## ❤️ Contributing

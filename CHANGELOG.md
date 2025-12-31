@@ -1,4 +1,17 @@
-## [0.2.3] - 2025-12-29
+## [0.2.4] - 2025-12-31
+
+### UI/UX Improvements
+* **Action Button Placement:** Moved the action button below the message text to improve readability and layout stability on narrower screens.
+* **Close Button:** Aligned the close button to the top-right corner (`CrossAxisAlignment.start`) for better aesthetics with multi-line messages.
+* **Typography:** Added `TextOverflow.ellipsis` to the title (max 1 line) to prevent layout breakage. Action button text is now bold for better visibility.
+
+### New Features
+* **Message Lines Control:** Added `maxLines` parameter to `show()` and `HyperConfig`.
+    * Defaults to `5` lines to prevent the snackbar from taking up too much screen space.
+    * Pass `null` to display the full message without truncation.
+* **Auto Dismiss Action:** Added `autoDismiss` property to `HyperSnackAction` (defaults to `true`). The snackbar will now automatically close when an action is tapped, unless specified otherwise.
+
+## [0.2.3]
 
 * **Fixed:** Resolved a `setState() called during build` runtime error that could occur when triggering a snackbar during a navigation transition (e.g., using `go_router` without a `BuildContext`).
 * **Improvement:** Added `SchedulerBinding` phase checks to ensure the overlay is inserted safely after the current frame build is completed.
