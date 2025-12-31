@@ -75,9 +75,15 @@ class HyperSnackBarContent extends StatelessWidget {
                           config.message!,
                           style: config.messageStyle ??
                               TextStyle(
-                                // Compatible with Flutter 3.27+ withValues
                                 color: txtColor.withValues(alpha: 0.9),
                                 fontSize: 14,
+                              ),
+                          maxLines: config.maxLines,
+                          overflow: config.maxLines == null
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                        ),
+                      ],
                       if (config.action != null) ...[
                         const SizedBox(width: 8),
                         Align(
