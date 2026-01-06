@@ -7,9 +7,9 @@ import 'package:hyper_snackbar/hyper_snackbar.dart';
 void main() {
   testWidgets('GoRouter transition does not crash HyperSnackbar',
       (WidgetTester tester) async {
-    // 1. テスト用のGoRouter設定
+    // 1. GoRouter setup for testing
     final router = GoRouter(
-      navigatorKey: HyperSnackbar.navigatorKey, // ここがテストの肝
+      navigatorKey: HyperSnackbar.navigatorKey, // This is key for the test
       initialLocation: '/',
       routes: [
         GoRoute(
@@ -18,7 +18,7 @@ void main() {
             body: ElevatedButton(
               onPressed: () {
                 context.go('/second');
-                // 画面遷移直後にスナックバーを表示（ビルド中の呼び出しをシミュレート）
+                // Display snackbar immediately after screen transition (simulating a call during build)
                 HyperSnackbar.show(title: 'Test', message: 'Message');
               },
               child: const Text('Go'),

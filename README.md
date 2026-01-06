@@ -13,7 +13,9 @@ Designed for modern apps that need more than just a simple toast.
 
 ## ✨ Features
 
-* **Stackable**: Display multiple notifications simultaneously without overlap.
+* **Stackable or Queued**: Choose between stacking notifications (`stack`, default) or showing them one by one (`queue`), similar to standard Snackbars.
+* **Scrollable Message Support**: Enable message text to be scrollable within a defined maximum height, useful for long logs or detailed information.
+* **Improved Gesture Handling**: Enhanced swipe-to-dismiss functionality to prevent animation conflicts, ensuring smooth dismissal without visual glitches.
 * **Highly Customizable**: Custom borders, margins, fonts, shadows, and tap actions.
 * **Smart Updates**: **Update the content** (text, icon, color) of an existing snackbar by ID without animation glitches.
 * **Interactive**: Support for action buttons (e.g., "Undo") and tap gestures on the bar itself.
@@ -30,7 +32,7 @@ Designed for modern apps that need more than just a simple toast.
 Add this to your package's `pubspec.yaml` file:
 ```dart
 dependencies:
-  hyper_snackbar: ^0.2.4
+  hyper_snackbar: ^0.2.5
 ```
 ## 🚀 Setup (Important)
 
@@ -290,7 +292,7 @@ final _router = GoRouter(
 | **Content** | | | |
 | `title` | `String` | Required | The main title text. |
 | `message` | `String?` | `null` | The subtitle text. |
-| `maxLines` | `int?` | `5` | Max lines for message. Set `null` for unlimited. |
+| `maxLines` | `int?` | `5` | Max lines for message when `scrollable` is `false`. Set `null` for unlimited display. When `scrollable` is `true`, it influences the initial height if `messageMaxHeight` is null. |
 | `icon` | `Widget?` | `null` | Icon widget displayed on the left. |
 | `action` | `HyperSnackAction?` | `null` | Action definition (label, callback, & `autoDismiss`). |
 | **Style** | | | |
@@ -308,6 +310,8 @@ final _router = GoRouter(
 | `onTap` | `VoidCallback?` | `null` | Callback when the entire bar is tapped. |
 | `displayDuration` | `Duration?` | `4s` | Set `null` for persistent (sticky) notification. |
 | `enableSwipe` | `bool` | `true` | Allow users to swipe to dismiss. |
+| `scrollable` | `bool` | `false` | If `true`, the `message` text will be scrollable within `messageMaxHeight`. In this mode, `maxLines` is primarily used to set the initial/minimum height if `messageMaxHeight` is null. |
+| `messageMaxHeight` | `double?` | `null` | The maximum height for the scrollable message area. Effective when `scrollable` is `true`. If `null`, message expands to fit content up to screen height. |
 | `showCloseButton`| `bool` | `true` | Show 'X' button on the right. |
 | `newestOnTop` | `bool` | `true` | `false` appends new items to the bottom. |
 | **Animation** | | | |

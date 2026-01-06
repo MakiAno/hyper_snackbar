@@ -344,6 +344,77 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 exitAnimationType: HyperSnackAnimationType.right,
               ),
             ),
+            const SizedBox(height: 16),
+
+            // -------------------------------------------------------
+            // 10. Scrollable Message
+            // -------------------------------------------------------
+            _buildHeader('10. Scrollable Message'),
+
+            _buildButton(
+              'Scrollable Message (maxHeight: 200)',
+              Colors.deepPurple,
+              () => HyperSnackbar.show(
+                title: 'Scrollable Log Message',
+                message:
+                    'This is a very long log message that demonstrates the scrollable feature. '
+                    'You can scroll through this message to read its full content. '
+                    'This is useful for displaying detailed error logs or system information '
+                    'without making the snackbar excessively tall. '
+                    'The snackbar will expand up to the specified `messageMaxHeight` (200.0) '
+                    'and then become scrollable within that height. '
+                    'If the message is shorter than the `messageMaxHeight`, the snackbar '
+                    'will only take the necessary height and no scrollbar will appear. '
+                    'Here is some more dummy text to make it longer: Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+                    'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                    'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+                    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. '
+                    'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                backgroundColor: Colors.deepPurple,
+                icon: const Icon(Icons.menu_book, color: Colors.white),
+                scrollable: true,
+                messageMaxHeight: 200.0,
+                context: context,
+              ),
+            ),
+            _buildButton(
+              'Scrollable Message (flexible height)',
+              Colors.indigo,
+              () => HyperSnackbar.show(
+                title: 'Flexible Scrollable Log',
+                message:
+                    'This message is also scrollable, but without a fixed `messageMaxHeight`. '
+                    'It will try to take up as much vertical space as needed, up to the available screen height, '
+                    'before becoming scrollable. This is useful when you want the message to expand '
+                    'as much as possible without obscuring other UI elements entirely. '
+                    'Here is some more dummy text to make it longer: Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+                    'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                    'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+                    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. '
+                    'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                backgroundColor: Colors.indigo,
+                icon: const Icon(Icons.vertical_align_center,
+                    color: Colors.white),
+                scrollable: true,
+                // messageMaxHeight: null, // Default behavior
+                context: context,
+              ),
+            ),
+            _buildButton(
+              'Scrollable (Short Message)',
+              Colors.blueGrey,
+              () => HyperSnackbar.show(
+                title: 'Short Scrollable Message',
+                message:
+                    'This message is short, so it will not scroll even if `scrollable` is true.',
+                backgroundColor: Colors.blueGrey,
+                icon: const Icon(Icons.short_text, color: Colors.white),
+                scrollable: true,
+                messageMaxHeight: 100.0,
+                context: context,
+              ),
+            ),
+
             const SizedBox(height: 60), // Bottom margin
 
             const SizedBox(height: 40),

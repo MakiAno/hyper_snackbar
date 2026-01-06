@@ -9,10 +9,18 @@ class HyperSnackBarContent extends StatelessWidget {
   /// A callback function that is called when the snackbar is dismissed.
   final VoidCallback onDismiss;
 
+  /// A callback function that is called when message scrolling starts.
+  final VoidCallback? onScrollStart;
+
+  /// A callback function that is called when message scrolling ends.
+  final VoidCallback? onScrollEnd;
+
   const HyperSnackBarContent({
     super.key,
     required this.config,
     required this.onDismiss,
+    this.onScrollStart,
+    this.onScrollEnd,
   });
 
   @override
@@ -71,18 +79,52 @@ class HyperSnackBarContent extends StatelessWidget {
                       ),
                       if (config.message != null) ...[
                         const SizedBox(height: 4),
-                        Text(
-                          config.message!,
-                          style: config.messageStyle ??
-                              TextStyle(
-                                color: txtColor.withValues(alpha: 0.9),
-                                fontSize: 14,
+                        if (config.scrollable)
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: config.messageMaxHeight ??
+                                  MediaQuery.of(context).size.height * 0.7,
+                            ),
+                            child: NotificationListener<ScrollNotification>(
+                              // Add NotificationListener
+                              onNotification:
+                                  (ScrollNotification notification) {
+                                if (notification is ScrollStartNotification) {
+                                  onScrollStart?.call();
+                                } else if (notification
+                                    is ScrollEndNotification) {
+                                  onScrollEnd?.call();
+                                }
+                                return false; // Allow other listeners to receive the notification
+                              },
+                              child: SingleChildScrollView(
+                                child: Text(
+                                  config.message!,
+                                  style: config.messageStyle ??
+                                      TextStyle(
+                                        color: txtColor.withValues(alpha: 0.9),
+                                        fontSize: 14,
+                                      ),
+                                  maxLines:
+                                      null, // Allow unlimited lines when scrollable
+                                  overflow: TextOverflow.visible,
+                                ),
                               ),
-                          maxLines: config.maxLines,
-                          overflow: config.maxLines == null
-                              ? TextOverflow.visible
-                              : TextOverflow.ellipsis,
-                        ),
+                            ),
+                          )
+                        else
+                          Text(
+                            config.message!,
+                            style: config.messageStyle ??
+                                TextStyle(
+                                  color: txtColor.withValues(alpha: 0.9),
+                                  fontSize: 14,
+                                ),
+                            maxLines: config.maxLines,
+                            overflow: config.maxLines == null
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                          ),
                       ],
                       if (config.action != null) ...[
                         const SizedBox(width: 8),

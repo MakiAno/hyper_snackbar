@@ -26,6 +26,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   late Animation<double>
       _animation; // Curve for entry animation is already applied
   Timer? _timer;
+  Timer? _scrollPauseTimer; // Timer for handling scroll pause/resume
 
   // Whether it is in the middle of exit animation
   bool _isExiting = false;
@@ -46,12 +47,36 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
 
   void _startEntryAnimation() {
     _controller.forward();
+    _resetDismissTimer(); // Use helper method
+  }
+
+  // Helper method to set or reset the dismiss timer
+  void _resetDismissTimer() {
+    _timer?.cancel();
+    _scrollPauseTimer?.cancel(); // Cancel any pending scroll resume timers
 
     if (config.displayDuration != null) {
       _timer = Timer(config.displayDuration!, () {
         dismiss();
       });
     }
+  }
+
+  // Pauses the dismiss timer when scrolling starts
+  void _handleScrollStart() {
+    _timer?.cancel();
+    _scrollPauseTimer?.cancel(); // Ensure no pending resume
+  }
+
+  // Resumes the dismiss timer when scrolling ends
+  void _handleScrollEnd() {
+    // Add a small delay before resuming the timer,
+    // in case of quick flick scrolls that immediately trigger scrollEnd
+    _scrollPauseTimer = Timer(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        _resetDismissTimer();
+      }
+    });
   }
 
   /// Updates the snackbar's content and appearance.
@@ -72,12 +97,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
       }
     });
 
-    _timer?.cancel();
-    if (config.displayDuration != null) {
-      _timer = Timer(config.displayDuration!, () {
-        dismiss();
-      });
-    }
+    _resetDismissTimer(); // Use the helper method
   }
 
   /// Starts the exit animation for the snackbar.
@@ -107,6 +127,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   @override
   void dispose() {
     _timer?.cancel();
+    _scrollPauseTimer?.cancel(); // Cancel scroll pause timer
     _controller.dispose();
     super.dispose();
   }
@@ -116,12 +137,20 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     Widget child = HyperSnackBarContent(
       config: config,
       onDismiss: dismiss,
+      onScrollStart: _handleScrollStart,
+      onScrollEnd: _handleScrollEnd,
     );
 
     if (config.enableSwipe) {
       child = Dismissible(
         key: ValueKey(config.id ?? DateTime.now().toString()),
         direction: DismissDirection.horizontal,
+        onUpdate: (details) {
+          if (details.progress > 0) {
+            _timer?.cancel();
+            _scrollPauseTimer?.cancel();
+          }
+        },
         onDismissed: (_) {
           widget.onDismiss();
         },
