@@ -135,6 +135,22 @@ class HyperConfig {
   /// The max lines of esaage.
   final int? maxLines;
 
+  /// Whether the message text is scrollable.
+  ///
+  /// If `true`, the `message` text will be scrollable within the `messageMaxHeight`.
+  /// When `scrollable` is `true`, `maxLines` will be used to define the initial height
+  /// (if `messageMaxHeight` is null) or the minimum height.
+  /// If `maxLines` is `null` and `scrollable` is `true`, the message will expand
+  /// to fit its content, up to the available space or `messageMaxHeight`.
+  final bool scrollable;
+
+  /// The maximum height for the scrollable message area.
+  ///
+  /// This is only effective if `scrollable` is `true`.
+  /// If `null`, it will take up as much space as the content needs, constrained
+  /// by `maxLines` (if specified) or the available screen height.
+  final double? messageMaxHeight;
+
   /// Animation. ---------------------------------------
 
   /// The duration of the entry animation.
@@ -179,6 +195,8 @@ class HyperConfig {
     this.position = HyperSnackPosition.top,
     this.displayMode = HyperSnackDisplayMode.stack,
     this.maxLines = 5,
+    this.scrollable = false,
+    this.messageMaxHeight,
     this.enterAnimationDuration = const Duration(milliseconds: 300),
     this.exitAnimationDuration = const Duration(milliseconds: 500),
     this.enterCurve = Curves.easeOutQuart,
@@ -212,6 +230,8 @@ class HyperConfig {
     HyperSnackPosition? position,
     HyperSnackDisplayMode? displayMode,
     Object? maxLines = _undefined,
+    bool? scrollable,
+    Object? messageMaxHeight = _undefined,
     Duration? enterAnimationDuration,
     Duration? exitAnimationDuration,
     Curve? enterCurve,
@@ -243,6 +263,10 @@ class HyperConfig {
       position: position ?? this.position,
       displayMode: displayMode ?? this.displayMode,
       maxLines: maxLines == _undefined ? this.maxLines : maxLines as int?,
+      scrollable: scrollable ?? this.scrollable,
+      messageMaxHeight: messageMaxHeight == _undefined
+          ? this.messageMaxHeight
+          : messageMaxHeight as double?,
       enterAnimationDuration:
           enterAnimationDuration ?? this.enterAnimationDuration,
       exitAnimationDuration:

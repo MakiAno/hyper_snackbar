@@ -63,15 +63,15 @@ void main() {
       );
       await tester.pump();
 
-      // Snackbar 1 登場
+      // Snackbar 1 appears
       await tester.pump(anim + const Duration(milliseconds: 10));
       expect(find.text('Snackbar 1'), findsOneWidget);
 
-      // Snackbar 1 退場まで待つ
+      // Wait for Snackbar 1 to dismiss
       await tester.pump(display + anim + const Duration(milliseconds: 50));
-      await tester.pump(); // Queue処理用の隙間
+      await tester.pump(); // Gap for queue processing
 
-      // Snackbar 2 登場
+      // Snackbar 2 appears
       await tester.pump(anim + const Duration(milliseconds: 10));
       expect(find.text('Snackbar 1'), findsNothing);
       expect(find.text('Snackbar 2'), findsOneWidget);
