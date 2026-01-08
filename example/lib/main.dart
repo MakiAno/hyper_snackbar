@@ -374,7 +374,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 title: 'Scrollable Log Message',
                 message:
                     'This is a very long log message that demonstrates the scrollable feature. ' *
-                    10,
+                        10,
                 backgroundColor: Colors.deepPurple,
                 icon: const Icon(Icons.menu_book, color: Colors.white),
                 scrollable: true,
@@ -388,7 +388,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 title: 'Flexible Scrollable Log',
                 message:
                     'This message expands as needed but becomes scrollable if it hits constraints. ' *
-                    10,
+                        10,
                 backgroundColor: Colors.indigo,
                 icon: const Icon(
                   Icons.vertical_align_center,

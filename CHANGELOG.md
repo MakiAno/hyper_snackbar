@@ -1,4 +1,15 @@
-## [0.2.5] - 2026-01-06
+## 0.3.0 - 2026-01-08
+
+* **FEAT**: Added `actionAlignment` parameter to control the horizontal alignment of the action button (Right, Center, Left).
+* **FEAT**: Added `content` parameter to support arbitrary Widgets as footer content (replacing the standard action button).
+* **FEAT**: Implemented "Overflow Safety" mechanism. Extremely long messages now automatically become scrollable within a constrained height (max 80% of screen) to prevent UI overflow errors.
+* **FEAT**: `Duration.zero` in `displayDuration` is now treated as a persistent snackbar (equivalent to `null`).
+* **FIX**: Resolved `ScrollController` related crashes by refactoring `HyperSnackBarContent` to a StatefulWidget.
+* **FIX**: Fixed layout issues where the close button would scroll off-screen. The header and footer are now fixed, with only the message body being scrollable.
+* **FIX**: Improved scrollbar positioning to appear at the absolute right edge of the card.
+* **DOCS**: Updated README with examples for new features.
+
+## [0.2.5]
 
 ### New Features
 * **Scrollable Message Text**: Introduced `scrollable` and `messageMaxHeight` properties to `show()` and `HyperConfig`, allowing for scrollable message content within a specified maximum height. When scrolling, the auto-dismiss timer is paused.
