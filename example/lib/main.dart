@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // ★ Register NavigatorKey to show without context
+      // Register NavigatorKey to show without context
       navigatorKey: HyperSnackbar.navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Hyper Snack Demo',
@@ -39,7 +39,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hyper Snack List Demo'),
+        title: const Text('Hyper Snack Demo v0.3.0'),
         backgroundColor: const Color(0xFF1F1F1F),
         foregroundColor: Colors.white,
       ),
@@ -90,7 +90,6 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 context: context,
               ),
             ),
-
             _buildButton(
               'Info',
               Colors.blue,
@@ -110,28 +109,21 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 title: 'Queue 1',
                 backgroundColor: Colors.orangeAccent,
                 exitAnimationType: HyperSnackAnimationType.top,
-                displayDuration: Duration(seconds: 1),
+                displayDuration: const Duration(seconds: 1),
                 displayMode: HyperSnackDisplayMode.queue,
               );
               HyperSnackbar.show(
                 title: 'Queue 2',
                 backgroundColor: Colors.orangeAccent,
                 exitAnimationType: HyperSnackAnimationType.top,
-                displayDuration: Duration(seconds: 1),
+                displayDuration: const Duration(seconds: 1),
                 displayMode: HyperSnackDisplayMode.queue,
               );
               HyperSnackbar.show(
                 title: 'Queue 3',
                 backgroundColor: Colors.orangeAccent,
                 exitAnimationType: HyperSnackAnimationType.top,
-                displayDuration: Duration(seconds: 1),
-                displayMode: HyperSnackDisplayMode.queue,
-              );
-              HyperSnackbar.show(
-                title: 'Queue 4',
-                backgroundColor: Colors.orangeAccent,
-                exitAnimationType: HyperSnackAnimationType.top,
-                displayDuration: Duration(seconds: 1),
+                displayDuration: const Duration(seconds: 1),
                 displayMode: HyperSnackDisplayMode.queue,
               );
             }),
@@ -147,13 +139,84 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             ),
 
             // -------------------------------------------------------
-            // 4. With Actions
+            // 4. With Actions & Content (Updated v0.3.0)
             // -------------------------------------------------------
-            _buildHeader('4. With Actions'),
+            _buildHeader('4. Actions & Custom Content (New)'),
             _buildButton(
-              'Delete with "Undo"',
+              'Standard Action (Right)',
               Colors.deepOrange,
               () => _showUndoSnackBar(),
+            ),
+
+            // New: Action Alignment
+            Row(
+              children: [
+                Expanded(
+                  child: _buildButton(
+                    'Left Align',
+                    Colors.orange,
+                    () => HyperSnackbar.show(
+                      title: 'Terms Updated',
+                      action: HyperSnackAction(
+                        label: 'READ',
+                        textColor: Colors.white,
+                        onPressed: () {},
+                      ),
+                      actionAlignment: MainAxisAlignment.start, // Left
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildButton(
+                    'Center Align',
+                    Colors.orange,
+                    () => HyperSnackbar.show(
+                      title: 'Update Available',
+                      action: HyperSnackAction(
+                        label: 'UPDATE',
+                        textColor: Colors.white,
+                        backgroundColor: Colors.blue,
+                        onPressed: () {},
+                      ),
+                      actionAlignment: MainAxisAlignment.center, // Center
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // New: Custom Content (Widget)
+            _buildButton(
+              'Custom Widget (Two Buttons)',
+              Colors.deepPurpleAccent,
+              () => HyperSnackbar.show(
+                title: 'Delete this item?',
+                message: 'This action cannot be undone.',
+                // Pass any widget to `content`
+                content: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => HyperSnackbar.dismissById('custom_w'),
+                      child: const Text(
+                        'CANCEL',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () => HyperSnackbar.dismissById('custom_w'),
+                      child: const Text('DELETE'),
+                    ),
+                  ],
+                ),
+                id: 'custom_w',
+              ),
             ),
 
             // -------------------------------------------------------
@@ -177,58 +240,48 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             ),
 
             // -------------------------------------------------------
-            // 7. Control & Management
+            // 7. Control & Management (Updated v0.3.0)
             // -------------------------------------------------------
             _buildHeader('7. Control & Management'),
 
-            // New Feature: Show with a fixed ID (Persistent)
+            // New: Duration.zero behavior
             _buildButton(
-              'Show Static ID ("static_1")',
+              'Persistent (Duration: 0)',
               Colors.purple,
               () => HyperSnackbar.show(
                 id: 'static_1',
                 title: 'Persistent Notification',
-                message: 'This will stay until you dismiss it by ID.',
-                displayDuration: null, // Does not disappear automatically
+                message: 'Duration.zero is now treated as persistent.',
+                displayDuration: Duration.zero, // Treated as null
                 backgroundColor: Colors.purple.shade700,
-                icon: const Icon(Icons.fingerprint, color: Colors.white),
-                showCloseButton: false, // Do not allow user to close
+                icon: const Icon(Icons.push_pin, color: Colors.white),
               ),
             ),
 
-            // New Feature: Close only the specified ID
             _buildButton(
               'Dismiss by ID ("static_1")',
               Colors.purple.shade300,
               () => HyperSnackbar.dismissById('static_1'),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
 
-            // New Feature: Close all
             _buildButton(
               'Clear All',
               Colors.grey,
               () => HyperSnackbar.clearAll(),
             ),
-
-            const SizedBox(height: 16),
-
-            // New Feature: Close all
             _buildButton(
               'Clear All (No animation)',
               Colors.grey,
               () => HyperSnackbar.clearAll(animated: false),
             ),
 
-            const SizedBox(height: 16),
-
             // -------------------------------------------------------
             // 8. Animation Playground
             // -------------------------------------------------------
             _buildHeader('8. Animation Playground'),
 
-            // 1. Slide Horizontal (comes in from the left, disappears to the right)
             _buildButton(
               'Left In -> Right Out',
               Colors.brown,
@@ -237,14 +290,10 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 message: 'Enter: fromLeft, Exit: toRight',
                 backgroundColor: Colors.brown.shade700,
                 icon: const Icon(Icons.swap_horiz, color: Colors.white),
-
-                // ★ Animation settings
                 enterAnimationType: HyperSnackAnimationType.left,
                 exitAnimationType: HyperSnackAnimationType.right,
               ),
             ),
-
-            // 2. Scale / Elastic (pops in)
             _buildButton(
               'Scale (Elastic) -> Fade',
               Colors.pink,
@@ -253,16 +302,12 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                 message: 'Enter: Scale (Elastic), Exit: Fade',
                 backgroundColor: Colors.pink.shade600,
                 icon: const Icon(Icons.star, color: Colors.white),
-
-                // ★ Animation settings
                 enterAnimationType: HyperSnackAnimationType.scale,
                 exitAnimationType: HyperSnackAnimationType.fade,
-                enterCurve: Curves.elasticOut, // Bouncy movement
+                enterCurve: Curves.elasticOut,
                 enterAnimationDuration: const Duration(milliseconds: 800),
               ),
             ),
-
-            // 3. From Bottom (comes up from the bottom)
             _buildButton(
               'From Bottom -> Slide Left',
               Colors.blueGrey,
@@ -274,77 +319,48 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
                   Icons.vertical_align_bottom,
                   color: Colors.white,
                 ),
-
-                // ★ Position and animation settings
-                position: HyperSnackPosition.bottom, // Show at the bottom
+                position: HyperSnackPosition.bottom,
                 enterAnimationType: HyperSnackAnimationType.bottom,
                 exitAnimationType: HyperSnackAnimationType.left,
               ),
             ),
 
-            // 4. Fade Only (fades in)
-            _buildButton(
-              'Fade In -> Fade Out',
-              Colors.black54,
-              () => HyperSnackbar.show(
-                title: 'Subtle Message',
-                message: 'Enter: Fade, Exit: Fade',
-                backgroundColor: Colors.black,
-                icon: const Icon(Icons.blur_on, color: Colors.white),
-
-                // ★ Animation settings
-                enterAnimationType: HyperSnackAnimationType.fade,
-                exitAnimationType: HyperSnackAnimationType.fade,
-                enterAnimationDuration: const Duration(milliseconds: 600),
-                enterCurve: Curves.easeIn,
-                exitCurve: Curves.easeIn,
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
             // -------------------------------------------------------
-            // 9. Long title & message
+            // 9. Long title & message (Updated v0.3.0)
             // -------------------------------------------------------
-            _buildHeader('9. Long title & message'),
+            _buildHeader('9. Long Message & Safety'),
 
             _buildButton(
-              'Long message. maxLines:5(defualt)',
-              Colors.yellow.shade700,
+              'Long text (maxLines: 5)',
+              Colors.yellow.shade800,
               () => HyperSnackbar.show(
-                title:
-                    'This title is long, very long, too longk, so long, much? long',
+                title: 'Truncated Long Text',
                 message:
                     'The meessage is long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long ',
-                backgroundColor: Colors.yellow.shade700,
+                backgroundColor: Colors.yellow.shade800,
                 textColor: Colors.black,
-                icon: const Icon(Icons.login_outlined, color: Colors.red),
-
-                // ★ Animation settings
-                enterAnimationType: HyperSnackAnimationType.top,
-                exitAnimationType: HyperSnackAnimationType.right,
+                icon: const Icon(Icons.short_text, color: Colors.black),
               ),
             ),
 
+            // New: Safety Overflow Demo
             _buildButton(
-              'Long message. maxLines:null(unlimited)',
-              Colors.yellow.shade700,
+              'Super Long Text (Overflow Safety)',
+              Colors.redAccent,
               () => HyperSnackbar.show(
-                title:
-                    'This title is long, very long, too longk, so long, much? long',
-                message:
-                    'The meessage is long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long strings.',
-                maxLines: null,
-                backgroundColor: Colors.yellow.shade700,
-                textColor: Colors.black,
-                icon: const Icon(Icons.login_outlined, color: Colors.red),
-
-                // ★ Animation settings
-                enterAnimationType: HyperSnackAnimationType.top,
-                exitAnimationType: HyperSnackAnimationType.right,
+                title: 'Safety Mechanism Demo',
+                // Generate huge text to exceed screen height
+                message: List.generate(
+                  50,
+                  (i) =>
+                      'Line $i: This is a very long text to test the overflow protection mechanism.',
+                ).join('\n'),
+                maxLines: null, // Unlimited lines
+                backgroundColor: Colors.black,
+                icon: const Icon(Icons.security, color: Colors.redAccent),
+                // Expected behavior: It should NOT overflow the screen, but become scrollable inside a constrained box.
               ),
             ),
-            const SizedBox(height: 16),
 
             // -------------------------------------------------------
             // 10. Scrollable Message
@@ -352,72 +368,37 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
             _buildHeader('10. Scrollable Message'),
 
             _buildButton(
-              'Scrollable Message (maxHeight: 200)',
+              'Scrollable (maxHeight: 200)',
               Colors.deepPurple,
               () => HyperSnackbar.show(
                 title: 'Scrollable Log Message',
                 message:
-                    'This is a very long log message that demonstrates the scrollable feature. '
-                    'You can scroll through this message to read its full content. '
-                    'This is useful for displaying detailed error logs or system information '
-                    'without making the snackbar excessively tall. '
-                    'The snackbar will expand up to the specified `messageMaxHeight` (200.0) '
-                    'and then become scrollable within that height. '
-                    'If the message is shorter than the `messageMaxHeight`, the snackbar '
-                    'will only take the necessary height and no scrollbar will appear. '
-                    'Here is some more dummy text to make it longer: Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
-                    'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
-                    'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
-                    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. '
-                    'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                    'This is a very long log message that demonstrates the scrollable feature. ' *
+                    10,
                 backgroundColor: Colors.deepPurple,
                 icon: const Icon(Icons.menu_book, color: Colors.white),
                 scrollable: true,
                 messageMaxHeight: 200.0,
-                context: context,
               ),
             ),
             _buildButton(
-              'Scrollable Message (flexible height)',
+              'Scrollable (Flexible Height)',
               Colors.indigo,
               () => HyperSnackbar.show(
                 title: 'Flexible Scrollable Log',
                 message:
-                    'This message is also scrollable, but without a fixed `messageMaxHeight`. '
-                    'It will try to take up as much vertical space as needed, up to the available screen height, '
-                    'before becoming scrollable. This is useful when you want the message to expand '
-                    'as much as possible without obscuring other UI elements entirely. '
-                    'Here is some more dummy text to make it longer: Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
-                    'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
-                    'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
-                    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. '
-                    'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                    'This message expands as needed but becomes scrollable if it hits constraints. ' *
+                    10,
                 backgroundColor: Colors.indigo,
-                icon: const Icon(Icons.vertical_align_center,
-                    color: Colors.white),
+                icon: const Icon(
+                  Icons.vertical_align_center,
+                  color: Colors.white,
+                ),
                 scrollable: true,
-                // messageMaxHeight: null, // Default behavior
-                context: context,
-              ),
-            ),
-            _buildButton(
-              'Scrollable (Short Message)',
-              Colors.blueGrey,
-              () => HyperSnackbar.show(
-                title: 'Short Scrollable Message',
-                message:
-                    'This message is short, so it will not scroll even if `scrollable` is true.',
-                backgroundColor: Colors.blueGrey,
-                icon: const Icon(Icons.short_text, color: Colors.white),
-                scrollable: true,
-                messageMaxHeight: 100.0,
-                context: context,
               ),
             ),
 
             const SizedBox(height: 60), // Bottom margin
-
-            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -433,17 +414,9 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
       message: 'Custom border, margin, and fonts applied.',
       backgroundColor: const Color(0xFF212121),
       icon: const Icon(Icons.brush, color: Colors.lightBlueAccent),
-
-      // Custom Border
-      border: Border.all(color: Colors.white.withAlpha(1), width: 1.0),
-
-      // Floating Margin
+      border: Border.all(color: Colors.white.withAlpha(30), width: 1.0),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-
-      // Inner Padding
       padding: const EdgeInsets.all(20),
-
-      // Custom Font Styles
       titleStyle: const TextStyle(
         color: Colors.white,
         fontSize: 18,
@@ -451,7 +424,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
         letterSpacing: 1.2,
       ),
       messageStyle: TextStyle(
-        color: Colors.white.withAlpha(7),
+        color: Colors.white.withAlpha(180),
         fontStyle: FontStyle.italic,
       ),
     );
@@ -473,6 +446,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
           HyperSnackbar.showSuccess(title: 'Item restored!');
         },
       ),
+      // Default is Right Alignment
     );
   }
 
@@ -482,10 +456,8 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   Future<void> _showProcessSnackBar() async {
     const String processId = 'process_123';
 
-    // To ensure this demo is clearly visible, clear other snackbars first.
     if (HyperSnackbar.isSnackbarOpen) {
       HyperSnackbar.clearAll();
-      // Wait a short moment for the clear animation to start.
       await Future.delayed(const Duration(milliseconds: 300));
     }
 
@@ -531,7 +503,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
       id: processId,
       title: 'Completed!',
       message: 'All tasks finished successfully.',
-      displayDuration: const Duration(seconds: 3), // Disappears after 3 seconds
+      displayDuration: const Duration(seconds: 3),
       backgroundColor: Colors.green[700]!,
       icon: const Icon(Icons.check_circle, color: Colors.white),
       context: context,
@@ -545,12 +517,9 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
     HyperSnackbar.show(
       title: 'System Log #$_logCount',
       message: 'Newest item is appended to the bottom.',
-
       position: HyperSnackPosition.top,
       newestOnTop: false, // Append to the bottom
       enterAnimationType: HyperSnackAnimationType.top,
-
-      // Console-style design
       backgroundColor: Colors.black87,
       borderRadius: 4.0,
       margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
@@ -560,8 +529,6 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
         color: Colors.greenAccent,
         fontWeight: FontWeight.bold,
       ),
-
-      // ★ Limit the maximum number of visible items to 5 (the first one disappears when the 6th one appears)
       maxVisibleCount: 5,
       context: context,
     );
@@ -608,9 +575,6 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   }
 }
 
-// ----------------------------------------------------------------
-// Detail Page (Navigation Target)
-// ----------------------------------------------------------------
 class DetailPage extends StatelessWidget {
   final String title;
   const DetailPage({super.key, required this.title});
