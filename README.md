@@ -9,9 +9,9 @@ A highly customizable, animated, and stackable snackbar manager for Flutter.
 Designed for modern apps that need more than just a simple toast.
 
 <p align="center">
-  <img src="screenshots/demo1.gif" width="32%" />
-  <img src="screenshots/demo2.gif" width="32%" />
-  <img src="screenshots/demo3.gif" width="32%" />
+  <img src="https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo1.gif" width="32%" />
+  <img src="https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo2.gif" width="32%" />
+  <img src="https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo3.gif" width="32%" />
 </p>
 
 ## ✨ Features
