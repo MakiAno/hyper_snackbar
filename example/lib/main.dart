@@ -39,7 +39,7 @@ class _HyperDemoPageState extends State<HyperDemoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hyper Snack Demo v0.3.0'),
+        title: const Text('Hyper Snack Demo v0.3.1'),
         backgroundColor: const Color(0xFF1F1F1F),
         foregroundColor: Colors.white,
       ),

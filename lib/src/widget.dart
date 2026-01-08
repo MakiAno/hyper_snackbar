@@ -96,6 +96,9 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // ---------------------------------------------------
+                // 1. Header (Icon + Title + Close Button)
+                // ---------------------------------------------------
                 Padding(
                   padding: EdgeInsets.only(
                     left: leftPad,
@@ -135,11 +138,16 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                     ],
                   ),
                 ),
+
+                // ---------------------------------------------------
+                // 2. Body (Message)
+                // ---------------------------------------------------
                 if (hasMessage) ...[
                   const SizedBox(height: 4),
                   Flexible(
                     fit: FlexFit.loose,
                     child: Container(
+                      width: double.infinity,
                       constraints: BoxConstraints(
                         maxHeight: config.scrollable
                             ? (config.messageMaxHeight ?? double.infinity)
@@ -181,7 +189,8 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                         fontSize: 14,
                                       ),
                                   // If scrollable=true, display all lines (view by scrolling)
-                                  maxLines: config.scrollable
+                                  maxLines: (config.scrollable ||
+                                          config.maxLines == null)
                                       ? null
                                       : config.maxLines,
                                   overflow: (config.scrollable ||
@@ -197,6 +206,10 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                     ),
                   ),
                 ],
+
+                // ---------------------------------------------------
+                // 3. Footer (Action / Content)
+                // ---------------------------------------------------
                 if (hasFooter) ...[
                   // If there is no message, make the gap with the title a little wider
                   SizedBox(height: hasMessage ? 0 : 8),
