@@ -30,155 +30,175 @@ Designed for modern apps that need more than just a simple toast.
 ## 📦 Installation
 
 Add this to your package's `pubspec.yaml` file:
-```dart
-    dependencies:
-      hyper_snackbar: ^0.3.0
+
+```yaml
+dependencies:
+  hyper_snackbar: ^0.3.1
 ```
+
 ## 🚀 Setup (Important)
 
 To use `HyperSnackbar` from anywhere in your code (e.g., ViewModels, BLoCs), you must register the `navigatorKey` in your `MaterialApp`.
+
 ```dart
-    import 'package:hyper_snackbar/hyper_snackbar.dart';
+import 'package:hyper_snackbar/hyper_snackbar.dart';
 
-    void main() {
-      runApp(const MyApp());
-    }
+void main() {
+  runApp(const MyApp());
+}
 
-    class MyApp extends StatelessWidget {
-      const MyApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-      @override
-      Widget build(BuildContext context) {
-        return MaterialApp(
-          title: 'My App',
-          // ▼ Register the key here to show snackbars without BuildContext
-          navigatorKey: HyperSnackbar.navigatorKey, 
-          home: const HomePage(),
-        );
-      }
-    }
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'My App',
+      // ▼ Register the key here to show snackbars without BuildContext
+      navigatorKey: HyperSnackbar.navigatorKey, 
+      home: const HomePage(),
+    );
+  }
+}
 ```
+
 ## 💡 Usage
 
 ### Basic Usage
 The API is static, so you can call it directly without creating an instance.
+
 ```dart
-    HyperSnackbar.show(
-      title: 'Success!',
-      message: 'Data has been saved successfully.',
-      backgroundColor: Colors.green,
-    );
+HyperSnackbar.show(
+  title: 'Success!',
+  message: 'Data has been saved successfully.',
+  backgroundColor: Colors.green,
+);
 ```
+
 ### Action Alignment (Right / Center / Left) 🆕
 You can now control the position of the action button.
+
 ```dart
-    // Center Alignment
-    HyperSnackbar.show(
-      title: 'Update Available',
-      action: HyperSnackAction(
-        label: 'INSTALL',
-        onPressed: () => installUpdate(),
-      ),
-      actionAlignment: MainAxisAlignment.center, // <--- Center the button
-    );
+// Center Alignment
+HyperSnackbar.show(
+  title: 'Update Available',
+  action: HyperSnackAction(
+    label: 'INSTALL',
+    onPressed: () => installUpdate(),
+  ),
+  actionAlignment: MainAxisAlignment.center, // <--- Center the button
+);
 ```
+
 ### Custom Content (Arbitrary Widget) 🆕
 Need more than one button? Use `content` to pass any widget.
+
 ```dart
-    HyperSnackbar.show(
-      title: 'Delete this item?',
-      message: 'This action cannot be undone.',
-      // Embed your own widget
-      content: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          TextButton(
-            onPressed: () => HyperSnackbar.dismissById('delete_confirm'),
-            child: Text('CANCEL', style: TextStyle(color: Colors.white)),
-          ),
-          SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: () => deleteItem(),
-            child: Text('DELETE'),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          ),
-        ],
+HyperSnackbar.show(
+  title: 'Delete this item?',
+  message: 'This action cannot be undone.',
+  // Embed your own widget
+  content: Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      TextButton(
+        onPressed: () => HyperSnackbar.dismissById('delete_confirm'),
+        child: Text('CANCEL', style: TextStyle(color: Colors.white)),
       ),
-      id: 'delete_confirm',
-    );
+      SizedBox(width: 8),
+      ElevatedButton(
+        onPressed: () => deleteItem(),
+        child: Text('DELETE'),
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+      ),
+    ],
+  ),
+  id: 'delete_confirm',
+);
 ```
+
 ### Presets
 Simple one-liners for common scenarios.
+
 ```dart
-    // Success
-    HyperSnackbar.showSuccess(title: 'Saved successfully');
+// Success
+HyperSnackbar.showSuccess(title: 'Saved successfully');
 
-    // Error
-    HyperSnackbar.showError(
-      title: 'Connection Failed', 
-      message: 'Please check your internet connection.'
-    );
+// Error
+HyperSnackbar.showError(
+  title: 'Connection Failed', 
+  message: 'Please check your internet connection.'
+);
 
-    // Warning
-    HyperSnackbar.showWarning(title: 'Low Storage');
+// Warning
+HyperSnackbar.showWarning(title: 'Low Storage');
 
-    // Info
-    HyperSnackbar.showInfo(title: 'New Message Received');
+// Info
+HyperSnackbar.showInfo(title: 'New Message Received');
 ```
+
 ### Update by ID (Loading -> Done) ⚡
 Update the state of a snackbar by providing a unique `id`.
+
 ```dart
-    const String processId = 'upload_process';
+const String processId = 'upload_process';
 
-    // 1. Show Loading state
-    HyperSnackbar.show(
-      id: processId,
-      title: 'Uploading...',
-      displayDuration: null, // Keep it visible
-      icon: CircularProgressIndicator(color: Colors.white),
-    );
+// 1. Show Loading state
+HyperSnackbar.show(
+  id: processId,
+  title: 'Uploading...',
+  displayDuration: null, // Keep it visible
+  icon: CircularProgressIndicator(color: Colors.white),
+);
 
-    // ... do some work ...
+// ... do some work ...
 
-    // 2. Update to "Done" state (using the same ID)
-    HyperSnackbar.show(
-      id: processId, // Replaces the content
-      title: 'Upload Complete!',
-      backgroundColor: Colors.green,
-      icon: Icon(Icons.check_circle, color: Colors.white),
-      displayDuration: Duration(seconds: 3), // Auto-dismiss
-    );
+// 2. Update to "Done" state (using the same ID)
+HyperSnackbar.show(
+  id: processId, // Replaces the content
+  title: 'Upload Complete!',
+  backgroundColor: Colors.green,
+  icon: Icon(Icons.check_circle, color: Colors.white),
+  displayDuration: Duration(seconds: 3), // Auto-dismiss
+);
 ```
+
 ### Advanced Usage
 
 #### Persistent Notification
 Set `displayDuration` to `Duration.zero` (or `null`) to make the snackbar stay until manually dismissed.
+
 ```dart
-    HyperSnackbar.show(
-      title: 'Persistent Message',
-      message: 'I will stay here until you close me.',
-      displayDuration: Duration.zero, // <--- Persistent
-    );
+HyperSnackbar.show(
+  title: 'Persistent Message',
+  message: 'I will stay here until you close me.',
+  displayDuration: Duration.zero, // <--- Persistent
+);
 ```
+
 #### Handling Long Text (Overflow Safety)
 Even with `maxLines: null`, the snackbar will safely handle extremely long text by enabling internal scrolling, ensuring it never exceeds the screen height.
+
 ```dart
-    HyperSnackbar.show(
-      title: 'System Log',
-      message: 'Very long error log...\nLine 1\nLine 2\n...',
-      maxLines: null, // Unlimited lines (scrollable if needed)
-      backgroundColor: Colors.grey[900],
-    );
+HyperSnackbar.show(
+  title: 'System Log',
+  message: 'Very long error log...\nLine 1\nLine 2\n...',
+  maxLines: null, // Unlimited lines (scrollable if needed)
+  backgroundColor: Colors.grey[900],
+);
 ```
+
 ### Using with GoRouter
 
 If you are using `go_router`, simply assign `HyperSnackbar.navigatorKey` to the `navigatorKey` property.
+
 ```dart
-    final _router = GoRouter(
-      navigatorKey: HyperSnackbar.navigatorKey, // Add this line
-      routes: [ ... ],
-    );
+final _router = GoRouter(
+  navigatorKey: HyperSnackbar.navigatorKey, // Add this line
+  routes: [ ... ],
+);
 ```
+
 ## ⚙️ Configuration (`HyperConfig`)
 
 | Property | Type | Default | Description |

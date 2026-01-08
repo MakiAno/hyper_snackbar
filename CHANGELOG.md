@@ -1,4 +1,9 @@
-## 0.3.0 - 2026-01-08
+## 0.3.1 - 2026-01-08
+
+* **FIX**: Ensures the scrollbar always appears at the right edge of the card, even for short messages on wide screens.
+* **DOCS**: Updated README images to use absolute URLs for better compatibility with pub.dev.
+
+## 0.3.0
 
 * **FEAT**: Added `actionAlignment` parameter to control the horizontal alignment of the action button (Right, Center, Left).
 * **FEAT**: Added `content` parameter to support arbitrary Widgets as footer content (replacing the standard action button).
