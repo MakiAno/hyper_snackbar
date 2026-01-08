@@ -55,7 +55,9 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     _timer?.cancel();
     _scrollPauseTimer?.cancel(); // Cancel any pending scroll resume timers
 
-    if (config.displayDuration != null) {
+    // Treat Duration.zero as persistent (null)
+    if (config.displayDuration != null &&
+        config.displayDuration != Duration.zero) {
       _timer = Timer(config.displayDuration!, () {
         dismiss();
       });

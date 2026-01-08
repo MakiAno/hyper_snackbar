@@ -116,7 +116,7 @@ class HyperConfig {
 
   /// The duration for which the snackbar is displayed.
   ///
-  /// If `null`, the snackbar will be persistent until manually dismissed.
+  /// If `null` or `Duration.zero`, the snackbar will be persistent until manually dismissed.
   final Duration? displayDuration;
 
   /// Whether to show a close button on the right side of the snackbar.
