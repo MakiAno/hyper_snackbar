@@ -45,6 +45,8 @@ class HyperSnackbar {
       String? message,
       Widget? icon,
       HyperSnackAction? action,
+      MainAxisAlignment actionAlignment = MainAxisAlignment.end,
+      Widget? content,
       VoidCallback? onTap,
       TextStyle? titleStyle,
       TextStyle? messageStyle,
@@ -79,6 +81,8 @@ class HyperSnackbar {
       message: message,
       icon: icon,
       action: action,
+      actionAlignment: actionAlignment,
+      content: content,
       onTap: onTap,
       titleStyle: titleStyle,
       messageStyle: messageStyle,
@@ -320,6 +324,8 @@ class HyperSnackbar {
 
   // --- Internal Logic ---
 
+  /// Updates the state of an existing snackbar without removing/re-adding it.
+  /// This ensures smooth transitions (e.g., loading -> success) without exit animations.
   static bool _tryUpdate(
       HyperConfig newConfig, List<Widget> list, StreamController stream) {
     final index = list.indexWhere(
@@ -409,6 +415,8 @@ class HyperSnackbar {
 
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
+      // Avoid inserting the overlay during the build phase to prevent
+      // "setState() or markNeedsBuild() called during build" errors.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (overlayState?.mounted == true) {
           overlayState!.insert(newEntry);
@@ -503,6 +511,8 @@ extension HyperSnackbarExtensions on BuildContext {
       String? message,
       Widget? icon,
       HyperSnackAction? action,
+      MainAxisAlignment actionAlignment = MainAxisAlignment.end,
+      Widget? content,
       VoidCallback? onTap,
       TextStyle? titleStyle,
       TextStyle? messageStyle,
@@ -537,6 +547,8 @@ extension HyperSnackbarExtensions on BuildContext {
       message: message,
       icon: icon,
       action: action,
+      actionAlignment: actionAlignment,
+      content: content,
       onTap: onTap,
       titleStyle: titleStyle,
       messageStyle: messageStyle,

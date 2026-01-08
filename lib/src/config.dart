@@ -70,8 +70,15 @@ class HyperConfig {
   /// An optional icon to display on the left side of the snackbar.
   final Widget? icon;
 
-  /// An optional action button to display on the right side of the snackbar.
+  /// An optional action button to display.
   final HyperSnackAction? action;
+
+  /// The alignment of the action button.
+  final MainAxisAlignment actionAlignment;
+
+  /// A custom widget to display instead of the action button.
+  /// If this is provided, [action] will be ignored.
+  final Widget? content;
 
   /// Interaction & Style. ------------------------------
 
@@ -177,6 +184,8 @@ class HyperConfig {
     this.message,
     this.icon,
     this.action,
+    this.actionAlignment = MainAxisAlignment.end,
+    this.content,
     this.onTap,
     this.titleStyle,
     this.messageStyle,
@@ -212,6 +221,8 @@ class HyperConfig {
     Object? message = _undefined,
     Widget? icon,
     HyperSnackAction? action,
+    MainAxisAlignment? actionAlignment,
+    Widget? content,
     VoidCallback? onTap,
     TextStyle? titleStyle,
     TextStyle? messageStyle,
@@ -245,6 +256,8 @@ class HyperConfig {
       message: message == _undefined ? this.message : message as String?,
       icon: icon ?? this.icon,
       action: action ?? this.action,
+      actionAlignment: actionAlignment ?? this.actionAlignment,
+      content: content ?? this.content,
       onTap: onTap ?? this.onTap,
       titleStyle: titleStyle ?? this.titleStyle,
       messageStyle: messageStyle ?? this.messageStyle,
