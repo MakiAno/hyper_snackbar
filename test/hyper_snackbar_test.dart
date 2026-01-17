@@ -111,6 +111,7 @@ void main() {
       const display = Duration(milliseconds: 500);
       const anim = Duration(milliseconds: 50);
 
+      // 1. Show A
       HyperSnackbar.show(
         title: 'A',
         displayMode: HyperSnackDisplayMode.queue,
@@ -122,6 +123,7 @@ void main() {
       await tester.pump(anim + const Duration(milliseconds: 10));
       expect(find.text('A'), findsOneWidget);
 
+      // 2. Show B (Queued)
       HyperSnackbar.show(
         title: 'B',
         displayMode: HyperSnackDisplayMode.queue,
@@ -132,10 +134,16 @@ void main() {
       await tester.pump();
       await tester.pump(anim + const Duration(milliseconds: 10));
 
+      expect(find.text('A'), findsOneWidget);
       expect(find.text('B'), findsNothing);
 
-      await tester.pump(const Duration(milliseconds: 800));
-      await tester.pumpAndSettle();
+      await tester.pump(display);
+
+      await tester.pump(anim);
+
+      await tester.pump();
+
+      await tester.pump(anim);
 
       expect(find.text('A'), findsNothing);
       expect(find.text('B'), findsOneWidget);
@@ -286,7 +294,7 @@ void main() {
 
       // Animation progress
       await tester.pump();
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 300));
 
       // 3. Verification
       expect(
@@ -319,7 +327,7 @@ void main() {
       HyperSnackbar.showFromConfig(noTitleConfig);
 
       await tester.pump();
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 300));
 
       // 3. Verification (success if message displays without crashing)
       expect(find.text('Message Only Notification'), findsOneWidget);

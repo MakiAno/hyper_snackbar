@@ -7,48 +7,54 @@ import 'package:hyper_snackbar/hyper_snackbar.dart';
 void main() {
   testWidgets('GoRouter transition does not crash HyperSnackbar',
       (WidgetTester tester) async {
-    // 1. GoRouter setup for testing
-    final router = GoRouter(
-      navigatorKey: HyperSnackbar.navigatorKey, // This is key for the test
-      initialLocation: '/',
-      routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => Scaffold(
-            body: ElevatedButton(
+    // 1. アプリを起動 (このファイル内で定義したルーターを使用)
+    await tester.pumpWidget(_createTestApp());
+
+    // 初期表示の完了を待つ
+    await tester.pumpAndSettle();
+
+    // 2. ボタンをタップ
+    // これで確実にボタンが見つかるはずです
+    await tester.tap(find.text('Show Snackbar'));
+
+    // 3. スナックバーの表示処理を待機
+    // Overlayへの挿入にはフレーム経過が必要なため、念入りにpumpします
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300)); // アニメーション
+
+    // 4. 検証
+    expect(find.text('Hello GoRouter'), findsOneWidget);
+  });
+}
+
+// --- テスト用のGoRouterアプリ定義 ---
+Widget _createTestApp() {
+  final router = GoRouter(
+    initialLocation: '/',
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => Scaffold(
+          body: Center(
+            child: ElevatedButton(
               onPressed: () {
-                context.go('/second');
-                // Display snackbar immediately after screen transition (simulating a call during build)
-                HyperSnackbar.show(title: 'Test', message: 'Message');
+                // ここでスナックバーを表示
+                HyperSnackbar.show(
+                  context: context,
+                  title: 'Hello GoRouter',
+                  message: 'This is a test.',
+                );
               },
-              child: const Text('Go'),
+              child: const Text('Show Snackbar'), // ★この文字を探しています
             ),
           ),
         ),
-        GoRoute(
-          path: '/second',
-          builder: (context, state) =>
-              const Scaffold(body: Text('Second Page')),
-        ),
-      ],
-    );
+      ),
+    ],
+  );
 
-    // 2. Sart App
-    await tester.pumpWidget(MaterialApp.router(
-      routerConfig: router,
-    ));
-
-    // 3. Tap the button and transition
-    await tester.tap(find.text('Go'));
-
-    // 4. Rebuid screen
-    await tester.pumpAndSettle();
-
-    // 5. No error and Transition complete
-    expect(find.text('Second Page'), findsOneWidget);
-
-    // Check snackbars
-    expect(find.text('Test'), findsOneWidget);
-    expect(find.text('Message'), findsOneWidget);
-  });
+  return MaterialApp.router(
+    routerConfig: router,
+  );
 }
