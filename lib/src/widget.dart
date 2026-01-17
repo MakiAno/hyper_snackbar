@@ -45,7 +45,6 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
   @override
   Widget build(BuildContext context) {
     final config = widget.config;
-    final theme = Theme.of(context);
     final bgColor = config.backgroundColor ?? Colors.grey[800];
     final txtColor = config.textColor ?? Colors.white;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -54,8 +53,6 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
     final hasBorder = config.border != null;
 
     // Get padding from config
-    // We split the padding into individual sides to apply them to specific sections (Header, Body, Footer).
-    // This allows the scrollbar to appear at the absolute right edge of the card, outside the content padding.
     final EdgeInsetsGeometry basePadding = config.padding;
     final double leftPad = basePadding is EdgeInsets ? basePadding.left : 16.0;
     final double rightPad =
@@ -88,7 +85,6 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
           onTap: config.onTap,
           borderRadius: BorderRadius.circular(config.borderRadius),
           child: ConstrainedBox(
-            // Safety measure: Limit the total height to 80% of the screen
             constraints: BoxConstraints(
               maxHeight: screenHeight * 0.8,
             ),
@@ -104,7 +100,6 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                     left: leftPad,
                     right: rightPad,
                     top: topPad,
-                    // If there is no message and no footer, this is the last element, so add bottom padding
                     bottom: (!hasMessage && !hasFooter) ? bottomPad : 0,
                   ),
                   child: Row(
@@ -116,7 +111,8 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                       ],
                       Expanded(
                         child: Text(
-                          config.title,
+                          // Fix1: config.title ?? '' （Null handling）
+                          config.title ?? '',
                           style: config.titleStyle ??
                               TextStyle(
                                 color: txtColor,
@@ -165,7 +161,6 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                         child: Scrollbar(
                           controller: _scrollController,
                           thumbVisibility: true,
-                          // Place Padding inside to keep the Scrollbar on the right edge (outside of Padding)
                           child: SingleChildScrollView(
                             controller: _scrollController,
                             physics:
@@ -176,7 +171,6 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                               padding: EdgeInsets.only(
                                 left: leftPad,
                                 right: rightPad,
-                                // If there is no footer, this is the last element, so add bottom padding
                                 bottom: (!hasFooter) ? bottomPad : 4.0,
                               ),
                               child: Align(
@@ -188,7 +182,6 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                         color: txtColor.withValues(alpha: 0.9),
                                         fontSize: 14,
                                       ),
-                                  // If scrollable=true, display all lines (view by scrolling)
                                   maxLines: (config.scrollable ||
                                           config.maxLines == null)
                                       ? null
@@ -211,9 +204,7 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                 // 3. Footer (Action / Content)
                 // ---------------------------------------------------
                 if (hasFooter) ...[
-                  // If there is no message, make the gap with the title a little wider
                   SizedBox(height: hasMessage ? 0 : 8),
-
                   Padding(
                     padding: EdgeInsets.only(
                       left: leftPad,
@@ -238,8 +229,9 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                   }
                                 },
                                 style: TextButton.styleFrom(
+                                  // FIX2: Call Theme.of(context) directly here
                                   foregroundColor: config.action!.textColor ??
-                                      theme.colorScheme.primary,
+                                      Theme.of(context).colorScheme.primary,
                                   backgroundColor:
                                       config.action!.backgroundColor,
                                   padding: const EdgeInsets.symmetric(

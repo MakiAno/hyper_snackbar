@@ -1,4 +1,11 @@
-## 0.3.1 - 2026-01-08
+## 0.3.2 - 2026-01-17
+
+* **IMPROVEMENT**: Made `title` in `HyperConfig` optional (`String?`). This facilitates the creation of reusable configuration templates (e.g., defining a common error style without a dummy title).
+* **DOCS**: Updated the configuration table in `README.md` to include previously missing parameters: `maxVisibleCount`, `displayMode`, `scrollable`, and `messageMaxHeight`.
+* **DOCS**: Added a "Style Templates" section to `README.md` to demonstrate how to reuse configuration objects effectively.
+* **REFACTOR**: Improved null-safety handling for the title in `HyperSnackBarContent` and removed unused variables.
+
+## 0.3.1
 
 * **FIX**: Ensures the scrollbar always appears at the right edge of the card, even for short messages on wide screens.
 * **DOCS**: Updated README images to use absolute URLs for better compatibility with pub.dev.
