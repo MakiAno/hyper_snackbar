@@ -62,7 +62,10 @@ class HyperConfig {
   final String? id;
 
   /// The main title text of the snackbar.
-  final String title;
+  ///
+  /// This is optional to allow creating "template" configs without a title.
+  /// However, when displaying, a title is usually expected.
+  final String? title;
 
   /// The detailed message body text.
   final String? message;
@@ -179,7 +182,7 @@ class HyperConfig {
   final HyperSnackAnimationType exitAnimationType;
 
   const HyperConfig({
-    required this.title,
+    this.title, // Removed required
     this.id,
     this.message,
     this.icon,

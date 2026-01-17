@@ -33,7 +33,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.3.1
+  hyper_snackbar: ^0.3.2
 ```
 
 ## 🚀 Setup (Important)
@@ -165,6 +165,33 @@ HyperSnackbar.show(
 
 ### Advanced Usage
 
+### Style Templates (Reusable Config) 🆕
+You can create a base configuration without a title and reuse it across your app.
+
+```dart
+// 1. Define a style template (No title required!)
+final errorStyle = HyperConfig(
+  backgroundColor: Colors.red,
+  icon: Icon(Icons.error, color: Colors.white),
+  borderRadius: 8,
+);
+
+// 2. Use it anywhere
+HyperSnackbar.showFromConfig(
+  errorStyle.copyWith(
+    title: 'Network Error',
+    message: 'Please check your connection.',
+  ),
+);
+
+HyperSnackbar.showFromConfig(
+  errorStyle.copyWith(
+    title: 'Server Error',
+    message: 'Please try again later.',
+  ),
+);
+```
+
 #### Persistent Notification
 Set `displayDuration` to `Duration.zero` (or `null`) to make the snackbar stay until manually dismissed.
 
@@ -204,13 +231,15 @@ final _router = GoRouter(
 | Property | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | **Content** | | | |
-| `title` | `String` | Required | The main title text. |
+| `title` | `String?` | `null` | The main title text. (Optional for templates) |
 | `message` | `String?` | `null` | The subtitle text. |
 | `icon` | `Widget?` | `null` | Icon widget displayed on the left. |
 | `action` | `HyperSnackAction?` | `null` | Action button definition. |
 | `actionAlignment` | `MainAxisAlignment` | `.end` | Alignment of the action (Left/Center/Right). |
 | `content` | `Widget?` | `null` | Custom widget to replace the action button. |
 | `maxLines` | `int?` | `5` | Max lines for message. `null` for unlimited. |
+| `scrollable` | `bool` | `false` | Enable vertical scrolling for message. |
+| `messageMaxHeight` | `double?` | `null` | Limit height of scrollable message area. |
 | **Style** | | | |
 | `backgroundColor` | `Color` | `Grey[800]` | Background color. |
 | `textColor` | `Color` | `White` | Text color. |
@@ -226,6 +255,8 @@ final _router = GoRouter(
 | `enableSwipe` | `bool` | `true` | Allow swipe to dismiss. |
 | `showCloseButton`| `bool` | `true` | Show 'X' button on the right. |
 | `newestOnTop` | `bool` | `true` | `false` appends new items to the bottom. |
+| `maxVisibleCount` | `int` | `3` | Max visible snackbars in stack mode. |
+| `displayMode` | `Enum` | `.stack` | `.stack` (Overlay) or `.queue` (One by one). |
 | **Animation** | | | |
 | `enterAnimationType`| `Enum` | `.top` | Entry animation type. |
 | `exitAnimationType` | `Enum` | `.left` | Exit animation type. |
