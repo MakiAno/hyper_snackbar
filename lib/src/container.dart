@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'config.dart';
 import 'widget.dart';
@@ -19,14 +18,14 @@ class HyperSnackBarContainer extends StatefulWidget {
 }
 
 class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   /// The current configuration of the snackbar.
   late HyperConfig config;
-  late AnimationController _controller;
-  late Animation<double>
-      _animation; // Curve for entry animation is already applied
-  Timer? _timer;
-  Timer? _scrollPauseTimer; // Timer for handling scroll pause/resume
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  // Deprecated Timer, managing time with _durationController
+  late AnimationController _durationController;
 
   // Whether it is in the middle of exit animation
   bool _isExiting = false;
@@ -35,91 +34,99 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   void initState() {
     super.initState();
     config = widget.config;
-    _controller = AnimationController(
+
+    // 1. Controller for entry/exit animations
+    _animationController = AnimationController(
       vsync: this,
       duration: config.enterAnimationDuration,
     );
 
-    _animation = CurvedAnimation(parent: _controller, curve: config.enterCurve);
+    _animation =
+        CurvedAnimation(parent: _animationController, curve: config.enterCurve);
+
+    // 2. Controller for display duration management
+    _durationController = AnimationController(
+      vsync: this,
+      // If null, set a reasonably long duration (it won't run, so it's fine)
+      duration: config.displayDuration ?? const Duration(days: 365),
+    );
+
+    // Close when animation completes
+    _durationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        dismiss();
+      }
+    });
 
     _startEntryAnimation();
   }
 
   void _startEntryAnimation() {
-    _controller.forward();
-    _resetDismissTimer(); // Use helper method
+    _animationController.forward();
+    _startDurationTimer(); // Start timer (controller) here!
   }
 
-  // Helper method to set or reset the dismiss timer
-  void _resetDismissTimer() {
-    _timer?.cancel();
-    _scrollPauseTimer?.cancel(); // Cancel any pending scroll resume timers
-
-    // Treat Duration.zero as persistent (null)
+  // Method to start Controller instead of Timer
+  void _startDurationTimer() {
+    // Start counting if not persistent (null) and not zero
     if (config.displayDuration != null &&
         config.displayDuration != Duration.zero) {
-      _timer = Timer(config.displayDuration!, () {
-        dismiss();
-      });
+      _durationController.forward();
     }
   }
 
-  // Pauses the dismiss timer when scrolling starts
+  // Pause on scroll start
   void _handleScrollStart() {
-    _timer?.cancel();
-    _scrollPauseTimer?.cancel(); // Ensure no pending resume
+    if (config.displayDuration != null) {
+      _durationController.stop();
+    }
   }
 
-  // Resumes the dismiss timer when scrolling ends
+  // Resume on scroll end
   void _handleScrollEnd() {
-    // Add a small delay before resuming the timer,
-    // in case of quick flick scrolls that immediately trigger scrollEnd
-    _scrollPauseTimer = Timer(const Duration(milliseconds: 100), () {
-      if (mounted) {
-        _resetDismissTimer();
-      }
-    });
+    if (config.displayDuration != null && !_isExiting && mounted) {
+      _durationController.forward();
+    }
   }
 
   /// Updates the snackbar's content and appearance.
-  ///
-  /// If the snackbar is in the middle of an exit animation, this method
-  /// will cancel the exit and start a new entry animation with the updated
-  /// configuration.
   void updateConfig(HyperConfig newConfig) {
     setState(() {
       config = newConfig;
 
-      // Process to restore if an update comes during exit
+      // If update comes during Exit, cancel and redisplay
       if (_isExiting) {
         _isExiting = false;
-        _controller.stop();
-        _controller.duration = config.enterAnimationDuration;
-        _controller.forward();
+        _animationController.stop();
+        _animationController.duration = config.enterAnimationDuration;
+        _animationController.forward();
       }
     });
 
-    _resetDismissTimer(); // Use the helper method
+    // Reset Duration timer and restart
+    _durationController.stop();
+    _durationController.value = 0.0;
+    if (config.displayDuration != null) {
+      _durationController.duration = config.displayDuration;
+      _startDurationTimer();
+    }
   }
 
   /// Starts the exit animation for the snackbar.
-  ///
-  /// Once the animation is complete, the `onDismiss` callback is called.
   void dismiss() {
     if (!mounted || _isExiting) return;
 
-    _timer?.cancel();
+    _durationController.stop(); // Stop timer
 
     setState(() {
       _isExiting = true;
     });
 
-    _controller.stop();
-    _controller.duration = config.exitAnimationDuration;
-    _controller.reset();
+    _animationController.stop();
+    _animationController.duration = config.exitAnimationDuration;
+    _animationController.reset();
 
-    _controller.forward().then((_) {
-      // If it is still in exit mode upon completion, execute deletion
+    _animationController.forward().then((_) {
       if (mounted && _isExiting) {
         widget.onDismiss();
       }
@@ -128,9 +135,8 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
 
   @override
   void dispose() {
-    _timer?.cancel();
-    _scrollPauseTimer?.cancel(); // Cancel scroll pause timer
-    _controller.dispose();
+    _animationController.dispose();
+    _durationController.dispose();
     super.dispose();
   }
 
@@ -141,6 +147,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
       onDismiss: dismiss,
       onScrollStart: _handleScrollStart,
       onScrollEnd: _handleScrollEnd,
+      durationAnimation: _durationController, // Pass Controller
     );
 
     if (config.enableSwipe) {
@@ -148,9 +155,9 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
         key: ValueKey(config.id ?? DateTime.now().toString()),
         direction: DismissDirection.horizontal,
         onUpdate: (details) {
+          // Stop timer during swipe
           if (details.progress > 0) {
-            _timer?.cancel();
-            _scrollPauseTimer?.cancel();
+            _durationController.stop();
           }
         },
         onDismissed: (_) {
@@ -161,7 +168,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     }
 
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _animationController,
       builder: (context, child) {
         return _isExiting
             ? _applyExitAnimation(child!)
@@ -172,100 +179,79 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   }
 
   // ---------------------------------------------------------------------------
-  // Enter animation
+  // Enter/Exit animations
   // ---------------------------------------------------------------------------
   Widget _applyEnterAnimation(Widget child) {
-    // config.enterCurve is already applied to _animation
-
     switch (config.enterAnimationType) {
       case HyperSnackAnimationType.scale:
         return ScaleTransition(
-          scale: _animation,
-          child: child,
+          scale: Tween<double>(begin: 0.6, end: 1.0).animate(_animation),
+          child: FadeTransition(
+            opacity: _animation,
+            child: child,
+          ),
         );
-
       case HyperSnackAnimationType.left:
         return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(-1.0, 0.0),
-            end: Offset.zero,
-          ).animate(_animation),
+          position:
+              Tween<Offset>(begin: const Offset(-1.0, 0.0), end: Offset.zero)
+                  .animate(_animation),
           child: child,
         );
-
       case HyperSnackAnimationType.right:
         return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1.0, 0.0),
-            end: Offset.zero,
-          ).animate(_animation),
+          position:
+              Tween<Offset>(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                  .animate(_animation),
           child: child,
         );
-
       case HyperSnackAnimationType.top:
         return SizeTransition(
           sizeFactor: _animation,
-          axisAlignment: -1.0, // Based on the top edge
+          axisAlignment: -1.0,
           child: FadeTransition(opacity: _animation, child: child),
         );
-
       case HyperSnackAnimationType.bottom:
         return SizeTransition(
           sizeFactor: _animation,
-          axisAlignment: 1.0, // Based on the bottom edge
+          axisAlignment: 1.0,
           child: FadeTransition(opacity: _animation, child: child),
         );
-
       case HyperSnackAnimationType.fade:
         return FadeTransition(opacity: _animation, child: child);
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Exit animation
-  // ---------------------------------------------------------------------------
   Widget _applyExitAnimation(Widget child) {
-    // Use a controller that goes from 0.0 -> 1.0 for exit,
-    // but in terms of animation, it means "Current -> Gone",
-    // so adjust with Tween etc.
-
     final exitAnim =
-        CurvedAnimation(parent: _controller, curve: config.exitCurve);
-
+        CurvedAnimation(parent: _animationController, curve: config.exitCurve);
     switch (config.exitAnimationType) {
       case HyperSnackAnimationType.scale:
-        // Scale down from 1.0 -> 0.0
         return ScaleTransition(
-          scale: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
-          child: child,
+          scale: Tween<double>(begin: 1.0, end: 0.6).animate(exitAnim),
+          child: FadeTransition(
+            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
+            child: child,
+          ),
         );
-
       case HyperSnackAnimationType.left:
-        // Disappear to the left
         return SlideTransition(
-          position: Tween<Offset>(
-            begin: Offset.zero,
-            end: const Offset(-1.0, 0.0),
-          ).animate(exitAnim),
+          position:
+              Tween<Offset>(begin: Offset.zero, end: const Offset(-1.0, 0.0))
+                  .animate(exitAnim),
           child: FadeTransition(
-            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
-            child: child,
-          ),
+              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
+              child: child),
         );
-
       case HyperSnackAnimationType.right:
-        // Disappear to the right
         return SlideTransition(
-          position: Tween<Offset>(
-            begin: Offset.zero,
-            end: const Offset(1.0, 0.0),
-          ).animate(exitAnim),
+          position:
+              Tween<Offset>(begin: Offset.zero, end: const Offset(1.0, 0.0))
+                  .animate(exitAnim),
           child: FadeTransition(
-            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
-            child: child,
-          ),
+              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
+              child: child),
         );
-
       case HyperSnackAnimationType.top:
       case HyperSnackAnimationType.bottom:
         return SizeTransition(
@@ -278,7 +264,6 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
               opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
               child: child),
         );
-
       case HyperSnackAnimationType.fade:
         return FadeTransition(
             opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),

@@ -181,6 +181,19 @@ class HyperConfig {
   /// The type of animation for exit.
   final HyperSnackAnimationType exitAnimationType;
 
+  /// Progress Bar Configuration -----------------------
+
+  /// The width (height) of the progress bar.
+  ///
+  /// - If `null` (default): No progress bar is shown.
+  /// - If `0.0`: The background "wipe" effect is used (fills the whole background).
+  /// - If `> 0.0`: A line progress bar with this height is shown at the bottom.
+  final double? progressBarWidth;
+
+  /// The color of the progress bar or the wipe effect.
+  /// If null, it defaults to a semi-transparent white/black depending on contrast.
+  final Color? progressBarColor;
+
   const HyperConfig({
     this.title, // Removed required
     this.id,
@@ -215,6 +228,8 @@ class HyperConfig {
     this.exitCurve = Curves.easeOut,
     this.enterAnimationType = HyperSnackAnimationType.top,
     this.exitAnimationType = HyperSnackAnimationType.left,
+    this.progressBarWidth,
+    this.progressBarColor,
   });
 
   /// Creates a copy of this [HyperConfig] but with the given fields replaced with the new values.
@@ -252,6 +267,8 @@ class HyperConfig {
     Curve? exitCurve,
     HyperSnackAnimationType? enterAnimationType,
     HyperSnackAnimationType? exitAnimationType,
+    double? progressBarWidth,
+    Color? progressBarColor,
   }) {
     return HyperConfig(
       id: id ?? this.id,
@@ -291,6 +308,8 @@ class HyperConfig {
       exitCurve: exitCurve ?? this.exitCurve,
       enterAnimationType: enterAnimationType ?? this.enterAnimationType,
       exitAnimationType: exitAnimationType ?? this.exitAnimationType,
+      progressBarWidth: progressBarWidth ?? this.progressBarWidth,
+      progressBarColor: progressBarColor ?? this.progressBarColor,
     );
   }
 }

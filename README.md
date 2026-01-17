@@ -3,10 +3,12 @@
 [![GitHub issues](https://img.shields.io/github/issues/MakiAno/hyper_snackbar?style=flat-square)](https://github.com/MakiAno/hyper_snackbar/issues)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-# Hyper Snackbar 🚀
+# HyperSnackbar 🚀
 
-A highly customizable, animated, and stackable snackbar manager for Flutter.
-Designed for modern apps that need more than just a simple toast.
+A highly customizable, animated, and powerful snackbar package for Flutter.
+Designed to be "Hyper" flexible — supports Stack/Queue modes, custom animations (Scale, Slide, Fade), progress bars, and highly interactive actions.
+
+[![Live Demo](https://img.shields.io/badge/demo-online-green.svg?style=flat-square&logo=flutter)](https://MakiAno.github.io/hyper_snackbar/)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo1.gif" width="32%" />
@@ -16,29 +18,29 @@ Designed for modern apps that need more than just a simple toast.
 
 ## ✨ Features
 
-* **Stackable**: Display multiple notifications simultaneously without overlap.
-* **Highly Customizable**: Custom borders, margins, fonts, shadows, and animations.
-* **Flexible Action Placement**: Align action buttons to the **Right**, **Center**, or **Left**.
-* **Custom Content Support**: Embed any widget (e.g., multiple buttons, sliders) instead of a standard action.
-* **Smart Updates**: Update the content of an existing snackbar by ID without animation glitches.
-* **Overflow Safety**: Automatically handles ultra-long text with internal scrolling, preventing UI overflow errors.
-* **Persistent Mode**: Set duration to `Duration.zero` (or `null`) to keep the snackbar visible until dismissed.
-* **Log Style**: Option to append new notifications to the **bottom** of the list (console log style).
-* **Presets**: Ready-to-use methods for Success, Error, Warning, and Info.
-* **Polished UI**: Supports bold action text, custom colors, and top-aligned close buttons for a modern look.
+* **Flexible Positioning**: Top or Bottom.
+* **Display Modes**: Stack (overlay) or Queue (sequential).
+* **Rich Animations**: Slide, Fade, and **New! Scale (Elastic Zoom)**.
+* **Progress Bar**:
+    * **Line**: A thin progress line at the bottom.
+    * **Wipe**: Background fills up like a gauge.
+* **Customizable**: Colors, borders, shadows, margins, and padding.
+* **Interactive**: Tap callbacks, Action buttons, and Dismissible swipes.
+* **Presets**: `showSuccess`, `showError`, `showWarning`, `showInfo` for quick usage.
+* **No Context Required**: Uses `NavigatorKey` for easy calling from anywhere (Logic/Controllers).
 
-## 📦 Installation
+## 🚀 Installation
 
 Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.3.2
+  hyper_snackbar: ^0.4.0
 ```
 
-## 🚀 Setup (Important)
+## 🛠 Setup
 
-To use `HyperSnackbar` from anywhere in your code (e.g., ViewModels, BLoCs), you must register the `navigatorKey` in your `MaterialApp`.
+Register the `navigatorKey` in your `MaterialApp` to show snackbars without a `BuildContext`.
 
 ```dart
 import 'package:hyper_snackbar/hyper_snackbar.dart';
@@ -53,8 +55,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My App',
-      // ▼ Register the key here to show snackbars without BuildContext
+      // Important: Register the key here to show snackbars without BuildContext
       navigatorKey: HyperSnackbar.navigatorKey, 
       home: const HomePage(),
     );
@@ -62,17 +63,29 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-## 💡 Usage
+## 📖 Usage
 
-### Basic Usage
-The API is static, so you can call it directly without creating an instance.
+### Basic Presets
+The easiest way to show a message. Now supports `position`, `margin`, `displayDuration` and `progressBarWidth`.
 
 ```dart
-HyperSnackbar.show(
-  title: 'Success!',
-  message: 'Data has been saved successfully.',
-  backgroundColor: Colors.green,
+// Simple Success
+HyperSnackbar.showSuccess(
+  title: 'Operation Successful',
+  message: 'Your data has been saved.',
 );
+
+// Error with Custom Position
+HyperSnackbar.showError(
+  title: 'Connection Failed',
+  position: HyperSnackPosition.bottom,
+  margin: const EdgeInsets.all(12),
+);
+// Warning
+HyperSnackbar.showWarning(title: 'Low Storage');
+
+// Info
+HyperSnackbar.showInfo(title: 'New Message Received');
 ```
 
 ### Action Alignment (Right / Center / Left) 🆕
@@ -115,26 +128,6 @@ HyperSnackbar.show(
   ),
   id: 'delete_confirm',
 );
-```
-
-### Presets
-Simple one-liners for common scenarios.
-
-```dart
-// Success
-HyperSnackbar.showSuccess(title: 'Saved successfully');
-
-// Error
-HyperSnackbar.showError(
-  title: 'Connection Failed', 
-  message: 'Please check your internet connection.'
-);
-
-// Warning
-HyperSnackbar.showWarning(title: 'Low Storage');
-
-// Info
-HyperSnackbar.showInfo(title: 'New Message Received');
 ```
 
 ### Update by ID (Loading -> Done) ⚡
@@ -215,6 +208,66 @@ HyperSnackbar.show(
 );
 ```
 
+### 🆕 Progress Bar Effects
+
+You can visualize the remaining duration using a progress bar.
+
+**Style 1: Line Effect** (Standard progress bar)
+```dart
+HyperSnackbar.show(
+  title: 'Processing...',
+  progressBarWidth: 4.0, // Height of the bar
+  progressBarColor: Colors.redAccent, // Custom color
+  displayDuration: const Duration(seconds: 5),
+);
+```
+
+**Style 2: Wipe Effect** (Background fill)
+```dart
+HyperSnackbar.show(
+  title: 'Downloading...',
+  progressBarWidth: 0.0, // 0.0 triggers the Wipe Effect
+  backgroundColor: Colors.blue,
+  displayDuration: const Duration(seconds: 3),
+);
+```
+
+### 🆕 Scale Animation (Elastic Pop)
+
+Create a modern "Pop" effect using the Scale animation type and an elastic curve.
+
+```dart
+HyperSnackbar.show(
+  title: 'New Message',
+  message: 'You have a new notification!',
+  backgroundColor: Colors.indigo,
+  
+  // Animation Settings
+  enterAnimationType: HyperSnackAnimationType.scale,
+  enterCurve: Curves.elasticOut, // Bouncy effect
+  enterAnimationDuration: const Duration(milliseconds: 800),
+);
+```
+
+### Action Button
+
+Add an interactive button to your snackbar.
+
+```dart
+HyperSnackbar.show(
+  title: 'Item Deleted',
+  message: 'It has been moved to trash.',
+  action: HyperSnackAction(
+    label: 'UNDO',
+    textColor: Colors.amber,
+    onPressed: () {
+      // Handle undo action
+      print('Undo clicked!');
+    },
+  ),
+);
+```
+
 ### Using with GoRouter
 
 If you are using `go_router`, simply assign `HyperSnackbar.navigatorKey` to the `navigatorKey` property.
@@ -226,46 +279,91 @@ final _router = GoRouter(
 );
 ```
 
-## ⚙️ Configuration (`HyperConfig`)
+## 📚 API Reference
 
-| Property | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| **Content** | | | |
-| `title` | `String?` | `null` | The main title text. (Optional for templates) |
-| `message` | `String?` | `null` | The subtitle text. |
+### HyperSnackbar Methods
+
+All methods are static and can be called from anywhere.
+
+| Method | Description |
+|---|---|
+| `show(...)` | Displays a fully customizable snackbar. |
+| `showSuccess(...)` | Preset: Green background, Check icon. |
+| `showError(...)` | Preset: Red background, Error icon. |
+| `showWarning(...)` | Preset: Orange background, Warning icon. |
+| `showInfo(...)` | Preset: Blue background, Info icon. |
+| `showFromConfig(config)` | Displays a snackbar using a `HyperConfig` object. |
+| `dismissById(id)` | Dismisses a specific snackbar by its ID. |
+| `clearAll({animated})` | Dismisses all currently visible snackbars. |
+| `isSnackbarOpen` | Returns `true` if any snackbar is visible. |
+| `isSnackbarOpenById(id)` | Returns `true` if the specific snackbar is visible. |
+
+### HyperConfig Properties
+
+These parameters can be passed to `HyperSnackbar.show()`.
+
+#### Content & ID
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `title` | `String?` | `null` | The main title text. |
+| `message` | `String?` | `null` | The body text. |
+| `id` | `String?` | `null` | Unique ID. Updates existing snackbar if ID matches. |
 | `icon` | `Widget?` | `null` | Icon widget displayed on the left. |
 | `action` | `HyperSnackAction?` | `null` | Action button definition. |
-| `actionAlignment` | `MainAxisAlignment` | `.end` | Alignment of the action (Left/Center/Right). |
-| `content` | `Widget?` | `null` | Custom widget to replace the action button. |
-| `maxLines` | `int?` | `5` | Max lines for message. `null` for unlimited. |
-| `scrollable` | `bool` | `false` | Enable vertical scrolling for message. |
-| `messageMaxHeight` | `double?` | `null` | Limit height of scrollable message area. |
-| **Style** | | | |
-| `backgroundColor` | `Color` | `Grey[800]` | Background color. |
-| `textColor` | `Color` | `White` | Text color. |
+| `actionAlignment` | `MainAxisAlignment` | `.end` | Alignment of the action button. |
+| `content` | `Widget?` | `null` | Custom widget to replace the action button area. |
+
+#### Appearance
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `backgroundColor` | `Color?` | `Grey[800]` | Background color of the snackbar. |
+| `textColor` | `Color?` | `White` | Color for title and message text. |
 | `borderRadius` | `double` | `12.0` | Corner radius. |
-| `border` | `BoxBorder?` | `null` | Border around the snackbar. |
-| `margin` | `EdgeInsets` | `zero` | Outer margin. |
-| `padding` | `EdgeInsets` | `16, 12` | Inner padding. |
 | `elevation` | `double` | `4.0` | Shadow elevation. |
-| **Behavior** | | | |
-| `id` | `String?` | `null` | Unique ID for updating content. |
-| `onTap` | `VoidCallback?` | `null` | Callback when tapped. |
-| `displayDuration` | `Duration?` | `4s` | `Duration.zero` or `null` makes it persistent. |
-| `enableSwipe` | `bool` | `true` | Allow swipe to dismiss. |
-| `showCloseButton`| `bool` | `true` | Show 'X' button on the right. |
-| `newestOnTop` | `bool` | `true` | `false` appends new items to the bottom. |
-| `maxVisibleCount` | `int` | `3` | Max visible snackbars in stack mode. |
-| `displayMode` | `Enum` | `.stack` | `.stack` (Overlay) or `.queue` (One by one). |
-| **Animation** | | | |
-| `enterAnimationType`| `Enum` | `.top` | Entry animation type. |
-| `exitAnimationType` | `Enum` | `.left` | Exit animation type. |
-| `enterAnimationDuration`| `Duration` | `300ms` | Entry duration. |
-| `exitAnimationDuration` | `Duration` | `500ms` | Exit duration. |
+| `border` | `BoxBorder?` | `null` | Custom border. |
+| `margin` | `EdgeInsetsGeometry` | `zero` | Margin around the snackbar. |
+| `padding` | `EdgeInsetsGeometry` | `16,12` | Padding inside the snackbar. |
+| `titleStyle` | `TextStyle?` | `null` | Custom style for the title. |
+| `messageStyle` | `TextStyle?` | `null` | Custom style for the message. |
 
-## ❤️ Contributing
+#### Behavior
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `displayDuration` | `Duration?` | `4s` | Duration to show. `null` or `zero` = Persistent. |
+| `onTap` | `VoidCallback?` | `null` | Callback when the snackbar is tapped. |
+| `showCloseButton` | `bool` | `true` | Whether to show the 'X' button. |
+| `enableSwipe` | `bool` | `true` | Whether the snackbar can be dismissed by swiping. |
+| `position` | `HyperSnackPosition` | `.top` | `.top` or `.bottom`. |
+| `displayMode` | `HyperSnackDisplayMode`| `.stack` | `.stack` (overlay) or `.queue` (sequential). |
+| `newestOnTop` | `bool` | `true` | If true, new snackbars appear on top of the stack. |
+| `maxVisibleCount` | `int` | `3` | Maximum number of snackbars visible at once (Stack mode). |
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+#### Text Handling
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `maxLines` | `int?` | `5` | Maximum lines for the message. |
+| `scrollable` | `bool` | `false` | If true, message becomes scrollable within constraints. |
+| `messageMaxHeight` | `double?` | `null` | Max height for the scrollable area. |
+
+#### Animation
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `enterAnimationType` | `HyperSnackAnimationType` | `.top` | Animation style for entry (`scale`, `fade`, `left`...). |
+| `exitAnimationType` | `HyperSnackAnimationType` | `.left` | Animation style for exit. |
+| `enterAnimationDuration`| `Duration` | `300ms` | Duration of entry animation. |
+| `exitAnimationDuration` | `Duration` | `500ms` | Duration of exit animation. |
+| `enterCurve` | `Curve` | `easeOutQuart`| Animation curve for entry. |
+| `exitCurve` | `Curve` | `easeOut` | Animation curve for exit. |
+
+#### Progress Bar
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `progressBarWidth` | `double?` | `null` | `>0`: Line height. `0.0`: Wipe effect. `null`: None. |
+| `progressBarColor` | `Color?` | `null` | Color of the bar. Defaults to semi-transparent white. |
+
+## 📱 Example
+
+Check out the `example` folder for a complete playground app where you can test all animations and generate code snippet interactively!
 
 ## 📄 License
 

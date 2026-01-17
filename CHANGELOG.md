@@ -1,4 +1,15 @@
-## 0.3.2 - 2026-01-17
+## 0.4.0 - 2026-01-17
+
+* **FEAT**: Added Progress Bar support.
+    * Introduced `progressBarWidth`: Supports `0.0` for a "Wipe" effect (fills the background), positive values for a standard line (e.g., `4.0`), and negative values to hide it.
+    * Introduced `progressBarColor`: Allows customization of the progress indicator's color.
+* **FEAT**: Increased freedom of styling presets.
+    * Enhanced `HyperConfig` and `show()` parameters to support finer control over `border`, `borderRadius`, `elevation`, and shadows. This enables diverse preset styles like "Outlined", "Flat", or "High Contrast".
+* **FEAT**: Added an interactive **Playground** to the example app.
+    * Includes a real-time mobile preview, style toggles, and code generation.
+* **DOCS**: Updated README to showcase the new progress bar styles and playground features.
+
+## 0.3.2
 
 * **IMPROVEMENT**: Made `title` in `HyperConfig` optional (`String?`). This facilitates the creation of reusable configuration templates (e.g., defining a common error style without a dummy title).
 * **DOCS**: Updated the configuration table in `README.md` to include previously missing parameters: `maxVisibleCount`, `displayMode`, `scrollable`, and `messageMaxHeight`.
