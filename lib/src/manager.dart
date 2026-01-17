@@ -74,6 +74,8 @@ class HyperSnackbar {
       Curve exitCurve = Curves.easeOut,
       HyperSnackAnimationType enterAnimationType = HyperSnackAnimationType.top,
       HyperSnackAnimationType exitAnimationType = HyperSnackAnimationType.left,
+      double? progressBarWidth,
+      Color? progressBarColor,
       BuildContext? context}) {
     final config = HyperConfig(
       title: title,
@@ -109,6 +111,8 @@ class HyperSnackbar {
       exitCurve: exitCurve,
       enterAnimationType: enterAnimationType,
       exitAnimationType: exitAnimationType,
+      progressBarWidth: progressBarWidth,
+      progressBarColor: progressBarColor,
     );
     showFromConfig(config, context: context);
   }
@@ -272,53 +276,97 @@ class HyperSnackbar {
         (widget) => widget is HyperSnackBarContainer && widget.config.id == id);
   }
 
-  // --- Presets ---
+// --- Presets ---
 
   /// Displays a success snackbar (Green background, check icon).
-  static void showSuccess(
-      {required String title, String? message, BuildContext? context}) {
+  static void showSuccess({
+    required String title,
+    String? message,
+    BuildContext? context,
+    EdgeInsetsGeometry margin = const EdgeInsets.all(8.0), // Default margin
+    HyperSnackPosition position = HyperSnackPosition.top,
+    Duration? displayDuration = const Duration(seconds: 4),
+    double? progressBarWidth,
+  }) {
     show(
       title: title,
       message: message,
       backgroundColor: Colors.green.shade600,
       icon: const Icon(Icons.check_circle, color: Colors.white),
       context: context,
+      margin: margin,
+      position: position,
+      displayDuration: displayDuration,
+      progressBarWidth: progressBarWidth,
     );
   }
 
   /// Displays an error snackbar (Red background, error icon).
-  static void showError(
-      {required String title, String? message, BuildContext? context}) {
+  static void showError({
+    required String title,
+    String? message,
+    BuildContext? context,
+    EdgeInsetsGeometry margin = const EdgeInsets.all(8.0),
+    HyperSnackPosition position = HyperSnackPosition.top,
+    Duration? displayDuration = const Duration(seconds: 4),
+    double? progressBarWidth,
+  }) {
     show(
       title: title,
       message: message,
       backgroundColor: Colors.red.shade600,
       icon: const Icon(Icons.error, color: Colors.white),
       context: context,
+      margin: margin,
+      position: position,
+      displayDuration: displayDuration,
+      progressBarWidth: progressBarWidth,
     );
   }
 
   /// Displays a warning snackbar (Orange background, warning icon).
-  static void showWarning(
-      {required String title, String? message, BuildContext? context}) {
+  static void showWarning({
+    required String title,
+    String? message,
+    BuildContext? context,
+    EdgeInsetsGeometry margin = const EdgeInsets.all(8.0),
+    HyperSnackPosition position = HyperSnackPosition.top,
+    Duration? displayDuration = const Duration(seconds: 4),
+    double? progressBarWidth,
+  }) {
     show(
       title: title,
       message: message,
       backgroundColor: Colors.orange.shade700,
       icon: const Icon(Icons.warning, color: Colors.white),
       context: context,
+      margin: margin,
+      position: position,
+      displayDuration: displayDuration,
+      progressBarWidth: progressBarWidth,
     );
   }
 
   /// Displays an info snackbar (Blue background, info icon).
-  static void showInfo(
-      {required String title, String? message, BuildContext? context}) {
+  static void showInfo({
+    required String title,
+    String? message,
+    BuildContext? context,
+    EdgeInsetsGeometry margin = const EdgeInsets.all(8.0),
+    HyperSnackPosition position = HyperSnackPosition.top,
+    Duration? displayDuration = const Duration(seconds: 4),
+    double? progressBarWidth,
+  }) {
     show(
       title: title,
       message: message,
       backgroundColor: Colors.blue.shade600,
       icon: const Icon(Icons.info, color: Colors.white),
       context: context,
+      margin: margin,
+      position: position,
+      displayDuration: displayDuration,
+      progressBarWidth: progressBarWidth,
     );
   }
 

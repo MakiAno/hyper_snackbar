@@ -60,7 +60,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // ★Test Point 1:
+                // ★ Test Point 1:
                 // Display snackbar immediately after screen transition command, without Context
                 context.go('/second');
 
