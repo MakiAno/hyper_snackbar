@@ -65,7 +65,9 @@ class _ScenarioPageState extends State<ScenarioPage> {
         textColor: Colors.amberAccent,
         onPressed: () {
           HyperSnackbar.showSuccess(
-              title: 'Restored!', position: HyperSnackPosition.bottom);
+            title: 'Restored!',
+            position: HyperSnackPosition.bottom,
+          );
         },
       ),
     );
@@ -119,9 +121,14 @@ class _ScenarioPageState extends State<ScenarioPage> {
       title: 'Uploading...',
       message: 'Please wait while uploading your files.',
       backgroundColor: Colors.blue.shade600,
-      icon: const Icon(Icons.cloud_upload, color: Colors.white),
+      icon: SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+      ),
+      // const Icon(Icons.cloud_upload, color: Colors.white),
       progressBarWidth: 0.0, // Wipe Effect
-      displayDuration: null, // Keep open
+      displayDuration: null,
     );
 
     // Simulate delay
@@ -142,14 +149,20 @@ class _ScenarioPageState extends State<ScenarioPage> {
 
   // --- UI Helper ---
 
-  Widget _buildScenarioItem(String title, String desc, IconData icon,
-      Color color, VoidCallback onTap) {
+  Widget _buildScenarioItem(
+    String title,
+    String desc,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: ListTile(
         leading: CircleAvatar(
-            backgroundColor: color.withValues(alpha: 0.1),
-            child: Icon(icon, color: color)),
+          backgroundColor: color.withValues(alpha: 0.1),
+          child: Icon(icon, color: color),
+        ),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(desc),
         trailing: const Icon(Icons.play_arrow_rounded),
