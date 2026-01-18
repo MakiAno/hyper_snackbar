@@ -21,7 +21,7 @@ void main() {
     // Since inserting into the Overlay requires frame progression, pump thoroughly.
     await tester.pump();
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300)); // アニメーション
+    await tester.pump(const Duration(milliseconds: 300)); // Animation
 
     // 4. Verification
     expect(find.text('Hello GoRouter'), findsOneWidget);
@@ -46,7 +46,8 @@ Widget _createTestApp() {
                   message: 'This is a test.',
                 );
               },
-              child: const Text('Show Snackbar'), // ★ Looking for this text
+              child: const Text(
+                  'Show Snackbar'), // The text that `find.text()` is looking for.
             ),
           ),
         ),
