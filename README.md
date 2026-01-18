@@ -8,7 +8,9 @@
 A highly customizable, animated, and powerful snackbar package for Flutter.
 Designed to be "Hyper" flexible — supports Stack/Queue modes, custom animations (Scale, Slide, Fade), progress bars, and highly interactive actions.
 
-[![Live Demo](https://img.shields.io/badge/demo-online-green.svg?style=flat-square&logo=flutter)](https://MakiAno.github.io/hyper_snackbar/)
+[![Live Demo](https://img.shields.io/badge/demo-online-green.svg?style=flat-square&logo=flutter)](https://makiano.github.io/hyper_snackbar/)
+<br>
+**[👉 Try the Interactive Playground!](https://makiano.github.io/hyper_snackbar/)**
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo1.gif" width="32%" />
@@ -35,7 +37,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.4.0
+  hyper_snackbar: ^0.4.1
 ```
 
 ## 🛠 Setup

@@ -1,4 +1,14 @@
-## 0.4.0 - 2026-01-17
+## 0.4.1 - 2026-01-18
+
+* **FIX**: Improved UX for scrollable messages. The auto-dismiss timer now pauses for 1 second after the user stops scrolling, preventing the snackbar from disappearing immediately.
+* **FIX**: Resolved an issue where the text ellipsis (`...`) would not appear correctly if the truncated text ended with a space or newline.
+* **REFACTOR**: Replaced deprecated color methods (e.g., `withOpacity`) with `withAlpha` to ensure future Flutter compatibility.
+* **EXAMPLE**: Significant design and feature updates to the Playground app.
+    * New "Dark Glassmorphism" UI design.
+    * Added "Surprise Me" button for random style generation.
+    * Improved real-time code generation preview.
+
+## 0.4.0
 
 * **FEAT**: Added Progress Bar support.
     * Introduced `progressBarWidth`: Supports `0.0` for a "Wipe" effect (fills the background), positive values for a standard line (e.g., `4.0`), and negative values to hide it.
