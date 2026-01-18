@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui'; // For ImageFilter
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,10 +43,15 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   double _progressBarValue = 0.0;
 
   // Behavior & Layout
-  HyperSnackPosition _position = HyperSnackPosition.top; // Default TOP
+  HyperSnackPosition _position = HyperSnackPosition.top;
   bool _useMargin = true;
   double _durationSeconds = 2.5;
   bool _dismissible = true;
+
+  // Stack/Queue & Order
+  HyperSnackDisplayMode _displayMode = HyperSnackDisplayMode.stack;
+  bool _newestOnTop = true;
+  double _maxVisibleCount = 3.0; // New: Variable maxVisibleCount
 
   // Key for the inner Scaffold (Phone Screen)
   final GlobalKey _innerScaffoldKey = GlobalKey();
@@ -67,27 +73,33 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           _showIcon = true;
           _maxLines = null;
           _allowScroll = false;
+          _displayMode = HyperSnackDisplayMode.stack;
+          _newestOnTop = true;
+          _maxVisibleCount = 3.0;
           break;
-        case 'Wipe':
-          _title = 'Downloading...';
-          _message = 'Please wait while we fetch your data.';
-          _selectedColor = const Color(0xFF2196F3);
+        case 'Log View':
+          _title = 'Log Entry';
+          _message = 'Operation completed at ${DateTime.now().second}s.';
+          _selectedColor = const Color(0xFF212121);
           _enterType = HyperSnackAnimationType.top;
-          _exitType = HyperSnackAnimationType.top;
+          _exitType = HyperSnackAnimationType.fade;
           _progressBarValue = 0.0;
           _useElasticCurve = false;
           _showAction = false;
-          _useBorder = false;
+          _useBorder = true;
+          _borderColor = Colors.grey.shade800;
+          _borderRadius = 4.0;
           _showIcon = true;
-          _maxLines = null;
+          _position = HyperSnackPosition.top;
+          _displayMode = HyperSnackDisplayMode.stack;
+          _newestOnTop = false; // Log style
+          _maxLines = 1;
           _allowScroll = false;
+          _maxVisibleCount = 5.0; // Show more logs
           break;
         case 'Long Text':
           _title = 'Long Text Test';
-          // Reverted to the repetitive pattern as requested.
-          // Using trim() to minimize trailing space issues where possible.
           _message = ('Long message ' * 100).trim();
-
           _selectedColor = const Color(0xFF212121);
           _enterType = HyperSnackAnimationType.scale;
           _progressBarValue = 4.0;
@@ -96,6 +108,9 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           _maxLines = 3;
           _allowScroll = true;
           _actionAlignment = MainAxisAlignment.end;
+          _displayMode = HyperSnackDisplayMode.stack;
+          _newestOnTop = true;
+          _maxVisibleCount = 3.0;
           break;
       }
     });
@@ -138,11 +153,23 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           MainAxisAlignment.end,
         ][random.nextInt(3)];
       }
+      _displayMode = random.nextBool()
+          ? HyperSnackDisplayMode.stack
+          : HyperSnackDisplayMode.queue;
+      _newestOnTop = random.nextBool();
+      _maxVisibleCount = (random.nextInt(5) + 1).toDouble();
     });
     _showSnackbar();
   }
 
   void _showSnackbar() {
+    if (_title == 'Log Entry') {
+      setState(() {
+        _message =
+            'Operation completed at ${DateTime.now().minute}:${DateTime.now().second}.${DateTime.now().millisecond}';
+      });
+    }
+
     double? width;
     if (_progressBarValue >= 0) {
       width = _progressBarValue;
@@ -153,29 +180,26 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
 
     Color? progressColor;
     if (width == 0) {
-      progressColor = isLightBg
-          ? Colors.black.withValues(alpha: 0.1)
-          : Colors.white.withValues(alpha: 0.15);
+      progressColor =
+          isLightBg ? Colors.black.withAlpha(25) : Colors.white.withAlpha(38);
     } else if (width != null && width > 0) {
       progressColor = Colors.redAccent;
     }
 
-    // --- Logic for Scrollable vs MaxLines ---
     int? activeMaxLines = _maxLines;
     double? activeMaxHeight;
 
     if (_allowScroll) {
-      // If scrolling is ON, disable maxLines text truncation.
       activeMaxLines = null;
-
-      // Use slider value to calculate a height constraint.
-      // Adjusted multiplier from 28.0 to 20.0 to fix the "one extra line" issue.
       if (_maxLines != null) {
         activeMaxHeight = _maxLines! * 20.0;
       } else {
         activeMaxHeight = 200.0;
       }
     }
+
+    EdgeInsets effectiveMargin =
+        _useMargin ? const EdgeInsets.all(12) : EdgeInsets.zero;
 
     final targetContext = _innerScaffoldKey.currentContext;
 
@@ -186,41 +210,39 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         message: _message,
         backgroundColor: _selectedColor,
         textColor: contentColor,
-        // Icon
         icon: _showIcon
             ? Icon(_getIconForColor(_selectedColor), color: contentColor)
             : null,
-        // Style
         borderRadius: _borderRadius,
         elevation: _elevation,
         border: _useBorder ? Border.all(color: _borderColor, width: 2) : null,
         padding: EdgeInsets.all(_contentPadding),
 
-        // Layout
         position: _position,
-        margin: _useMargin ? const EdgeInsets.all(12) : EdgeInsets.zero,
+        margin: effectiveMargin,
         enableSwipe: _dismissible,
 
-        // --- Text Options ---
+        displayMode: _displayMode,
+        newestOnTop: _newestOnTop,
+        maxVisibleCount: _maxVisibleCount.toInt(), // ★ Applied here
+
         maxLines: activeMaxLines,
         scrollable: _allowScroll,
         messageMaxHeight: activeMaxHeight,
 
-        // Animation
         enterAnimationType: _enterType,
         exitAnimationType: _exitType,
         enterCurve: _useElasticCurve ? Curves.elasticOut : Curves.easeOutQuart,
         enterAnimationDuration: _useElasticCurve
             ? const Duration(milliseconds: 800)
             : const Duration(milliseconds: 400),
-        // Progress
+
         progressBarWidth: width,
         progressBarColor: progressColor,
         displayDuration: Duration(
           milliseconds: (_durationSeconds * 1000).toInt(),
         ),
 
-        // Action
         action: _showAction
             ? HyperSnackAction(
                 label: 'UNDO',
@@ -239,6 +261,9 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   void _showUndoFeedback() {
     final targetContext = _innerScaffoldKey.currentContext;
     if (targetContext != null) {
+      EdgeInsets margin =
+          _useMargin ? const EdgeInsets.all(12) : EdgeInsets.zero;
+
       HyperSnackbar.show(
         context: targetContext,
         title: 'Action Triggered',
@@ -246,6 +271,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         backgroundColor: Colors.grey.shade900,
         icon: const Icon(Icons.refresh, color: Colors.white),
         position: _position,
+        margin: margin,
         displayDuration: const Duration(seconds: 2),
       );
     }
@@ -265,12 +291,21 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     final isDesktop = MediaQuery.of(context).size.width > 900;
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Playground'),
-        backgroundColor: Colors.black,
+        title: const Text(
+          'HyperSnackbar Playground',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.transparent,
+        flexibleSpace: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(color: Colors.black.withAlpha(128)),
+          ),
+        ),
         foregroundColor: Colors.white,
-        scrolledUnderElevation: 0,
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.shuffle),
@@ -290,448 +325,619 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           ),
         ],
       ),
-      body: isDesktop
-          ? Row(
-              children: [
-                Expanded(
-                  flex: 4,
-                  child: Container(
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(child: _buildControls()),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF2E3192), Color(0xFF1BFFFF)],
+          ),
+        ),
+        child: SafeArea(
+          child: isDesktop
+              ? Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: _buildGlassContainer(
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: _buildControls(),
+                              ),
+                            ),
+                            Divider(
+                              height: 1,
+                              color: Colors.white.withAlpha(61),
+                            ),
+                            _buildShowButtonArea(),
+                          ],
                         ),
-                        const Divider(height: 1),
-                        _buildShowButtonArea(),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                const VerticalDivider(width: 1),
-                Expanded(flex: 6, child: _buildPhonePreview()),
-              ],
-            )
-          : Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        _buildControls(),
-                        const SizedBox(height: 20),
-                        SizedBox(height: 600, child: _buildPhonePreview()),
-                      ],
+                    Expanded(flex: 6, child: _buildPhonePreview()),
+                  ],
+                )
+              : Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: _buildGlassContainer(
+                                child: _buildControls(),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            SizedBox(height: 650, child: _buildPhonePreview()),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                    _buildShowButtonArea(glass: true),
+                  ],
                 ),
-                _buildShowButtonArea(),
-              ],
-            ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassContainer({required Widget child}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withAlpha(102),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white.withAlpha(25)),
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _label(String text) {
+    return Text(
+      text,
+      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
     );
   }
 
   Widget _buildControls() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // --- 1. Position & Presets ---
-          Row(
-            children: [
-              const Text(
-                'Pos: ',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              DropdownButton<HyperSnackPosition>(
-                value: _position,
-                isDense: true,
-                items: const [
-                  DropdownMenuItem(
-                    value: HyperSnackPosition.top,
-                    child: Text('TOP'),
-                  ),
-                  DropdownMenuItem(
-                    value: HyperSnackPosition.bottom,
-                    child: Text('BOTTOM'),
-                  ),
-                ],
-                onChanged: (v) => setState(() => _position = v!),
-              ),
-              const Spacer(),
-              const Text('Dismissible: '),
-              Switch(
-                value: _dismissible,
-                onChanged: (v) => setState(() => _dismissible = v),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          _sectionHeader('Presets'),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _presetButton('Success', Colors.green),
-              _presetButton('Wipe', Colors.blue),
-              _presetButton('Long Text', Colors.black87),
-            ],
-          ),
+    const textStyle = TextStyle(color: Colors.white);
 
-          const SizedBox(height: 24),
-          // --- 2. Live Style Preview ---
-          _sectionHeader('Real-time Style Preview'),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
-            ),
-            child: Column(
+    return Theme(
+      data: ThemeData.dark().copyWith(
+        sliderTheme: SliderThemeData(
+          activeTrackColor: Colors.cyanAccent,
+          thumbColor: Colors.cyan,
+          overlayColor: Colors.cyan.withAlpha(51),
+        ),
+        switchTheme: SwitchThemeData(
+          thumbColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? Colors.cyan
+                : Colors.grey,
+          ),
+          trackColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? Colors.cyan.withAlpha(128)
+                : null,
+          ),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _sectionHeader('1. Layout & Behavior'),
+            Row(
               children: [
-                // The Mock Snackbar (Visual Only)
-                Container(
-                  padding: EdgeInsets.all(_contentPadding),
-                  decoration: BoxDecoration(
-                    color: _selectedColor,
-                    borderRadius: BorderRadius.circular(_borderRadius),
-                    border: _useBorder
-                        ? Border.all(color: _borderColor, width: 2)
-                        : null,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: _elevation,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (_showIcon) ...[
-                        Icon(
-                          _getIconForColor(_selectedColor),
-                          color: _selectedColor.computeLuminance() > 0.5
-                              ? Colors.black87
-                              : Colors.white,
-                        ),
-                        const SizedBox(width: 12),
-                      ],
-                      Text(
-                        'Style Preview',
-                        style: TextStyle(
-                          color: _selectedColor.computeLuminance() > 0.5
-                              ? Colors.black87
-                              : Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'This preview updates shape & color only.',
-                  style: TextStyle(fontSize: 10, color: Colors.grey),
+                _label('Pos: '),
+                const SizedBox(width: 8),
+                DropdownButton<HyperSnackPosition>(
+                  value: _position,
+                  dropdownColor: Colors.grey.shade900,
+                  style: textStyle,
+                  isDense: true,
+                  underline: Container(height: 1, color: Colors.white54),
+                  items: const [
+                    DropdownMenuItem(
+                      value: HyperSnackPosition.top,
+                      child: Text('TOP'),
+                    ),
+                    DropdownMenuItem(
+                      value: HyperSnackPosition.bottom,
+                      child: Text('BOTTOM'),
+                    ),
+                  ],
+                  onChanged: (v) => setState(() => _position = v!),
                 ),
               ],
             ),
-          ),
-
-          const SizedBox(height: 24),
-          // --- 3. Content ---
-          _sectionHeader('Content'),
-          TextField(
-            decoration: const InputDecoration(
-              labelText: 'Title',
-              border: OutlineInputBorder(),
-              isDense: true,
-            ),
-            controller: TextEditingController(text: _title),
-            onChanged: (v) => _title = v,
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            decoration: const InputDecoration(
-              labelText: 'Message',
-              border: OutlineInputBorder(),
-              isDense: true,
-            ),
-            controller: TextEditingController(text: _message),
-            maxLines: 3,
-            minLines: 1,
-            onChanged: (v) => _message = v,
-          ),
-          const SizedBox(height: 12),
-          // Text Options
-          Row(
-            children: [
-              const Text('Max Lines: ', style: TextStyle(fontSize: 13)),
-              Expanded(
-                child: Slider(
-                  value: _maxLines?.toDouble() ?? 6.0,
-                  min: 1,
-                  max: 6,
-                  divisions: 5,
-                  label: _maxLines == null ? 'All' : _maxLines.toString(),
-                  onChanged: (v) {
-                    setState(() {
-                      _maxLines = v >= 6 ? null : v.toInt();
-                    });
-                  },
-                ),
-              ),
-              SizedBox(
-                width: 40,
-                child: Text(
-                  _maxLines == null ? 'All' : '${_maxLines!}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Scrollable Content'),
-            subtitle: _allowScroll
-                ? const Text(
-                    'Use "Max Lines" slider to set visible height.',
-                    style: TextStyle(fontSize: 10),
-                  )
-                : null,
-            dense: true,
-            value: _allowScroll,
-            onChanged: (v) => setState(() => _allowScroll = v),
-          ),
-
-          const SizedBox(height: 12),
-          // Toggles
-          Row(
-            children: [
-              _compactSwitch('Icon', _showIcon, (v) => _showIcon = v),
-              const SizedBox(width: 24),
-              _compactSwitch('Action', _showAction, (v) => _showAction = v),
-            ],
-          ),
-          // Action Alignment (Only if Action is shown)
-          if (_showAction) ...[
             const SizedBox(height: 8),
             Row(
               children: [
-                const Text('Action Pos: ', style: TextStyle(fontSize: 13)),
+                _label('Mode: '),
                 const SizedBox(width: 8),
-                SegmentedButton<MainAxisAlignment>(
+                SegmentedButton<HyperSnackDisplayMode>(
                   showSelectedIcon: false,
                   style: ButtonStyle(
                     visualDensity: VisualDensity.compact,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    padding: WidgetStateProperty.all(EdgeInsets.zero),
+                    padding: WidgetStateProperty.all(
+                      const EdgeInsets.symmetric(horizontal: 12),
+                    ),
+                    backgroundColor: WidgetStateProperty.resolveWith(
+                      (states) => states.contains(WidgetState.selected)
+                          ? Colors.cyan.withAlpha(77)
+                          : Colors.transparent,
+                    ),
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
                   ),
                   segments: const [
                     ButtonSegment(
-                      value: MainAxisAlignment.start,
-                      icon: Icon(Icons.align_horizontal_left),
+                      value: HyperSnackDisplayMode.stack,
+                      label: Text('Stack'),
                     ),
                     ButtonSegment(
-                      value: MainAxisAlignment.center,
-                      icon: Icon(Icons.align_horizontal_center),
-                    ),
-                    ButtonSegment(
-                      value: MainAxisAlignment.end,
-                      icon: Icon(Icons.align_horizontal_right),
+                      value: HyperSnackDisplayMode.queue,
+                      label: Text('Queue'),
                     ),
                   ],
-                  selected: {_actionAlignment},
-                  onSelectionChanged: (newSet) {
-                    setState(() => _actionAlignment = newSet.first);
-                  },
+                  selected: {_displayMode},
+                  onSelectionChanged: (newSet) =>
+                      setState(() => _displayMode = newSet.first),
                 ),
+
+                // ★ NEW: Max Visible Count Slider (Only for Stack)
+                if (_displayMode == HyperSnackDisplayMode.stack) ...[
+                  const SizedBox(width: 16),
+                  _label('Max: ${_maxVisibleCount.toInt()}'),
+                  Expanded(
+                    child: Slider(
+                      value: _maxVisibleCount,
+                      min: 1,
+                      max: 5,
+                      divisions: 4,
+                      onChanged: (v) => setState(() => _maxVisibleCount = v),
+                    ),
+                  ),
+                ],
               ],
             ),
-          ],
-
-          const SizedBox(height: 24),
-          // --- 4. Appearance ---
-          _sectionHeader('Appearance'),
-          // Colors
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
+            if (_displayMode == HyperSnackDisplayMode.stack) ...[
+              const SizedBox(height: 8),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Newest on Top', style: textStyle),
+                subtitle: Text(
+                  _newestOnTop
+                      ? 'New entries push old ones down'
+                      : 'New entries append to bottom (Log view)',
+                  style: const TextStyle(fontSize: 10, color: Colors.white70),
+                ),
+                dense: true,
+                value: _newestOnTop,
+                onChanged: (v) => setState(() => _newestOnTop = v),
+              ),
+            ],
+            Row(
               children: [
-                _colorOption(const Color(0xFF323232)),
-                _colorOption(Colors.white),
-                _colorOption(const Color(0xFF212121)),
-                _colorOption(Colors.green.shade700),
-                _colorOption(Colors.red.shade700),
-                _colorOption(const Color(0xFF2196F3)),
-                _colorOption(const Color(0xFF6C63FF)),
+                _label('Margin: '),
+                Switch(
+                  value: _useMargin,
+                  onChanged: (v) => setState(() => _useMargin = v),
+                ),
+                const SizedBox(width: 16),
+                _label('Dismissible: '),
+                Switch(
+                  value: _dismissible,
+                  onChanged: (v) => setState(() => _dismissible = v),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
-
-          // Border
-          Row(
-            children: [
-              const Text(
-                'Border: ',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              _compactSwitch('', _useBorder, (v) => _useBorder = v),
-              if (_useBorder) ...[
-                const SizedBox(width: 12),
-                _borderColorOption(Colors.white),
-                _borderColorOption(Colors.cyanAccent),
-                _borderColorOption(Colors.redAccent),
-                _borderColorOption(Colors.black),
+            const SizedBox(height: 12),
+            _sectionHeader('2. Presets'),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _presetButton('Success', Colors.greenAccent),
+                _presetButton('Wipe', Colors.lightBlueAccent),
+                _presetButton('Log View', Colors.grey),
+                _presetButton('Long Text', Colors.white),
               ],
-            ],
-          ),
-          const SizedBox(height: 8),
-
-          _sliderRow(
-            'Radius',
-            _borderRadius,
-            0,
-            32,
-            (v) => setState(() => _borderRadius = v),
-          ),
-          _sliderRow(
-            'Shadow',
-            _elevation,
-            0,
-            20,
-            (v) => setState(() => _elevation = v),
-          ),
-
-          Row(
-            children: [
-              const Text('Margin: '),
-              Switch(
-                value: _useMargin,
-                onChanged: (v) => setState(() => _useMargin = v),
+            ),
+            const SizedBox(height: 24),
+            _sectionHeader('3. Real-time Style Preview'),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withAlpha(13),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.white10),
               ),
-            ],
-          ),
-
-          const SizedBox(height: 24),
-          // --- 5. Animation ---
-          _sectionHeader('Animation'),
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<HyperSnackAnimationType>(
-                  key: ValueKey('enter_$_enterType'),
-                  decoration: const InputDecoration(
-                    labelText: 'Enter',
-                    isDense: true,
-                    border: OutlineInputBorder(),
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(_contentPadding),
+                    decoration: BoxDecoration(
+                      color: _selectedColor,
+                      borderRadius: BorderRadius.circular(_borderRadius),
+                      border: _useBorder
+                          ? Border.all(color: _borderColor, width: 2)
+                          : null,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(77),
+                          blurRadius: _elevation,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (_showIcon) ...[
+                          Icon(
+                            _getIconForColor(_selectedColor),
+                            color: _selectedColor.computeLuminance() > 0.5
+                                ? Colors.black87
+                                : Colors.white,
+                          ),
+                          const SizedBox(width: 12),
+                        ],
+                        Flexible(
+                          child: Text(
+                            'Style Preview',
+                            style: TextStyle(
+                              color: _selectedColor.computeLuminance() > 0.5
+                                  ? Colors.black87
+                                  : Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  initialValue: _enterType,
-                  items: HyperSnackAnimationType.values
-                      .map(
-                        (e) => DropdownMenuItem(value: e, child: Text(e.name)),
-                      )
-                      .toList(),
-                  onChanged: (v) => setState(() => _enterType = v!),
-                ),
+                ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: DropdownButtonFormField<HyperSnackAnimationType>(
-                  key: ValueKey('exit_$_exitType'),
-                  decoration: const InputDecoration(
-                    labelText: 'Exit',
-                    isDense: true,
-                    border: OutlineInputBorder(),
+            ),
+            const SizedBox(height: 24),
+            _sectionHeader('4. Content'),
+            TextField(
+              style: textStyle,
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                labelStyle: TextStyle(color: Colors.white70),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white30),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.cyanAccent),
+                ),
+                isDense: true,
+              ),
+              controller: TextEditingController(text: _title),
+              onChanged: (v) => _title = v,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              style: textStyle,
+              decoration: const InputDecoration(
+                labelText: 'Message',
+                labelStyle: TextStyle(color: Colors.white70),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white30),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.cyanAccent),
+                ),
+                isDense: true,
+              ),
+              controller: TextEditingController(text: _message),
+              maxLines: 3,
+              minLines: 1,
+              onChanged: (v) => _message = v,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Text('Max Lines: ', style: textStyle.copyWith(fontSize: 13)),
+                Expanded(
+                  child: Slider(
+                    value: _maxLines?.toDouble() ?? 6.0,
+                    min: 1,
+                    max: 6,
+                    divisions: 5,
+                    label: _maxLines == null ? 'All' : _maxLines.toString(),
+                    onChanged: (v) {
+                      setState(() {
+                        _maxLines = v >= 6 ? null : v.toInt();
+                      });
+                    },
                   ),
-                  initialValue: _exitType,
-                  items: HyperSnackAnimationType.values
-                      .map(
-                        (e) => DropdownMenuItem(value: e, child: Text(e.name)),
-                      )
-                      .toList(),
-                  onChanged: (v) => setState(() => _exitType = v!),
                 ),
+                SizedBox(
+                  width: 40,
+                  child: Text(
+                    _maxLines == null ? 'All' : '${_maxLines!}',
+                    style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Scrollable Content', style: textStyle),
+              subtitle: _allowScroll
+                  ? const Text(
+                      'Use "Max Lines" slider to set visible height.',
+                      style: TextStyle(fontSize: 10, color: Colors.white70),
+                    )
+                  : null,
+              dense: true,
+              value: _allowScroll,
+              onChanged: (v) => setState(() => _allowScroll = v),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                _compactSwitch('Icon', _showIcon, (v) => _showIcon = v),
+                const SizedBox(width: 24),
+                _compactSwitch('Action', _showAction, (v) => _showAction = v),
+              ],
+            ),
+            if (_showAction) ...[
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Text(
+                    'Action Pos: ',
+                    style: TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                  const SizedBox(width: 8),
+                  SegmentedButton<MainAxisAlignment>(
+                    showSelectedIcon: false,
+                    style: ButtonStyle(
+                      visualDensity: VisualDensity.compact,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      padding: WidgetStateProperty.all(EdgeInsets.zero),
+                      backgroundColor: WidgetStateProperty.resolveWith(
+                        (states) => states.contains(WidgetState.selected)
+                            ? Colors.cyan.withAlpha(77)
+                            : Colors.transparent,
+                      ),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                    ),
+                    segments: const [
+                      ButtonSegment(
+                        value: MainAxisAlignment.start,
+                        icon: Icon(Icons.align_horizontal_left),
+                      ),
+                      ButtonSegment(
+                        value: MainAxisAlignment.center,
+                        icon: Icon(Icons.align_horizontal_center),
+                      ),
+                      ButtonSegment(
+                        value: MainAxisAlignment.end,
+                        icon: Icon(Icons.align_horizontal_right),
+                      ),
+                    ],
+                    selected: {_actionAlignment},
+                    onSelectionChanged: (newSet) {
+                      setState(() => _actionAlignment = newSet.first);
+                    },
+                  ),
+                ],
               ),
             ],
-          ),
-          const SizedBox(height: 12),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Elastic Curve (Bouncy)'),
-            dense: true,
-            value: _useElasticCurve,
-            onChanged: (v) => setState(() => _useElasticCurve = v),
-          ),
-          _sliderRow(
-            'Duration (s)',
-            _durationSeconds,
-            1,
-            10,
-            (v) => setState(() => _durationSeconds = v),
-          ),
-
-          const SizedBox(height: 24),
-          // --- 6. Progress Bar ---
-          _sectionHeader('Progress Bar'),
-          SegmentedButton<double>(
-            segments: const [
-              ButtonSegment(value: -1, label: Text('None')),
-              ButtonSegment(value: 0.0, label: Text('Wipe')),
-              ButtonSegment(value: 4.0, label: Text('Line')),
-            ],
-            selected: {
-              _progressBarValue == 0.0
-                  ? 0.0
-                  : (_progressBarValue > 0 ? 4.0 : -1),
-            },
-            onSelectionChanged: (Set<double> newSelection) {
-              setState(() {
-                _progressBarValue = newSelection.first;
-              });
-            },
-          ),
-          const SizedBox(height: 50),
-        ],
+            const SizedBox(height: 24),
+            _sectionHeader('5. Appearance'),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _colorOption(const Color(0xFF323232)),
+                  _colorOption(Colors.white),
+                  _colorOption(const Color(0xFF212121)),
+                  _colorOption(Colors.green.shade700),
+                  _colorOption(Colors.red.shade700),
+                  _colorOption(const Color(0xFF2196F3)),
+                  _colorOption(const Color(0xFF6C63FF)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                _label('Border: '),
+                _compactSwitch('', _useBorder, (v) => _useBorder = v),
+                if (_useBorder) ...[
+                  const SizedBox(width: 12),
+                  _borderColorOption(Colors.white),
+                  _borderColorOption(Colors.cyanAccent),
+                  _borderColorOption(Colors.redAccent),
+                  _borderColorOption(Colors.black),
+                ],
+              ],
+            ),
+            const SizedBox(height: 8),
+            _sliderRow(
+              'Radius',
+              _borderRadius,
+              0,
+              32,
+              (v) => setState(() => _borderRadius = v),
+            ),
+            _sliderRow(
+              'Shadow',
+              _elevation,
+              0,
+              20,
+              (v) => setState(() => _elevation = v),
+            ),
+            const SizedBox(height: 24),
+            _sectionHeader('6. Animation'),
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<HyperSnackAnimationType>(
+                    key: ValueKey('enter_$_enterType'),
+                    dropdownColor: Colors.grey.shade900,
+                    style: textStyle,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter',
+                      labelStyle: TextStyle(color: Colors.white70),
+                      isDense: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white30),
+                      ),
+                    ),
+                    initialValue: _enterType,
+                    items: HyperSnackAnimationType.values
+                        .map(
+                          (e) =>
+                              DropdownMenuItem(value: e, child: Text(e.name)),
+                        )
+                        .toList(),
+                    onChanged: (v) => setState(() => _enterType = v!),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: DropdownButtonFormField<HyperSnackAnimationType>(
+                    key: ValueKey('exit_$_exitType'),
+                    dropdownColor: Colors.grey.shade900,
+                    style: textStyle,
+                    decoration: const InputDecoration(
+                      labelText: 'Exit',
+                      labelStyle: TextStyle(color: Colors.white70),
+                      isDense: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white30),
+                      ),
+                    ),
+                    initialValue: _exitType,
+                    items: HyperSnackAnimationType.values
+                        .map(
+                          (e) =>
+                              DropdownMenuItem(value: e, child: Text(e.name)),
+                        )
+                        .toList(),
+                    onChanged: (v) => setState(() => _exitType = v!),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Elastic Curve (Bouncy)', style: textStyle),
+              dense: true,
+              value: _useElasticCurve,
+              onChanged: (v) => setState(() => _useElasticCurve = v),
+            ),
+            _sliderRow(
+              'Duration (s)',
+              _durationSeconds,
+              1,
+              10,
+              (v) => setState(() => _durationSeconds = v),
+            ),
+            const SizedBox(height: 24),
+            _sectionHeader('7. Progress Bar'),
+            SegmentedButton<double>(
+              segments: const [
+                ButtonSegment(value: -1, label: Text('None')),
+                ButtonSegment(value: 0.0, label: Text('Wipe')),
+                ButtonSegment(value: 4.0, label: Text('Line')),
+              ],
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? Colors.cyan.withAlpha(77)
+                      : Colors.transparent,
+                ),
+                foregroundColor: WidgetStateProperty.all(Colors.white),
+              ),
+              selected: {
+                _progressBarValue == 0.0
+                    ? 0.0
+                    : (_progressBarValue > 0 ? 4.0 : -1),
+              },
+              onSelectionChanged: (Set<double> newSelection) {
+                setState(() {
+                  _progressBarValue = newSelection.first;
+                });
+              },
+            ),
+            const SizedBox(height: 50),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildShowButtonArea() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
+  Widget _buildShowButtonArea({bool glass = false}) {
+    final button = SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          gradient: const LinearGradient(
+            colors: [Color(0xFF6C63FF), Color(0xFF48A9FE)],
           ),
-        ],
-      ),
-      child: SizedBox(
-        width: double.infinity,
-        height: 50,
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF6C63FF).withAlpha(102),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: ElevatedButton.icon(
           onPressed: _showSnackbar,
-          icon: const Icon(Icons.bolt),
+          icon: const Icon(Icons.bolt, color: Colors.white),
           label: const Text(
             'SHOW SNACKBAR',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF6C63FF),
-            foregroundColor: Colors.white,
-            elevation: 2,
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
           ),
         ),
       ),
+    );
+
+    if (glass) {
+      return Container(padding: const EdgeInsets.all(24), child: button);
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: const BoxDecoration(color: Colors.transparent),
+      child: button,
     );
   }
 
@@ -740,95 +946,126 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Phone Frame
+          // Device Frame (Notch Removed)
           Container(
             width: 380,
-            height: 700,
+            height: 750,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: Colors.grey.shade800, width: 8),
+              color: Colors.black, // Device body
+              borderRadius: BorderRadius.circular(40),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+                  color: Colors.black.withAlpha(102),
+                  blurRadius: 30,
+                  offset: const Offset(0, 20),
                 ),
               ],
             ),
-            clipBehavior: Clip.antiAlias,
-            child: Navigator(
-              onGenerateRoute: (settings) {
-                return MaterialPageRoute(
-                  builder: (context) => Scaffold(
-                    key: _innerScaffoldKey, // Key for context
-                    backgroundColor: Colors.grey[50], // Preview BG
-                    appBar: AppBar(
-                      title: const Text(
-                        'My App',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      backgroundColor: Colors.white,
-                      elevation: 0,
-                      centerTitle: true,
-                    ),
-                    body: Stack(
-                      children: [
-                        // App Content
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.touch_app,
-                                size: 64,
-                                color: Colors.grey[300],
+            padding: const EdgeInsets.all(12), // Bezel width
+            child: Stack(
+              children: [
+                // Screen Content
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Navigator(
+                    onGenerateRoute: (settings) {
+                      return MaterialPageRoute(
+                        builder: (context) => Scaffold(
+                          key: _innerScaffoldKey, // Key for context
+                          extendBodyBehindAppBar: true,
+                          appBar: AppBar(
+                            title: const Text(
+                              'Hyper Demo',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
                               ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Preview Area',
-                                style: TextStyle(
-                                  color: Colors.grey[400],
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                            ),
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                            centerTitle: true,
                           ),
-                        ),
-                        // Code Overlay
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          child: Container(
-                            height: 200,
-                            padding: const EdgeInsets.all(16),
-                            color: const Color(0xFF1E1E2E),
-                            child: SingleChildScrollView(
-                              child: SelectableText(
-                                _generateCode(),
-                                style: const TextStyle(
-                                  fontFamily: 'Courier',
-                                  color: Color(0xFFA6ACCD),
-                                  fontSize: 11,
-                                  height: 1.4,
-                                ),
+                          body: Container(
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Color(0xFF2A2D3E), Color(0xFF1F1F2E)],
                               ),
+                            ),
+                            child: Stack(
+                              children: [
+                                // Mock Content
+                                Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.touch_app,
+                                        size: 64,
+                                        color: Colors.white.withAlpha(25),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'Preview Screen',
+                                        style: TextStyle(
+                                          color: Colors.white.withAlpha(51),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // Code Overlay
+                                Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  bottom: 0,
+                                  child: ClipRRect(
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                        sigmaX: 10,
+                                        sigmaY: 10,
+                                      ),
+                                      child: Container(
+                                        height: 220,
+                                        padding: const EdgeInsets.all(16),
+                                        color: Colors.black.withAlpha(153),
+                                        child: SingleChildScrollView(
+                                          child: SelectableText(
+                                            _generateCode(),
+                                            style: const TextStyle(
+                                              fontFamily: 'Courier',
+                                              color: Color(0xFF00FFC6),
+                                              fontSize: 10,
+                                              height: 1.4,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           const Text(
             'Interactive Device Preview',
-            style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Colors.white70,
+              fontWeight: FontWeight.bold,
+              shadows: [Shadow(color: Colors.black, blurRadius: 4)],
+            ),
           ),
         ],
       ),
@@ -843,9 +1080,9 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       child: Text(
         title,
         style: const TextStyle(
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: Colors.black87,
+          color: Colors.cyanAccent,
         ),
       ),
     );
@@ -860,7 +1097,10 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   ) {
     return Row(
       children: [
-        SizedBox(width: 80, child: Text('$label: ')),
+        SizedBox(
+          width: 80,
+          child: Text('$label: ', style: const TextStyle(color: Colors.white)),
+        ),
         Expanded(
           child: Slider(
             value: value,
@@ -870,7 +1110,13 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
             onChanged: onChanged,
           ),
         ),
-        SizedBox(width: 30, child: Text('${value.toInt()}')),
+        SizedBox(
+          width: 30,
+          child: Text(
+            '${value.toInt()}',
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
       ],
     );
   }
@@ -883,7 +1129,11 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (label.isNotEmpty) Text(label, style: const TextStyle(fontSize: 14)),
+        if (label.isNotEmpty)
+          Text(
+            label,
+            style: const TextStyle(fontSize: 14, color: Colors.white),
+          ),
         Transform.scale(
           scale: 0.8,
           child: Switch(
@@ -899,7 +1149,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   Widget _presetButton(String label, Color color) {
     return ActionChip(
       label: Text(label),
-      backgroundColor: color.withValues(alpha: 0.1),
+      backgroundColor: color.withAlpha(25),
       labelStyle: TextStyle(color: color, fontWeight: FontWeight.bold),
       side: BorderSide.none,
       onPressed: () => _applyPreset(label),
@@ -921,7 +1171,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: color.withValues(alpha: 0.4),
+                    color: color.withAlpha(102),
                     blurRadius: 6,
                     spreadRadius: 2,
                   ),
@@ -956,7 +1206,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         ),
         child: isSelected
             ? const Center(
-                child: Icon(Icons.circle, size: 8, color: Colors.black),
+                child: Icon(Icons.circle, size: 8, color: Colors.white),
               )
             : null,
       ),
@@ -970,10 +1220,10 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     sb.writeln('HyperSnackbar.show(');
     sb.writeln("  title: '$_title',");
 
-    // TRUNCATE MESSAGE IN CODE VIEW TO PREVENT UI FRAGMENTATION
+    // TRUNCATE MESSAGE IN CODE VIEW
     if (_message.isNotEmpty) {
       if (_message.length > 80) {
-        sb.writeln("  message: '${_message.substring(0, 80)}... (truncated)',");
+        sb.writeln("  message: '${_message.substring(0, 80)}...',");
       } else {
         sb.writeln("  message: '$_message',");
       }
@@ -1012,19 +1262,35 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     if (_position == HyperSnackPosition.bottom) {
       sb.writeln('  position: HyperSnackPosition.bottom,');
     }
-    if (!_useMargin) sb.writeln('  margin: EdgeInsets.zero,');
+
+    if (!_useMargin) {
+      sb.writeln('  margin: EdgeInsets.zero,');
+    }
+
     if (!_dismissible) sb.writeln('  dismissible: false,');
+
+    if (_displayMode == HyperSnackDisplayMode.queue) {
+      sb.writeln('  displayMode: HyperSnackDisplayMode.queue,');
+    } else {
+      // Only show if Stack
+      if (_maxVisibleCount != 3.0) {
+        sb.writeln('  maxVisibleCount: ${_maxVisibleCount.toInt()},');
+      }
+    }
+
+    if (!_newestOnTop) {
+      sb.writeln('  newestOnTop: false, // Log style');
+    }
+
     if (_durationSeconds != 2.5) {
       sb.writeln(
         '  displayDuration: Duration(milliseconds: ${(_durationSeconds * 1000).toInt()}),',
       );
     }
 
-    // Text Options & Scroll logic
     if (_allowScroll) {
       sb.writeln('  scrollable: true,');
       if (_maxLines != null) {
-        sb.writeln('  // Constraining height instead of lines for scrolling:');
         sb.writeln('  messageMaxHeight: ${_maxLines! * 20.0},');
       } else {
         sb.writeln('  messageMaxHeight: 200.0,');
