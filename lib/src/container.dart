@@ -1,3 +1,4 @@
+import 'dart:async'; // Added
 import 'package:flutter/material.dart';
 import 'config.dart';
 import 'widget.dart';
@@ -26,6 +27,9 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
 
   // Deprecated Timer, managing time with _durationController
   late AnimationController _durationController;
+
+  // Timer for scroll Resume delay (New)
+  Timer? _scrollEndTimer;
 
   // Whether it is in the middle of exit animation
   bool _isExiting = false;
@@ -78,14 +82,21 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   // Pause on scroll start
   void _handleScrollStart() {
     if (config.displayDuration != null) {
+      _scrollEndTimer?.cancel(); // Cancel any existing resume timer
       _durationController.stop();
     }
   }
 
-  // Resume on scroll end
+  // Resume on scroll end (With 1s Delay)
   void _handleScrollEnd() {
     if (config.displayDuration != null && !_isExiting && mounted) {
-      _durationController.forward();
+      _scrollEndTimer?.cancel();
+      // Wait 1 second before resuming to give user "reading time"
+      _scrollEndTimer = Timer(const Duration(seconds: 1), () {
+        if (mounted && !_isExiting) {
+          _durationController.forward();
+        }
+      });
     }
   }
 
@@ -104,6 +115,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     });
 
     // Reset Duration timer and restart
+    _scrollEndTimer?.cancel();
     _durationController.stop();
     _durationController.value = 0.0;
     if (config.displayDuration != null) {
@@ -116,7 +128,8 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   void dismiss() {
     if (!mounted || _isExiting) return;
 
-    _durationController.stop(); // Stop timer
+    _scrollEndTimer?.cancel(); // Cancel resume timer
+    _durationController.stop(); // Stop animation timer
 
     setState(() {
       _isExiting = true;
@@ -135,6 +148,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
 
   @override
   void dispose() {
+    _scrollEndTimer?.cancel();
     _animationController.dispose();
     _durationController.dispose();
     super.dispose();
@@ -157,6 +171,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
         onUpdate: (details) {
           // Stop timer during swipe
           if (details.progress > 0) {
+            _scrollEndTimer?.cancel();
             _durationController.stop();
           }
         },
