@@ -50,7 +50,7 @@ class HomePage extends StatelessWidget {
             const _SectionHeader('Minimal Usage'),
             const SizedBox(height: 8),
 
-            // 最も基本的な使い方
+            // The most basic usage
             _ActionButton(
               label: 'Hello World',
               onPressed: () {
@@ -62,7 +62,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // プリセットの紹介
+            // Introduction of presets
             Row(
               children: [
                 Expanded(
