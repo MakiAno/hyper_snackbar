@@ -75,8 +75,21 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
     final bool isLineEffect = showProgressBar && config.progressBarWidth! > 0.0;
 
     // Progress bar color (default is faint white)
-    final progressColor =
-        config.progressBarColor ?? Colors.white.withValues(alpha: 0.2);
+    final progressColor = config.progressBarColor ?? Colors.white.withAlpha(51);
+
+    // --- Message Logic for Ellipsis (Stabilization Fix) ---
+    // If not scrollable and maxLines is set, we treat it as "Summary Mode".
+    final bool isEllipsisMode = !config.scrollable && config.maxLines != null;
+
+    String displayMessage = config.message ?? '';
+
+    if (hasMessage && isEllipsisMode) {
+      // 1. Remove trailing spaces (prevents ellipsis from being pushed out)
+      displayMessage = displayMessage.trimRight();
+      // 2. Replace newlines with spaces (treat as single paragraph)
+      //    This prevents hard line breaks from confusing the maxLines counter.
+      displayMessage = displayMessage.replaceAll('\n', ' ');
+    }
 
     return Container(
       margin: config.margin,
@@ -164,8 +177,7 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                             GestureDetector(
                               onTap: widget.onDismiss,
                               child: Icon(Icons.close,
-                                  size: 20,
-                                  color: txtColor.withValues(alpha: 0.6)),
+                                  size: 20, color: txtColor.withAlpha(153)),
                             ),
                           ],
                         ],
@@ -214,11 +226,10 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                   child: Align(
                                     alignment: Alignment.topLeft,
                                     child: Text(
-                                      config.message!,
+                                      displayMessage, // Use stabilized message
                                       style: config.messageStyle ??
                                           TextStyle(
-                                            color:
-                                                txtColor.withValues(alpha: 0.9),
+                                            color: txtColor.withAlpha(230),
                                             fontSize: 14,
                                           ),
                                       maxLines: (config.scrollable ||
@@ -299,8 +310,6 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
             // ===============================================
             // 3. Thin Bar (Line Effect) - Width > 0
             // ===============================================
-            // Placed at the end of the Stack to overlay on content,
-            // and attached to the bottom using Positioned.
             if (isLineEffect)
               Positioned(
                 bottom: 0,
