@@ -1,4 +1,9 @@
-## 0.4.1 - 2026-01-18
+## 0.4.2 - 2026-01-18
+
+* **CHORE**: Translated remaining comments in the example app to English for better accessibility.
+* **DOCS**: Minor updates to the example code for consistency.
+
+## 0.4.1
 
 * **FIX**: Improved UX for scrollable messages. The auto-dismiss timer now pauses for 1 second after the user stops scrolling, preventing the snackbar from disappearing immediately.
 * **FIX**: Resolved an issue where the text ellipsis (`...`) would not appear correctly if the truncated text ended with a space or newline.
