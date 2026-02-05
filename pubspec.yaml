@@ -1,6 +1,6 @@
 name: hyper_snackbar
 description: A highly customizable and animated snackbar package for Flutter.
-version: 0.4.2
+version: 0.4.3
 repository: https://github.com/MakiAno/hyper_snackbar
 screenshots:
   - description: 'Demo animation for HyperSnackbar 1'

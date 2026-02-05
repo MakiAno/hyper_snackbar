@@ -1,4 +1,13 @@
-## 0.4.2 - 2026-01-18
+## [0.4.3] - 2026-02-05
+
+### Fixed
+- **Overlay Retrieval Crash:** Fixed an issue where calling `HyperSnackbar.show` without a proper context (or from background processes) caused a `No Overlay widget found` crash. Added a robust fallback mechanism using `navigatorKey`.
+- **Corner Rendering Artifacts:** Fixed an issue where black halos/borders appeared on rounded corners when the snackbar was displayed over dark backgrounds (like Drawers). Improved rendering by separating Material shape handling from content clipping using `ClipRRect`.
+
+### Improved
+- **Overlay Lookup:** Enhanced `Overlay` lookup to support `rootOverlay: true`, ensuring the snackbar appears above modals and drawers when a context is provided.
+- 
+## 0.4.2
 
 * **CHORE**: Translated remaining comments in the example app to English for better accessibility.
 * **DOCS**: Minor updates to the example code for consistency.
