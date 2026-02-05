@@ -437,18 +437,22 @@ class HyperSnackbar {
     if (_isOverlayMounted) return;
     OverlayState? overlayState;
 
+    // rootOverlay: true にすることで、ネストしたNavigatorの中にいても
+    // 可能な限り最上位（ドロワーやダイアログの上）を探しに行きます
     if (context != null) {
-      overlayState = Overlay.of(context);
-    } else {
-      if (navigatorKey.currentState == null) {
-        throw FlutterError(
-            'HyperSnackbar: Context was not provided and navigatorKey is not registered.\n'
-            'Please Add `navigatorKey: HyperSnackbar.navigatorKey` to your MaterialApp.');
-      }
-      overlayState = navigatorKey.currentState?.overlay;
+      overlayState = Overlay.maybeOf(context, rootOverlay: true);
     }
 
-    if (overlayState == null) return;
+    // 2. context で見つからなかった、または context が null の場合
+    // navigatorKey から直接取得する（これが最も確実なフォールバック）
+    overlayState ??= navigatorKey.currentState?.overlay;
+
+    // 3. それでも見つからない場合はエラーログを出して終了
+    if (overlayState == null) {
+      debugPrint(
+          "HyperSnackbar: No Overlay found. Check your navigatorKey setup.");
+      return;
+    }
 
     final newEntry = OverlayEntry(
       builder: (context) => _HyperOverlayManager(

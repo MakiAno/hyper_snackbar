@@ -107,139 +107,143 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                 ),
               )
             : null,
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          children: [
-            // ===============================================
-            // 1. Background Wipe (Wipe Effect) - Width == 0
-            // ===============================================
-            if (isWipeEffect)
-              Positioned.fill(
-                child: AnimatedBuilder(
-                  animation: widget.durationAnimation!,
-                  builder: (context, child) {
-                    return FractionallySizedBox(
-                      alignment: Alignment.centerLeft,
-                      widthFactor:
-                          widget.durationAnimation!.value, // 0.0 -> 1.0
-                      child: Container(color: progressColor),
-                    );
-                  },
+        clipBehavior: Clip.none,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(config.borderRadius),
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            children: [
+              // ===============================================
+              // 1. Background Wipe (Wipe Effect) - Width == 0
+              // ===============================================
+              if (isWipeEffect)
+                Positioned.fill(
+                  child: AnimatedBuilder(
+                    animation: widget.durationAnimation!,
+                    builder: (context, child) {
+                      return FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor:
+                            widget.durationAnimation!.value, // 0.0 -> 1.0
+                        child: Container(color: progressColor),
+                      );
+                    },
+                  ),
                 ),
-              ),
 
-            // ===============================================
-            // 2. Main Content (InkWell)
-            // ===============================================
-            InkWell(
-              onTap: config.onTap,
-              borderRadius: BorderRadius.circular(config.borderRadius),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: screenHeight * 0.8,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // ---------------------------------------------------
-                    // Header (Icon + Title + Close Button)
-                    // ---------------------------------------------------
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: leftPad,
-                        right: rightPad,
-                        top: topPad,
-                        bottom: (!hasMessage && !hasFooter) ? bottomPad : 0,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (config.icon != null) ...[
-                            config.icon!,
-                            const SizedBox(width: 12),
-                          ],
-                          Expanded(
-                            child: Text(
-                              config.title ?? '',
-                              style: config.titleStyle ??
-                                  TextStyle(
-                                    color: txtColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+              // ===============================================
+              // 2. Main Content (InkWell)
+              // ===============================================
+              InkWell(
+                onTap: config.onTap,
+                borderRadius: BorderRadius.circular(config.borderRadius),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: screenHeight * 0.8,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // ---------------------------------------------------
+                      // Header (Icon + Title + Close Button)
+                      // ---------------------------------------------------
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: leftPad,
+                          right: rightPad,
+                          top: topPad,
+                          bottom: (!hasMessage && !hasFooter) ? bottomPad : 0,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (config.icon != null) ...[
+                              config.icon!,
+                              const SizedBox(width: 12),
+                            ],
+                            Expanded(
+                              child: Text(
+                                config.title ?? '',
+                                style: config.titleStyle ??
+                                    TextStyle(
+                                      color: txtColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                          if (config.showCloseButton) ...[
-                            const SizedBox(width: 8),
-                            GestureDetector(
-                              onTap: widget.onDismiss,
-                              child: Icon(Icons.close,
-                                  size: 20, color: txtColor.withAlpha(153)),
-                            ),
+                            if (config.showCloseButton) ...[
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: widget.onDismiss,
+                                child: Icon(Icons.close,
+                                    size: 20, color: txtColor.withAlpha(153)),
+                              ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
-                    ),
 
-                    // ---------------------------------------------------
-                    // Body (Message)
-                    // ---------------------------------------------------
-                    if (hasMessage) ...[
-                      const SizedBox(height: 4),
-                      Flexible(
-                        fit: FlexFit.loose,
-                        child: Container(
-                          width: double.infinity,
-                          constraints: BoxConstraints(
-                            maxHeight: config.scrollable
-                                ? (config.messageMaxHeight ?? double.infinity)
-                                : double.infinity,
-                          ),
-                          child: NotificationListener<ScrollNotification>(
-                            onNotification: (notification) {
-                              if (notification is ScrollStartNotification) {
-                                widget.onScrollStart?.call();
-                              } else if (notification
-                                  is ScrollEndNotification) {
-                                widget.onScrollEnd?.call();
-                              }
-                              return false;
-                            },
-                            child: Scrollbar(
-                              controller: _scrollController,
-                              thumbVisibility: true,
-                              child: SingleChildScrollView(
+                      // ---------------------------------------------------
+                      // Body (Message)
+                      // ---------------------------------------------------
+                      if (hasMessage) ...[
+                        const SizedBox(height: 4),
+                        Flexible(
+                          fit: FlexFit.loose,
+                          child: Container(
+                            width: double.infinity,
+                            constraints: BoxConstraints(
+                              maxHeight: config.scrollable
+                                  ? (config.messageMaxHeight ?? double.infinity)
+                                  : double.infinity,
+                            ),
+                            child: NotificationListener<ScrollNotification>(
+                              onNotification: (notification) {
+                                if (notification is ScrollStartNotification) {
+                                  widget.onScrollStart?.call();
+                                } else if (notification
+                                    is ScrollEndNotification) {
+                                  widget.onScrollEnd?.call();
+                                }
+                                return false;
+                              },
+                              child: Scrollbar(
                                 controller: _scrollController,
-                                physics: (config.scrollable ||
-                                        config.maxLines == null)
-                                    ? const BouncingScrollPhysics()
-                                    : const NeverScrollableScrollPhysics(),
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    left: leftPad,
-                                    right: rightPad,
-                                    bottom: (!hasFooter) ? bottomPad : 4.0,
-                                  ),
-                                  child: Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      displayMessage, // Use stabilized message
-                                      style: config.messageStyle ??
-                                          TextStyle(
-                                            color: txtColor.withAlpha(230),
-                                            fontSize: 14,
-                                          ),
-                                      maxLines: (config.scrollable ||
-                                              config.maxLines == null)
-                                          ? null
-                                          : config.maxLines,
-                                      overflow: (config.scrollable ||
-                                              config.maxLines == null)
-                                          ? TextOverflow.visible
-                                          : TextOverflow.ellipsis,
+                                thumbVisibility: true,
+                                child: SingleChildScrollView(
+                                  controller: _scrollController,
+                                  physics: (config.scrollable ||
+                                          config.maxLines == null)
+                                      ? const BouncingScrollPhysics()
+                                      : const NeverScrollableScrollPhysics(),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      left: leftPad,
+                                      right: rightPad,
+                                      bottom: (!hasFooter) ? bottomPad : 4.0,
+                                    ),
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        displayMessage, // Use stabilized message
+                                        style: config.messageStyle ??
+                                            TextStyle(
+                                              color: txtColor.withAlpha(230),
+                                              fontSize: 14,
+                                            ),
+                                        maxLines: (config.scrollable ||
+                                                config.maxLines == null)
+                                            ? null
+                                            : config.maxLines,
+                                        overflow: (config.scrollable ||
+                                                config.maxLines == null)
+                                            ? TextOverflow.visible
+                                            : TextOverflow.ellipsis,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -247,87 +251,90 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
 
-                    // ---------------------------------------------------
-                    // Footer (Action / Content)
-                    // ---------------------------------------------------
-                    if (hasFooter) ...[
-                      SizedBox(height: hasMessage ? 0 : 8),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: leftPad,
-                          right: rightPad,
-                          bottom: bottomPad,
-                          top: 0,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (config.content != null)
-                              config.content!
-                            else if (config.action != null)
-                              Row(
-                                mainAxisAlignment: config.actionAlignment,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      config.action!.onPressed();
-                                      if (config.action!.autoDismiss) {
-                                        widget.onDismiss();
-                                      }
-                                    },
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: config
-                                              .action!.textColor ??
-                                          Theme.of(context).colorScheme.primary,
-                                      backgroundColor:
-                                          config.action!.backgroundColor,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 4),
-                                      minimumSize: Size.zero,
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
+                      // ---------------------------------------------------
+                      // Footer (Action / Content)
+                      // ---------------------------------------------------
+                      if (hasFooter) ...[
+                        SizedBox(height: hasMessage ? 0 : 8),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: leftPad,
+                            right: rightPad,
+                            bottom: bottomPad,
+                            top: 0,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (config.content != null)
+                                config.content!
+                              else if (config.action != null)
+                                Row(
+                                  mainAxisAlignment: config.actionAlignment,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        config.action!.onPressed();
+                                        if (config.action!.autoDismiss) {
+                                          widget.onDismiss();
+                                        }
+                                      },
+                                      style: TextButton.styleFrom(
+                                        foregroundColor:
+                                            config.action!.textColor ??
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                        backgroundColor:
+                                            config.action!.backgroundColor,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        minimumSize: Size.zero,
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      child: Text(
+                                        config.action!.label,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
-                                    child: Text(
-                                      config.action!.label,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                          ],
+                                  ],
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
 
-            // ===============================================
-            // 3. Thin Bar (Line Effect) - Width > 0
-            // ===============================================
-            if (isLineEffect)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: AnimatedBuilder(
-                  animation: widget.durationAnimation!,
-                  builder: (context, child) {
-                    return LinearProgressIndicator(
-                      value: widget.durationAnimation!.value,
-                      backgroundColor: Colors.transparent,
-                      valueColor: AlwaysStoppedAnimation<Color>(progressColor),
-                      minHeight: config.progressBarWidth,
-                    );
-                  },
+              // ===============================================
+              // 3. Thin Bar (Line Effect) - Width > 0
+              // ===============================================
+              if (isLineEffect)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: AnimatedBuilder(
+                    animation: widget.durationAnimation!,
+                    builder: (context, child) {
+                      return LinearProgressIndicator(
+                        value: widget.durationAnimation!.value,
+                        backgroundColor: Colors.transparent,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(progressColor),
+                        minHeight: config.progressBarWidth,
+                      );
+                    },
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
