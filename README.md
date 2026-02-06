@@ -37,7 +37,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.4.2
+  hyper_snackbar: ^0.4.4
 ```
 
 ## 🛠 Setup

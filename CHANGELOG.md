@@ -1,4 +1,9 @@
-## [0.4.3] - 2026-02-05
+## 0.4.4 - 2026-02-06
+
+* Fix: Corrected installation instructions and example code in README.md.
+* Documentation: Updated usage examples for better clarity.
+
+## [0.4.3]
 
 ### Fixed
 - **Overlay Retrieval Crash:** Fixed an issue where calling `HyperSnackbar.show` without a proper context (or from background processes) caused a `No Overlay widget found` crash. Added a robust fallback mechanism using `navigatorKey`.
