@@ -147,6 +147,17 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   }
 
   @override
+  void didUpdateWidget(HyperSnackBarContainer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.config != oldWidget.config) {
+      setState(() {
+        config = widget.config;
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _scrollEndTimer?.cancel();
     _animationController.dispose();

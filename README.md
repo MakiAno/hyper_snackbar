@@ -10,7 +10,9 @@ Designed to be "Hyper" flexible — supports Stack/Queue modes, custom animation
 
 [![Live Demo](https://img.shields.io/badge/demo-online-green.svg?style=flat-square&logo=flutter)](https://makiano.github.io/hyper_snackbar/)
 <br>
-**[👉 Try the Interactive Playground!](https://makiano.github.io/hyper_snackbar/)**
+<h2 align="center">
+  <a href="https://makiano.github.io/hyper_snackbar/">👉 Try the Interactive Playground!</a>
+</h2>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/MakiAno/hyper_snackbar/main/screenshots/demo1.gif" width="32%" />
@@ -37,7 +39,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.4.4
+  hyper_snackbar: ^0.5.0
 ```
 
 ## 🛠 Setup
@@ -300,68 +302,69 @@ All methods are static and can be called from anywhere.
 | `isSnackbarOpen` | Returns `true` if any snackbar is visible. |
 | `isSnackbarOpenById(id)` | Returns `true` if the specific snackbar is visible. |
 
-### HyperConfig Properties
+## ⚙️ Configuration Parameters
 
-These parameters can be passed to `HyperSnackbar.show()`.
+`HyperSnackbar` is highly customizable. You can configure it using the `HyperConfig` object or directly via parameters in `HyperSnackbar.show` / `context.showHyperSnackbar`.
 
-#### Content & ID
+### 🎨 General & Appearance
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `title` | `String?` | `null` | The main title text. |
-| `message` | `String?` | `null` | The body text. |
-| `id` | `String?` | `null` | Unique ID. Updates existing snackbar if ID matches. |
-| `icon` | `Widget?` | `null` | Icon widget displayed on the left. |
-| `action` | `HyperSnackAction?` | `null` | Action button definition. |
-| `actionAlignment` | `MainAxisAlignment` | `.end` | Alignment of the action button. |
-| `content` | `Widget?` | `null` | Custom widget to replace the action button area. |
-
-#### Appearance
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `backgroundColor` | `Color?` | `Grey[800]` | Background color of the snackbar. |
-| `textColor` | `Color?` | `White` | Color for title and message text. |
-| `borderRadius` | `double` | `12.0` | Corner radius. |
+| `title` | `String?` | `null` | The title of the snackbar. |
+| `message` | `String?` | `null` | The main message body. |
+| `icon` | `Widget?` | `null` | Custom icon widget displayed on the left. |
+| `useAdaptiveLoader` | `bool` | `false` | **(New)** If `true`, displays a platform-adaptive loading indicator (`CupertinoActivityIndicator` / `CircularProgressIndicator`) instead of the icon. |
+| `backgroundColor` | `Color?` | `null` | Background color (defaults to dark grey). |
+| `textColor` | `Color?` | `null` | Color for title and message text. |
+| `borderRadius` | `double` | `12.0` | Corner radius of the snackbar. |
 | `elevation` | `double` | `4.0` | Shadow elevation. |
-| `border` | `BoxBorder?` | `null` | Custom border. |
+| `border` | `BoxBorder?` | `null` | Custom border for the snackbar container. |
 | `margin` | `EdgeInsetsGeometry` | `zero` | Margin around the snackbar. |
-| `padding` | `EdgeInsetsGeometry` | `16,12` | Padding inside the snackbar. |
-| `titleStyle` | `TextStyle?` | `null` | Custom style for the title. |
-| `messageStyle` | `TextStyle?` | `null` | Custom style for the message. |
+| `padding` | `EdgeInsetsGeometry` | `16, 12` | Internal padding. |
 
-#### Behavior
+### 👆 Actions & Interaction
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `displayDuration` | `Duration?` | `4s` | Duration to show. `null` or `zero` = Persistent. |
-| `onTap` | `VoidCallback?` | `null` | Callback when the snackbar is tapped. |
-| `showCloseButton` | `bool` | `true` | Whether to show the 'X' button. |
-| `enableSwipe` | `bool` | `true` | Whether the snackbar can be dismissed by swiping. |
-| `position` | `HyperSnackPosition` | `.top` | `.top` or `.bottom`. |
-| `displayMode` | `HyperSnackDisplayMode`| `.stack` | `.stack` (overlay) or `.queue` (sequential). |
-| `newestOnTop` | `bool` | `true` | If true, new snackbars appear on top of the stack. |
+| `action` | `HyperSnackAction?` | `null` | Action button configuration (label, callback, colors). |
+| `actionAlignment` | `MainAxisAlignment` | `.end` | Alignment of the action button (e.g., `.start`, `.center`). |
+| `content` | `Widget?` | `null` | Custom widget to replace the action button area. |
+| `onTap` | `VoidCallback?` | `null` | Callback when the snackbar itself is tapped. |
+| `showCloseButton` | `bool` | `true` | Whether to show the "X" close button. |
+| `enableSwipe` | `bool` | `true` | Allow dismissing the snackbar by swiping horizontally. |
+
+### ⏱️ Behavior & Positioning
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `id` | `String?` | `null` | Unique ID. Updating a snackbar with the same ID modifies the existing one. |
+| `displayDuration` | `Duration?` | `4s` | How long the snackbar stays visible. `null` means persistent. |
+| `position` | `HyperSnackPosition` | `.top` | Vertical position (`.top` or `.bottom`). |
+| `displayMode` | `HyperSnackDisplayMode` | `.stack` | `.stack` (overlays on top) or `.queue` (shows one by one). |
+| `newestOnTop` | `bool` | `true` | (Stack mode) If `true`, new snackbars appear on top of the stack. |
 | `maxVisibleCount` | `int` | `3` | Maximum number of snackbars visible at once (Stack mode). |
 
-#### Text Handling
+### 📝 Text Handling
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `maxLines` | `int?` | `5` | Maximum lines for the message. |
-| `scrollable` | `bool` | `false` | If true, message becomes scrollable within constraints. |
-| `messageMaxHeight` | `double?` | `null` | Max height for the scrollable area. |
+| `titleStyle` | `TextStyle?` | `null` | Custom style for the title text. |
+| `messageStyle` | `TextStyle?` | `null` | Custom style for the message text. |
+| `maxLines` | `int?` | `5` | Maximum lines for the message text. |
+| `scrollable` | `bool` | `false` | If `true`, the message becomes scrollable within constraints. |
+| `messageMaxHeight` | `double?` | `null` | Max height for the scrollable message area. |
 
-#### Animation
+### ✨ Animation
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `enterAnimationType` | `HyperSnackAnimationType` | `.top` | Animation style for entry (`scale`, `fade`, `left`...). |
+| `enterAnimationType` | `HyperSnackAnimationType` | `.top` | Animation style for entry (`scale`, `fade`, `left`, etc.). |
 | `exitAnimationType` | `HyperSnackAnimationType` | `.left` | Animation style for exit. |
 | `enterAnimationDuration`| `Duration` | `300ms` | Duration of entry animation. |
 | `exitAnimationDuration` | `Duration` | `500ms` | Duration of exit animation. |
 | `enterCurve` | `Curve` | `easeOutQuart`| Animation curve for entry. |
 | `exitCurve` | `Curve` | `easeOut` | Animation curve for exit. |
 
-#### Progress Bar
+### 📊 Progress Bar
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `progressBarWidth` | `double?` | `null` | `>0`: Line height. `0.0`: Wipe effect. `null`: None. |
-| `progressBarColor` | `Color?` | `null` | Color of the bar. Defaults to semi-transparent white. |
+| `progressBarWidth` | `double?` | `null` | Height of the progress bar. `0.0` creates a background "wipe" effect. `null` disables it. |
+| `progressBarColor` | `Color?` | `null` | Color of the progress bar. Defaults to a semi-transparent contrast color. |
 
 ## 📱 Example
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'config.dart';
 
 /// Pure UI Widget for the Snackbar content.
@@ -158,10 +159,24 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (config.icon != null) ...[
-                              config.icon!,
-                              const SizedBox(width: 12),
-                            ],
+                            if (config.useAdaptiveLoader)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 12.0),
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: Theme.of(context).platform ==
+                                          TargetPlatform.iOS
+                                      ? const CupertinoActivityIndicator()
+                                      : const CircularProgressIndicator(
+                                          strokeWidth: 2),
+                                ),
+                              )
+                            else if (config.icon != null)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 12.0),
+                                child: config.icon,
+                              ),
                             Expanded(
                               child: Text(
                                 config.title ?? '',

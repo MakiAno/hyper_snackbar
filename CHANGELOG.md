@@ -1,4 +1,14 @@
-## 0.4.4 - 2026-02-06
+## 0.5.0 - 2026-02-06
+
+### Added
+- Added `useAdaptiveLoader` property to `HyperConfig`.
+  - When set to `true`, a platform-adaptive loading indicator (`CupertinoActivityIndicator` on iOS, `CircularProgressIndicator` on others) is displayed in the icon slot.
+  - This overrides the `icon` property if both are specified.
+
+### Documentation
+- Updated all code comments and API documentation to English for better international support.
+
+## 0.4.4
 
 * Fix: Corrected installation instructions and example code in README.md.
 * Documentation: Updated usage examples for better clarity.

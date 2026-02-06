@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Sentinel
+/// Sentinel value to check for undefined arguments in copyWith.
 const _undefined = Object();
 
 /// Defines the vertical position where the snackbar will appear.
@@ -71,6 +71,8 @@ class HyperConfig {
   final String? message;
 
   /// An optional icon to display on the left side of the snackbar.
+  ///
+  /// If [useAdaptiveLoader] is set to `true`, this property will be ignored.
   final Widget? icon;
 
   /// An optional action button to display.
@@ -142,23 +144,23 @@ class HyperConfig {
   /// The display mode of the snackbar (stack or queue).
   final HyperSnackDisplayMode displayMode;
 
-  /// The max lines of esaage.
+  /// The maximum number of lines for the message text.
   final int? maxLines;
 
   /// Whether the message text is scrollable.
   ///
-  /// If `true`, the `message` text will be scrollable within the `messageMaxHeight`.
-  /// When `scrollable` is `true`, `maxLines` will be used to define the initial height
-  /// (if `messageMaxHeight` is null) or the minimum height.
-  /// If `maxLines` is `null` and `scrollable` is `true`, the message will expand
-  /// to fit its content, up to the available space or `messageMaxHeight`.
+  /// If `true`, the [message] text will be scrollable within the [messageMaxHeight].
+  /// When [scrollable] is `true`, [maxLines] will be used to define the initial height
+  /// (if [messageMaxHeight] is null) or the minimum height.
+  /// If [maxLines] is `null` and [scrollable] is `true`, the message will expand
+  /// to fit its content, up to the available space or [messageMaxHeight].
   final bool scrollable;
 
   /// The maximum height for the scrollable message area.
   ///
-  /// This is only effective if `scrollable` is `true`.
+  /// This is only effective if [scrollable] is `true`.
   /// If `null`, it will take up as much space as the content needs, constrained
-  /// by `maxLines` (if specified) or the available screen height.
+  /// by [maxLines] (if specified) or the available screen height.
   final double? messageMaxHeight;
 
   /// Animation. ---------------------------------------
@@ -191,8 +193,16 @@ class HyperConfig {
   final double? progressBarWidth;
 
   /// The color of the progress bar or the wipe effect.
+  ///
   /// If null, it defaults to a semi-transparent white/black depending on contrast.
   final Color? progressBarColor;
+
+  /// Whether to show a platform-adaptive loading indicator as the icon.
+  ///
+  /// If `true`, this displays a [CupertinoActivityIndicator] on iOS/macOS and
+  /// a [CircularProgressIndicator] on other platforms in place of the [icon].
+  /// This overrides the [icon] property if both are set.
+  final bool useAdaptiveLoader;
 
   const HyperConfig({
     this.title, // Removed required
@@ -230,6 +240,7 @@ class HyperConfig {
     this.exitAnimationType = HyperSnackAnimationType.left,
     this.progressBarWidth,
     this.progressBarColor,
+    this.useAdaptiveLoader = false,
   });
 
   /// Creates a copy of this [HyperConfig] but with the given fields replaced with the new values.
@@ -269,6 +280,7 @@ class HyperConfig {
     HyperSnackAnimationType? exitAnimationType,
     double? progressBarWidth,
     Color? progressBarColor,
+    bool? useAdaptiveLoader,
   }) {
     return HyperConfig(
       id: id ?? this.id,
@@ -310,6 +322,7 @@ class HyperConfig {
       exitAnimationType: exitAnimationType ?? this.exitAnimationType,
       progressBarWidth: progressBarWidth ?? this.progressBarWidth,
       progressBarColor: progressBarColor ?? this.progressBarColor,
+      useAdaptiveLoader: useAdaptiveLoader ?? this.useAdaptiveLoader,
     );
   }
 }

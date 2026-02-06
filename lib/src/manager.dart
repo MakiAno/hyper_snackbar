@@ -36,9 +36,17 @@ class HyperSnackbar {
 
   static bool _isOverlayMounted = false;
 
+  /// Displays a customizable snackbar.
+  ///
   /// Shows a custom snackbar with detailed configuration as named parameters.
   /// For reusing configurations, consider creating a [HyperConfig] object and
   /// using [showFromConfig] instead.
+  ///
+  /// [title] is the headline of the snackbar.
+  /// [message] is the main content text.
+  /// [icon] is the widget displayed on the left.
+  /// [useAdaptiveLoader] if true, displays a platform-adaptive loading indicator
+  /// in place of the icon. This overrides [icon] if provided.
   static void show(
       {required String title,
       String? id,
@@ -76,6 +84,7 @@ class HyperSnackbar {
       HyperSnackAnimationType exitAnimationType = HyperSnackAnimationType.left,
       double? progressBarWidth,
       Color? progressBarColor,
+      bool useAdaptiveLoader = false,
       BuildContext? context}) {
     final config = HyperConfig(
       title: title,
@@ -113,6 +122,7 @@ class HyperSnackbar {
       exitAnimationType: exitAnimationType,
       progressBarWidth: progressBarWidth,
       progressBarColor: progressBarColor,
+      useAdaptiveLoader: useAdaptiveLoader,
     );
     showFromConfig(config, context: context);
   }
@@ -557,42 +567,46 @@ class _HyperOverlayManager extends StatelessWidget {
 
 /// Extension methods for [BuildContext] to easily show snackbars.
 extension HyperSnackbarExtensions on BuildContext {
-  void showHyperSnackbar(
-      {required String title,
-      String? id,
-      String? message,
-      Widget? icon,
-      HyperSnackAction? action,
-      MainAxisAlignment actionAlignment = MainAxisAlignment.end,
-      Widget? content,
-      VoidCallback? onTap,
-      TextStyle? titleStyle,
-      TextStyle? messageStyle,
-      BoxBorder? border,
-      EdgeInsetsGeometry margin = EdgeInsets.zero,
-      EdgeInsetsGeometry padding =
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      Color? backgroundColor,
-      Color? textColor,
-      double borderRadius = 12.0,
-      double elevation = 4.0,
-      Duration? displayDuration = const Duration(seconds: 4),
-      bool showCloseButton = true,
-      bool enableSwipe = true,
-      bool newestOnTop = true,
-      int maxVisibleCount = 3,
-      HyperSnackPosition position = HyperSnackPosition.top,
-      HyperSnackDisplayMode displayMode = HyperSnackDisplayMode.stack,
-      int? maxLines = 5,
-      bool scrollable = false,
-      double? messageMaxHeight,
-      Duration enterAnimationDuration = const Duration(milliseconds: 300),
-      Duration exitAnimationDuration = const Duration(milliseconds: 500),
-      Curve enterCurve = Curves.easeOutQuart,
-      Curve exitCurve = Curves.easeOut,
-      HyperSnackAnimationType enterAnimationType = HyperSnackAnimationType.top,
-      HyperSnackAnimationType exitAnimationType =
-          HyperSnackAnimationType.left}) {
+  void showHyperSnackbar({
+    required String title,
+    String? id,
+    String? message,
+    Widget? icon,
+    HyperSnackAction? action,
+    MainAxisAlignment actionAlignment = MainAxisAlignment.end,
+    Widget? content,
+    VoidCallback? onTap,
+    TextStyle? titleStyle,
+    TextStyle? messageStyle,
+    BoxBorder? border,
+    EdgeInsetsGeometry margin = EdgeInsets.zero,
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    Color? backgroundColor,
+    Color? textColor,
+    double borderRadius = 12.0,
+    double elevation = 4.0,
+    Duration? displayDuration = const Duration(seconds: 4),
+    bool showCloseButton = true,
+    bool enableSwipe = true,
+    bool newestOnTop = true,
+    int maxVisibleCount = 3,
+    HyperSnackPosition position = HyperSnackPosition.top,
+    HyperSnackDisplayMode displayMode = HyperSnackDisplayMode.stack,
+    int? maxLines = 5,
+    bool scrollable = false,
+    double? messageMaxHeight,
+    Duration enterAnimationDuration = const Duration(milliseconds: 300),
+    Duration exitAnimationDuration = const Duration(milliseconds: 500),
+    Curve enterCurve = Curves.easeOutQuart,
+    Curve exitCurve = Curves.easeOut,
+    HyperSnackAnimationType enterAnimationType = HyperSnackAnimationType.top,
+    HyperSnackAnimationType exitAnimationType = HyperSnackAnimationType.left,
+    // ▼ Added missing parameters to match HyperSnackbar.show
+    double? progressBarWidth,
+    Color? progressBarColor,
+    bool useAdaptiveLoader = false,
+  }) {
     HyperSnackbar.show(
       title: title,
       id: id,
@@ -627,6 +641,10 @@ extension HyperSnackbarExtensions on BuildContext {
       exitCurve: exitCurve,
       enterAnimationType: enterAnimationType,
       exitAnimationType: exitAnimationType,
+      // ▼ Pass them to the show method
+      progressBarWidth: progressBarWidth,
+      progressBarColor: progressBarColor,
+      useAdaptiveLoader: useAdaptiveLoader,
       context: this,
     );
   }
