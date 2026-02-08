@@ -39,7 +39,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.5.0
+  hyper_snackbar: ^0.6.0
 ```
 
 ## 🛠 Setup
@@ -162,7 +162,7 @@ HyperSnackbar.show(
 
 ### Advanced Usage
 
-### Style Templates (Reusable Config) 🆕
+### Style Templates (Reusable Config)
 You can create a base configuration without a title and reuse it across your app.
 
 ```dart
@@ -212,7 +212,19 @@ HyperSnackbar.show(
 );
 ```
 
-### 🆕 Progress Bar Effects
+#### Overlay Control (Embedded Mode)🆕
+By default, snackbars render on the root overlay (covering the entire screen). Set useLocalOverlay: true to render the snackbar inside the nearest active Navigator or scope (e.g., inside a specific tab, bottom sheet, or nested window).
+
+```dart
+HyperSnackbar.show(
+  title: 'Embedded Message',
+  message: 'This snackbar stays inside the nested navigator.',
+  useLocalOverlay: true, // <--- Render inside local scope
+  backgroundColor: Colors.indigo,
+);
+```
+
+### Progress Bar Effects
 
 You can visualize the remaining duration using a progress bar.
 
@@ -320,6 +332,8 @@ All methods are static and can be called from anywhere.
 | `border` | `BoxBorder?` | `null` | Custom border for the snackbar container. |
 | `margin` | `EdgeInsetsGeometry` | `zero` | Margin around the snackbar. |
 | `padding` | `EdgeInsetsGeometry` | `16, 12` | Internal padding. |
+| `useLocalOverlay`| `bool` | `false` | If false, renders on the root overlay (full screen). If true, renders on the nearest overlay (useful for nested navigators). |
+
 
 ### 👆 Actions & Interaction
 | Parameter | Type | Default | Description |

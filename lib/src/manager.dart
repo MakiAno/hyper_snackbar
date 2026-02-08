@@ -85,52 +85,53 @@ class HyperSnackbar {
       double? progressBarWidth,
       Color? progressBarColor,
       bool useAdaptiveLoader = false,
+      bool useLocalOverlay = false,
       BuildContext? context}) {
     final config = HyperConfig(
-      title: title,
-      id: id,
-      message: message,
-      icon: icon,
-      action: action,
-      actionAlignment: actionAlignment,
-      content: content,
-      onTap: onTap,
-      titleStyle: titleStyle,
-      messageStyle: messageStyle,
-      border: border,
-      margin: margin,
-      padding: padding,
-      backgroundColor: backgroundColor,
-      textColor: textColor,
-      borderRadius: borderRadius,
-      elevation: elevation,
-      displayDuration: displayDuration,
-      showCloseButton: showCloseButton,
-      enableSwipe: enableSwipe,
-      newestOnTop: newestOnTop,
-      maxVisibleCount: maxVisibleCount,
-      position: position,
-      displayMode: displayMode,
-      maxLines: maxLines,
-      scrollable: scrollable,
-      messageMaxHeight: messageMaxHeight,
-      enterAnimationDuration: enterAnimationDuration,
-      exitAnimationDuration: exitAnimationDuration,
-      enterCurve: enterCurve,
-      exitCurve: exitCurve,
-      enterAnimationType: enterAnimationType,
-      exitAnimationType: exitAnimationType,
-      progressBarWidth: progressBarWidth,
-      progressBarColor: progressBarColor,
-      useAdaptiveLoader: useAdaptiveLoader,
-    );
+        title: title,
+        id: id,
+        message: message,
+        icon: icon,
+        action: action,
+        actionAlignment: actionAlignment,
+        content: content,
+        onTap: onTap,
+        titleStyle: titleStyle,
+        messageStyle: messageStyle,
+        border: border,
+        margin: margin,
+        padding: padding,
+        backgroundColor: backgroundColor,
+        textColor: textColor,
+        borderRadius: borderRadius,
+        elevation: elevation,
+        displayDuration: displayDuration,
+        showCloseButton: showCloseButton,
+        enableSwipe: enableSwipe,
+        newestOnTop: newestOnTop,
+        maxVisibleCount: maxVisibleCount,
+        position: position,
+        displayMode: displayMode,
+        maxLines: maxLines,
+        scrollable: scrollable,
+        messageMaxHeight: messageMaxHeight,
+        enterAnimationDuration: enterAnimationDuration,
+        exitAnimationDuration: exitAnimationDuration,
+        enterCurve: enterCurve,
+        exitCurve: exitCurve,
+        enterAnimationType: enterAnimationType,
+        exitAnimationType: exitAnimationType,
+        progressBarWidth: progressBarWidth,
+        progressBarColor: progressBarColor,
+        useAdaptiveLoader: useAdaptiveLoader,
+        useLocalOverlay: useLocalOverlay);
     showFromConfig(config, context: context);
   }
 
   /// Shows a snackbar using a pre-configured [HyperConfig] object.
   /// This is useful for reusing the same design across different parts of your app.
   static void showFromConfig(HyperConfig config, {BuildContext? context}) {
-    _mountOverlayIfNeeded(context);
+    _mountOverlayIfNeeded(context, config.useLocalOverlay);
 
     if (config.displayMode == HyperSnackDisplayMode.queue) {
       _queue.add(config);
@@ -443,21 +444,22 @@ class HyperSnackbar {
     }
   }
 
-  static void _mountOverlayIfNeeded(BuildContext? context) {
+  static void _mountOverlayIfNeeded(
+      BuildContext? context, bool useLocalOverlay) {
     if (_isOverlayMounted) return;
     OverlayState? overlayState;
 
-    // rootOverlay: true にすることで、ネストしたNavigatorの中にいても
-    // 可能な限り最上位（ドロワーやダイアログの上）を探しに行きます
+    // By setting rootOverlay: true, even if you are in a nested Navigator,
+    // it will search for the highest level possible (above drawers and dialogs)
     if (context != null) {
-      overlayState = Overlay.maybeOf(context, rootOverlay: true);
+      overlayState = Overlay.maybeOf(context, rootOverlay: !useLocalOverlay);
     }
 
-    // 2. context で見つからなかった、または context が null の場合
-    // navigatorKey から直接取得する（これが最も確実なフォールバック）
+    // 2. If it is not found in the context, or if the context is null
+    // get it directly from the navigatorKey (this is the most reliable fallback)
     overlayState ??= navigatorKey.currentState?.overlay;
 
-    // 3. それでも見つからない場合はエラーログを出して終了
+    // 3. If it is still not found, output an error log and exit
     if (overlayState == null) {
       debugPrint(
           "HyperSnackbar: No Overlay found. Check your navigatorKey setup.");
@@ -606,6 +608,7 @@ extension HyperSnackbarExtensions on BuildContext {
     double? progressBarWidth,
     Color? progressBarColor,
     bool useAdaptiveLoader = false,
+    bool useLocalOverlay = false,
   }) {
     HyperSnackbar.show(
       title: title,
@@ -645,6 +648,7 @@ extension HyperSnackbarExtensions on BuildContext {
       progressBarWidth: progressBarWidth,
       progressBarColor: progressBarColor,
       useAdaptiveLoader: useAdaptiveLoader,
+      useLocalOverlay: useLocalOverlay,
       context: this,
     );
   }

@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter (Web Port 5001)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--web-port",
+                "5001"
+            ]
+        }
+    ]
+}

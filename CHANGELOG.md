@@ -1,4 +1,14 @@
-## 0.5.0 - 2026-02-06
+## 0.6.0 - 2026-02-08
+
+### ✨ New Features
+* **Overlay Control (`useLocalOverlay`):**
+    * Added `useLocalOverlay` parameter to `HyperSnackbar.show` and extension methods (default: `false`).
+    * Allows developers to choose whether the snackbar should render on the root overlay (covering everything, including modals) or the local overlay (scoped within a nested Navigator).
+
+### 🛠 Improvements
+* **Playground Update:** Updated the example app to demonstrate the new Loader mode and embedded overlay behavior.
+
+## 0.5.0
 
 ### Added
 - Added `useAdaptiveLoader` property to `HyperConfig`.
