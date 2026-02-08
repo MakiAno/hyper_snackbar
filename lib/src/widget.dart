@@ -92,6 +92,43 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
       displayMessage = displayMessage.replaceAll('\n', ' ');
     }
 
+    Widget? iconWidget;
+
+    if (config.useAdaptiveLoader) {
+      // --- Loader ---
+
+      Color loaderColor = txtColor;
+
+      if (config.icon is Icon) {
+        final icon = config.icon as Icon;
+        if (icon.color != null) {
+          loaderColor = icon.color!;
+        }
+      }
+
+      final isCupertino = Theme.of(context).platform == TargetPlatform.iOS ||
+          Theme.of(context).platform == TargetPlatform.macOS;
+
+      // --- Loader ---
+      iconWidget = SizedBox(
+        width: 20,
+        height: 20,
+        child: isCupertino
+            ? CupertinoActivityIndicator(
+                color:
+                    loaderColor, // This ensures that the color changes even on iOS
+                radius: 10, // Match the diameter to 20px
+              )
+            : CircularProgressIndicator(
+                strokeWidth: 2.5,
+                valueColor: AlwaysStoppedAnimation<Color>(loaderColor),
+              ),
+      );
+    } else {
+      // --- Icon ---
+      iconWidget = config.icon;
+    }
+
     return Container(
       margin: config.margin,
       child: Material(
@@ -159,24 +196,10 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (config.useAdaptiveLoader)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 12.0),
-                                child: SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: Theme.of(context).platform ==
-                                          TargetPlatform.iOS
-                                      ? const CupertinoActivityIndicator()
-                                      : const CircularProgressIndicator(
-                                          strokeWidth: 2),
-                                ),
-                              )
-                            else if (config.icon != null)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 12.0),
-                                child: config.icon,
-                              ),
+                            if (iconWidget != null) ...[
+                              iconWidget,
+                              const SizedBox(width: 12),
+                            ],
                             Expanded(
                               child: Text(
                                 config.title ?? '',

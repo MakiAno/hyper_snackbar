@@ -204,6 +204,8 @@ class HyperConfig {
   /// This overrides the [icon] property if both are set.
   final bool useAdaptiveLoader;
 
+  final bool useLocalOverlay;
+
   const HyperConfig({
     this.title, // Removed required
     this.id,
@@ -241,6 +243,7 @@ class HyperConfig {
     this.progressBarWidth,
     this.progressBarColor,
     this.useAdaptiveLoader = false,
+    this.useLocalOverlay = false,
   });
 
   /// Creates a copy of this [HyperConfig] but with the given fields replaced with the new values.
@@ -281,6 +284,7 @@ class HyperConfig {
     double? progressBarWidth,
     Color? progressBarColor,
     bool? useAdaptiveLoader,
+    bool? useLocalOverlay,
   }) {
     return HyperConfig(
       id: id ?? this.id,
@@ -323,6 +327,7 @@ class HyperConfig {
       progressBarWidth: progressBarWidth ?? this.progressBarWidth,
       progressBarColor: progressBarColor ?? this.progressBarColor,
       useAdaptiveLoader: useAdaptiveLoader ?? this.useAdaptiveLoader,
+      useLocalOverlay: useLocalOverlay ?? this.useLocalOverlay,
     );
   }
 }

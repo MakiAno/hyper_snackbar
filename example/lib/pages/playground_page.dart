@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hyper_snackbar/hyper_snackbar.dart';
 
+enum _IconMode { none, static, loader }
+
 class PlaygroundPage extends StatefulWidget {
   const PlaygroundPage({super.key});
 
@@ -26,7 +28,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   final double _contentPadding = 16.0;
 
   // Icon & Action
-  bool _showIcon = true;
+  _IconMode _iconMode = _IconMode.static;
   bool _showAction = false;
   MainAxisAlignment _actionAlignment = MainAxisAlignment.end;
 
@@ -70,7 +72,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           _showAction = false;
           _useBorder = false;
           _borderRadius = 12.0;
-          _showIcon = true;
+          _iconMode = _IconMode.static;
           _maxLines = null;
           _allowScroll = false;
           _displayMode = HyperSnackDisplayMode.stack;
@@ -89,7 +91,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           _useBorder = true;
           _borderColor = Colors.grey.shade800;
           _borderRadius = 4.0;
-          _showIcon = true;
+          _iconMode = _IconMode.static;
           _position = HyperSnackPosition.top;
           _displayMode = HyperSnackDisplayMode.stack;
           _newestOnTop = false; // Log style
@@ -104,13 +106,30 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           _enterType = HyperSnackAnimationType.scale;
           _progressBarValue = 4.0;
           _showAction = true;
-          _showIcon = true;
+          _iconMode = _IconMode.static;
           _maxLines = 3;
           _allowScroll = true;
           _actionAlignment = MainAxisAlignment.end;
           _displayMode = HyperSnackDisplayMode.stack;
           _newestOnTop = true;
           _maxVisibleCount = 3.0;
+          break;
+        case 'Loading':
+          _title = 'Processing...';
+          _message = 'Please wait while we connect to the server.';
+          _selectedColor = Colors.indigo.shade700;
+          _enterType = HyperSnackAnimationType.fade;
+          _exitType = HyperSnackAnimationType.fade;
+          _progressBarValue = -1; // No progress bar (infinite feel)
+          _showAction = false;
+          _useBorder = false;
+          _borderRadius = 12.0;
+          _iconMode = _IconMode.loader; // Loader Mode
+          _maxLines = null;
+          _allowScroll = false;
+          _displayMode = HyperSnackDisplayMode.stack;
+          _newestOnTop = true;
+          _durationSeconds = 4.0; // Slightly longer
           break;
       }
     });
@@ -210,9 +229,13 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         message: _message,
         backgroundColor: _selectedColor,
         textColor: contentColor,
-        icon: _showIcon
-            ? Icon(_getIconForColor(_selectedColor), color: contentColor)
-            : null,
+        icon: _iconMode == _IconMode.none
+            ? null
+            : Icon(
+                _getIconForColor(_selectedColor),
+                color: contentColor,
+              ),
+        useAdaptiveLoader: _iconMode == _IconMode.loader,
         borderRadius: _borderRadius,
         elevation: _elevation,
         border: _useBorder ? Border.all(color: _borderColor, width: 2) : null,
@@ -254,6 +277,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               )
             : null,
         actionAlignment: _actionAlignment,
+        useLocalOverlay: true,
       );
     }
   }
@@ -273,6 +297,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         position: _position,
         margin: margin,
         displayDuration: const Duration(seconds: 2),
+        useLocalOverlay: true,
       );
     }
   }
@@ -554,6 +579,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                 _presetButton('Wipe', Colors.lightBlueAccent),
                 _presetButton('Log View', Colors.grey),
                 _presetButton('Long Text', Colors.white),
+                _presetButton('Loading', Colors.indigo),
               ],
             ),
             const SizedBox(height: 24),
@@ -587,7 +613,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (_showIcon) ...[
+                        if (_iconMode == _IconMode.static) ...[
                           Icon(
                             _getIconForColor(_selectedColor),
                             color: _selectedColor.computeLuminance() > 0.5
@@ -694,8 +720,44 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
             const SizedBox(height: 12),
             Row(
               children: [
-                _compactSwitch('Icon', _showIcon, (v) => _showIcon = v),
-                const SizedBox(width: 24),
+                const SizedBox(height: 12),
+                _label('Icon Type:'),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: SegmentedButton<_IconMode>(
+                    showSelectedIcon: false,
+                    style: ButtonStyle(
+                      visualDensity: VisualDensity.compact,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      backgroundColor: WidgetStateProperty.resolveWith(
+                          (states) => states.contains(WidgetState.selected)
+                              ? Colors.cyan.withAlpha(77)
+                              : Colors.transparent),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                    ),
+                    segments: const [
+                      ButtonSegment(
+                        value: _IconMode.none,
+                        label: Text('None'),
+                        icon: Icon(Icons.close, size: 16),
+                      ),
+                      ButtonSegment(
+                        value: _IconMode.static,
+                        label: Text('Static'),
+                        icon: Icon(Icons.image, size: 16),
+                      ),
+                      ButtonSegment(
+                        value: _IconMode.loader,
+                        label: Text('Loader'),
+                        icon: Icon(Icons.refresh, size: 16),
+                      ),
+                    ],
+                    selected: {_iconMode},
+                    onSelectionChanged: (newSet) =>
+                        setState(() => _iconMode = newSet.first),
+                  ),
+                ),
+                const SizedBox(width: 16),
                 _compactSwitch('Action', _showAction, (v) => _showAction = v),
               ],
             ),
@@ -1244,19 +1306,19 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       sb.writeln('  padding: EdgeInsets.all($_contentPadding),');
     }
 
-    if (_showIcon) {
+    if (_iconMode == _IconMode.none) {
+      sb.writeln('  icon: null,');
+    } else if (_iconMode == _IconMode.static) {
       if (isLightBg) {
         sb.writeln('  textColor: Colors.black87,');
         sb.writeln(
-          '  icon: Icon(Icons.${_getIconName()}, color: Colors.black87),',
-        );
+            '  icon: Icon(Icons.${_getIconName()}, color: Colors.black87),');
       } else {
         sb.writeln(
-          '  icon: Icon(Icons.${_getIconName()}, color: Colors.white),',
-        );
+            '  icon: Icon(Icons.${_getIconName()}, color: Colors.white),');
       }
-    } else {
-      sb.writeln('  icon: null,');
+    } else if (_iconMode == _IconMode.loader) {
+      sb.writeln('  useAdaptiveLoader: true,');
     }
 
     if (_position == HyperSnackPosition.bottom) {
