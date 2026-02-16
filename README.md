@@ -8,6 +8,8 @@
 A highly customizable, animated, and powerful snackbar package for Flutter.
 Designed to be "Hyper" flexible — supports Stack/Queue modes, custom animations (Scale, Slide, Fade), progress bars, and highly interactive actions.
 
+Now with **Presets** and **GetX-style** aliases for easier migration!
+
 [![Live Demo](https://img.shields.io/badge/demo-online-green.svg?style=flat-square&logo=flutter)](https://makiano.github.io/hyper_snackbar/)
 <br>
 <h2 align="center">
@@ -25,13 +27,11 @@ Designed to be "Hyper" flexible — supports Stack/Queue modes, custom animation
 * **Flexible Positioning**: Top or Bottom.
 * **Display Modes**: Stack (overlay) or Queue (sequential).
 * **Rich Animations**: Slide, Fade, and **New! Scale (Elastic Zoom)**.
-* **Progress Bar**:
-    * **Line**: A thin progress line at the bottom.
-    * **Wipe**: Background fills up like a gauge.
-* **Customizable**: Colors, borders, shadows, margins, and padding.
+* **Presets System**: Define reusable styles and inherit/override them easily.
+* **Progress Bar**: Line or Wipe effects.
 * **Interactive**: Tap callbacks, Action buttons, and Dismissible swipes.
-* **Presets**: `showSuccess`, `showError`, `showWarning`, `showInfo` for quick usage.
-* **No Context Required**: Uses `NavigatorKey` for easy calling from anywhere (Logic/Controllers).
+* **GetX Migration Aids**: Supports parameters like `duration`, `snackPosition`, and `colorText`.
+* **No Context Required**: Uses `NavigatorKey` for easy calling from anywhere.
 
 ## 🚀 Installation
 
@@ -39,7 +39,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.6.0
+  hyper_snackbar: ^0.7.0
 ```
 
 ## 🛠 Setup
@@ -69,229 +69,147 @@ class MyApp extends StatelessWidget {
 
 ## 📖 Usage
 
-### Basic Presets
-The easiest way to show a message. Now supports `position`, `margin`, `displayDuration` and `progressBarWidth`.
+### Basic Usage
+The simplest way to show a message.
 
 ```dart
-// Simple Success
+HyperSnackbar.show(
+  title: 'Hello World',
+  message: 'This is the simplest usage.',
+);
+```
+
+### Built-in Presets
+Quickly show styled messages for common scenarios.
+
+```dart
+// Success
 HyperSnackbar.showSuccess(
-  title: 'Operation Successful',
-  message: 'Your data has been saved.',
+  title: 'Success!',
+  message: 'Operation completed successfully.',
 );
 
-// Error with Custom Position
+// Error
 HyperSnackbar.showError(
-  title: 'Connection Failed',
-  position: HyperSnackPosition.bottom,
-  margin: const EdgeInsets.all(12),
+  title: 'Error',
+  message: 'Something went wrong.',
 );
-// Warning
+
+// Warning & Info
 HyperSnackbar.showWarning(title: 'Low Storage');
-
-// Info
-HyperSnackbar.showInfo(title: 'New Message Received');
+HyperSnackbar.showInfo(title: 'New Message');
 ```
 
-### Action Alignment (Right / Center / Left) 🆕
-You can now control the position of the action button.
+---
+
+### 🎨 Creating Custom Presets (New!)
+
+Stop repeating yourself! Define reusable styles using `HyperSnackbar.preset` and reuse them across your app.
 
 ```dart
-// Center Alignment
-HyperSnackbar.show(
-  title: 'Update Available',
-  action: HyperSnackAction(
-    label: 'INSTALL',
-    onPressed: () => installUpdate(),
-  ),
-  actionAlignment: MainAxisAlignment.center, // <--- Center the button
-);
-```
-
-### Custom Content (Arbitrary Widget) 🆕
-Need more than one button? Use `content` to pass any widget.
-
-```dart
-HyperSnackbar.show(
-  title: 'Delete this item?',
-  message: 'This action cannot be undone.',
-  // Embed your own widget
-  content: Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      TextButton(
-        onPressed: () => HyperSnackbar.dismissById('delete_confirm'),
-        child: Text('CANCEL', style: TextStyle(color: Colors.white)),
-      ),
-      SizedBox(width: 8),
-      ElevatedButton(
-        onPressed: () => deleteItem(),
-        child: Text('DELETE'),
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-      ),
-    ],
-  ),
-  id: 'delete_confirm',
-);
-```
-
-### Update by ID (Loading -> Done) ⚡
-Update the state of a snackbar by providing a unique `id`.
-
-```dart
-const String processId = 'upload_process';
-
-// 1. Show Loading state
-HyperSnackbar.show(
-  id: processId,
-  title: 'Uploading...',
-  displayDuration: null, // Keep it visible
-  icon: CircularProgressIndicator(color: Colors.white),
-);
-
-// ... do some work ...
-
-// 2. Update to "Done" state (using the same ID)
-HyperSnackbar.show(
-  id: processId, // Replaces the content
-  title: 'Upload Complete!',
-  backgroundColor: Colors.green,
-  icon: Icon(Icons.check_circle, color: Colors.white),
-  displayDuration: Duration(seconds: 3), // Auto-dismiss
-);
-```
-
-### Advanced Usage
-
-### Style Templates (Reusable Config)
-You can create a base configuration without a title and reuse it across your app.
-
-```dart
-// 1. Define a style template (No title required!)
-final errorStyle = HyperConfig(
-  backgroundColor: Colors.red,
-  icon: Icon(Icons.error, color: Colors.white),
-  borderRadius: 8,
+// 1. Define a base preset (e.g., in your constants file)
+static final myBrandPreset = HyperSnackbar.preset(
+  backgroundColor: Colors.deepPurple,
+  icon: Icon(Icons.star, color: Colors.amber),
+  borderRadius: 16,
+  animationType: HyperSnackAnimationType.scale, // Sets both enter & exit
 );
 
 // 2. Use it anywhere
-HyperSnackbar.showFromConfig(
-  errorStyle.copyWith(
-    title: 'Network Error',
-    message: 'Please check your connection.',
-  ),
+HyperSnackbar.show(
+  title: 'Welcome!',
+  preset: myBrandPreset,
 );
 
-HyperSnackbar.showFromConfig(
-  errorStyle.copyWith(
-    title: 'Server Error',
-    message: 'Please try again later.',
-  ),
+// 3. Override specific properties on the fly
+HyperSnackbar.show(
+  title: 'Welcome!',
+  preset: myBrandPreset,
+  backgroundColor: Colors.red, // Overrides the purple color
 );
 ```
 
-#### Persistent Notification
-Set `displayDuration` to `Duration.zero` (or `null`) to make the snackbar stay until manually dismissed.
+You can even inherit and extend presets using `copyWith`:
 
 ```dart
-HyperSnackbar.show(
-  title: 'Persistent Message',
-  message: 'I will stay here until you close me.',
-  displayDuration: Duration.zero, // <--- Persistent
+final darkPreset = myBrandPreset.copyWith(
+  backgroundColor: Colors.black,
+  textColor: Colors.white,
 );
 ```
 
-#### Handling Long Text (Overflow Safety)
-Even with `maxLines: null`, the snackbar will safely handle extremely long text by enabling internal scrolling, ensuring it never exceeds the screen height.
+---
+
+### ⚡ GetX Migration Guide
+
+Coming from GetX? `HyperSnackbar` now supports familiar parameter aliases to assist with migration.
+
+| HyperSnackbar Param | GetX Alias |
+|---|---|
+| `displayDuration` | `duration` |
+| `position` | `snackPosition` |
+| `textColor` | `colorText` |
+| `enter/exitAnimationDuration` | `animationDuration` |
 
 ```dart
+// You can use GetX-style parameters directly:
 HyperSnackbar.show(
-  title: 'System Log',
-  message: 'Very long error log...\nLine 1\nLine 2\n...',
-  maxLines: null, // Unlimited lines (scrollable if needed)
-  backgroundColor: Colors.grey[900],
+  title: 'Familiar?',
+  message: 'It works just like you expect.',
+  snackPosition: HyperSnackPosition.bottom, // Alias for position
+  duration: Duration(seconds: 3),           // Alias for displayDuration
+  colorText: Colors.white,                  // Alias for textColor
 );
 ```
 
-#### Overlay Control (Embedded Mode)🆕
-By default, snackbars render on the root overlay (covering the entire screen). Set useLocalOverlay: true to render the snackbar inside the nearest active Navigator or scope (e.g., inside a specific tab, bottom sheet, or nested window).
+---
+
+### Advanced Features
+
+#### Progress Bar Effects
+Visualize the remaining duration.
 
 ```dart
 HyperSnackbar.show(
-  title: 'Embedded Message',
-  message: 'This snackbar stays inside the nested navigator.',
-  useLocalOverlay: true, // <--- Render inside local scope
-  backgroundColor: Colors.indigo,
-);
-```
-
-### Progress Bar Effects
-
-You can visualize the remaining duration using a progress bar.
-
-**Style 1: Line Effect** (Standard progress bar)
-```dart
-HyperSnackbar.show(
-  title: 'Processing...',
-  progressBarWidth: 4.0, // Height of the bar
-  progressBarColor: Colors.redAccent, // Custom color
+  title: 'Loading...',
+  progressBarWidth: 4.0, // Line effect
+  // progressBarWidth: 0.0, // Wipe effect (background fill)
   displayDuration: const Duration(seconds: 5),
 );
 ```
 
-**Style 2: Wipe Effect** (Background fill)
-```dart
-HyperSnackbar.show(
-  title: 'Downloading...',
-  progressBarWidth: 0.0, // 0.0 triggers the Wipe Effect
-  backgroundColor: Colors.blue,
-  displayDuration: const Duration(seconds: 3),
-);
-```
-
-### 🆕 Scale Animation (Elastic Pop)
-
-Create a modern "Pop" effect using the Scale animation type and an elastic curve.
-
-```dart
-HyperSnackbar.show(
-  title: 'New Message',
-  message: 'You have a new notification!',
-  backgroundColor: Colors.indigo,
-  
-  // Animation Settings
-  enterAnimationType: HyperSnackAnimationType.scale,
-  enterCurve: Curves.elasticOut, // Bouncy effect
-  enterAnimationDuration: const Duration(milliseconds: 800),
-);
-```
-
-### Action Button
-
-Add an interactive button to your snackbar.
+#### Action Button & Custom Content
+Add interactive buttons or fully custom widgets.
 
 ```dart
 HyperSnackbar.show(
   title: 'Item Deleted',
-  message: 'It has been moved to trash.',
   action: HyperSnackAction(
     label: 'UNDO',
-    textColor: Colors.amber,
-    onPressed: () {
-      // Handle undo action
-      print('Undo clicked!');
-    },
+    onPressed: () => undoAction(),
+  ),
+);
+
+// Or use a custom widget
+HyperSnackbar.show(
+  title: 'Cart Updated',
+  content: Row(
+    children: [
+      TextButton(onPressed: () {}, child: Text('View Cart')),
+      TextButton(onPressed: () {}, child: Text('Checkout')),
+    ],
   ),
 );
 ```
 
-### Using with GoRouter
-
-If you are using `go_router`, simply assign `HyperSnackbar.navigatorKey` to the `navigatorKey` property.
+#### Overlay Control (Embedded Mode)
+By default, snackbars render on the root overlay (covering modals). Set `useLocalOverlay: true` to render inside the nearest active Navigator (e.g., inside a tab or bottom sheet).
 
 ```dart
-final _router = GoRouter(
-  navigatorKey: HyperSnackbar.navigatorKey, // Add this line
-  routes: [ ... ],
+HyperSnackbar.show(
+  title: 'Embedded Message',
+  useLocalOverlay: true, 
+  backgroundColor: Colors.indigo,
 );
 ```
 
@@ -304,11 +222,11 @@ All methods are static and can be called from anywhere.
 | Method | Description |
 |---|---|
 | `show(...)` | Displays a fully customizable snackbar. |
+| `preset(...)` | **(New)** Creates a reusable configuration object. |
 | `showSuccess(...)` | Preset: Green background, Check icon. |
 | `showError(...)` | Preset: Red background, Error icon. |
 | `showWarning(...)` | Preset: Orange background, Warning icon. |
 | `showInfo(...)` | Preset: Blue background, Info icon. |
-| `showFromConfig(config)` | Displays a snackbar using a `HyperConfig` object. |
 | `dismissById(id)` | Dismisses a specific snackbar by its ID. |
 | `clearAll({animated})` | Dismisses all currently visible snackbars. |
 | `isSnackbarOpen` | Returns `true` if any snackbar is visible. |
@@ -316,24 +234,24 @@ All methods are static and can be called from anywhere.
 
 ## ⚙️ Configuration Parameters
 
-`HyperSnackbar` is highly customizable. You can configure it using the `HyperConfig` object or directly via parameters in `HyperSnackbar.show` / `context.showHyperSnackbar`.
+`HyperSnackbar` is highly customizable. You can configure it using the `HyperConfig` object, `HyperSnackbar.preset`, or directly via parameters in `HyperSnackbar.show`.
 
 ### 🎨 General & Appearance
 | Parameter | Type | Default | Description |
 |---|---|---|---|
+| `preset` | `HyperConfig?` | `null` | **(New)** Base configuration to apply/override. |
 | `title` | `String?` | `null` | The title of the snackbar. |
 | `message` | `String?` | `null` | The main message body. |
 | `icon` | `Widget?` | `null` | Custom icon widget displayed on the left. |
-| `useAdaptiveLoader` | `bool` | `false` | **(New)** If `true`, displays a platform-adaptive loading indicator (`CupertinoActivityIndicator` / `CircularProgressIndicator`) instead of the icon. |
+| `useAdaptiveLoader` | `bool` | `false` | If `true`, displays a platform-adaptive loading indicator instead of the icon. |
 | `backgroundColor` | `Color?` | `null` | Background color (defaults to dark grey). |
-| `textColor` | `Color?` | `null` | Color for title and message text. |
+| `textColor` | `Color?` | `null` | Color for title and message text (alias: `colorText`). |
 | `borderRadius` | `double` | `12.0` | Corner radius of the snackbar. |
 | `elevation` | `double` | `4.0` | Shadow elevation. |
 | `border` | `BoxBorder?` | `null` | Custom border for the snackbar container. |
 | `margin` | `EdgeInsetsGeometry` | `zero` | Margin around the snackbar. |
 | `padding` | `EdgeInsetsGeometry` | `16, 12` | Internal padding. |
-| `useLocalOverlay`| `bool` | `false` | If false, renders on the root overlay (full screen). If true, renders on the nearest overlay (useful for nested navigators). |
-
+| `useLocalOverlay`| `bool` | `false` | If false, renders on the root overlay. If true, renders on the nearest overlay. |
 
 ### 👆 Actions & Interaction
 | Parameter | Type | Default | Description |
@@ -349,8 +267,8 @@ All methods are static and can be called from anywhere.
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `id` | `String?` | `null` | Unique ID. Updating a snackbar with the same ID modifies the existing one. |
-| `displayDuration` | `Duration?` | `4s` | How long the snackbar stays visible. `null` means persistent. |
-| `position` | `HyperSnackPosition` | `.top` | Vertical position (`.top` or `.bottom`). |
+| `displayDuration` | `Duration?` | `4s` | How long the snackbar stays visible (alias: `duration`). `null` means persistent. |
+| `position` | `HyperSnackPosition` | `.top` | Vertical position (alias: `snackPosition`). |
 | `displayMode` | `HyperSnackDisplayMode` | `.stack` | `.stack` (overlays on top) or `.queue` (shows one by one). |
 | `newestOnTop` | `bool` | `true` | (Stack mode) If `true`, new snackbars appear on top of the stack. |
 | `maxVisibleCount` | `int` | `3` | Maximum number of snackbars visible at once (Stack mode). |
@@ -367,8 +285,10 @@ All methods are static and can be called from anywhere.
 ### ✨ Animation
 | Parameter | Type | Default | Description |
 |---|---|---|---|
+| `animationType` | `HyperSnackAnimationType?`| `null` | **(New)** Sets both enter and exit animation types simultaneously. |
 | `enterAnimationType` | `HyperSnackAnimationType` | `.top` | Animation style for entry (`scale`, `fade`, `left`, etc.). |
 | `exitAnimationType` | `HyperSnackAnimationType` | `.left` | Animation style for exit. |
+| `animationDuration` | `Duration?` | `null` | **(New)** Sets both enter and exit durations simultaneously. |
 | `enterAnimationDuration`| `Duration` | `300ms` | Duration of entry animation. |
 | `exitAnimationDuration` | `Duration` | `500ms` | Duration of exit animation. |
 | `enterCurve` | `Curve` | `easeOutQuart`| Animation curve for entry. |
@@ -379,10 +299,6 @@ All methods are static and can be called from anywhere.
 |---|---|---|---|
 | `progressBarWidth` | `double?` | `null` | Height of the progress bar. `0.0` creates a background "wipe" effect. `null` disables it. |
 | `progressBarColor` | `Color?` | `null` | Color of the progress bar. Defaults to a semi-transparent contrast color. |
-
-## 📱 Example
-
-Check out the `example` folder for a complete playground app where you can test all animations and generate code snippet interactively!
 
 ## 📄 License
 

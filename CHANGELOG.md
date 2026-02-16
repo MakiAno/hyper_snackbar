@@ -1,4 +1,21 @@
-## 0.6.0 - 2026-02-08
+## 0.7.0
+
+### ✨ New Features
+* **Presets System (`HyperSnackbar.preset`):**
+    * Introduced `HyperSnackbar.preset()` factory method. This allows developers to define reusable configuration objects (presets) cleanly.
+    * Added `preset` parameter to `show()` and `context.showHyperSnackbar()`. You can now pass a base preset and override specific properties (e.g., `HyperSnackbar.show(preset: myErrorPreset, message: '...')`).
+* **Unified Animation Controls:**
+    * Added `animationType` and `animationDuration` parameters. These set both the *enter* and *exit* animations simultaneously, simplifying configuration.
+* **GetX Migration Aids:**
+    * Added parameter aliases to assist developers familiar with GetX: `duration`, `snackPosition`, `colorText`, and `animationDuration`. These map to `HyperSnackbar`'s native parameters.
+
+### 🐛 Bug Fixes
+* **Overlay Context Switching:** Fixed a bug where the snackbar would remain attached to the previous Overlay (e.g., global root) even when `useLocalOverlay: true` was requested in a new context (e.g., inside a Playground or nested Navigator). The manager now correctly detects overlay changes and remounts the entry.
+
+### 📦 Examples
+* **New Demo Page:** Added "Presets & Overrides" page to the example app to demonstrate configuration inheritance and cascading styles.
+
+## 0.6.0
 
 ### ✨ New Features
 * **Overlay Control (`useLocalOverlay`):**

@@ -3,6 +3,7 @@ import 'package:hyper_snackbar/hyper_snackbar.dart';
 
 import 'pages/playground_page.dart';
 import 'pages/scenario_page.dart';
+import 'pages/preset_demo_page.dart'; // Import added
 
 void main() {
   runApp(const MyApp());
@@ -46,7 +47,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // --- 1. Minimal Usage (For Pub.dev: Area to understand usage without looking at the code) ---
+            // --- 1. Minimal Usage (For Pub.dev) ---
             const _SectionHeader('Minimal Usage'),
             const SizedBox(height: 8),
 
@@ -93,7 +94,7 @@ class HomePage extends StatelessWidget {
             const Divider(),
             const SizedBox(height: 16),
 
-            // --- 2. Advanced Demos (Guide to Playground & Scenarios) ---
+            // --- 2. Advanced Demos ---
             const _SectionHeader('Interactive Demos'),
             const SizedBox(height: 12),
 
@@ -122,6 +123,22 @@ class HomePage extends StatelessWidget {
                 Navigator.of(
                   context,
                 ).push(MaterialPageRoute(builder: (_) => const ScenarioPage()));
+              },
+            ),
+
+            const SizedBox(height: 16),
+
+            // Preset & Override Demo Button (New)
+            _MenuCard(
+              title: '🎨 Presets & Overrides',
+              subtitle: 'Learn how to use config presets and inheritance.',
+              color: Colors.teal,
+              icon: Icons.style,
+              onTap: () {
+                Navigator.of(
+                  context,
+                ).push(
+                    MaterialPageRoute(builder: (_) => const PresetDemoPage()));
               },
             ),
           ],
@@ -167,7 +184,7 @@ class _ActionButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: color?.withAlpha(30), // Light tint
+        backgroundColor: color?.withAlpha(30),
         foregroundColor: color ?? Theme.of(context).colorScheme.primary,
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
