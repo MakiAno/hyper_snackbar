@@ -8,7 +8,7 @@ void main() {
 
 // 1. GoRouter Configuration
 final GoRouter _router = GoRouter(
-  // ★ Important: Pass HyperSnackbar's navigatorKey to GoRouter
+  // Important: Pass HyperSnackbar's navigatorKey to GoRouter
   navigatorKey: HyperSnackbar.navigatorKey,
   initialLocation: '/',
   routes: <RouteBase>[
@@ -60,7 +60,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // ★ Test Point 1:
+                // Test Point 1:
                 // Display snackbar immediately after screen transition command, without Context
                 context.go('/second');
 

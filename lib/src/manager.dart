@@ -78,6 +78,8 @@ class HyperSnackbar {
     Color? progressBarColor,
     bool useAdaptiveLoader = false,
     bool useLocalOverlay = false,
+    double? maxWidth,
+    AlignmentGeometry alignment = Alignment.center,
 
     // --- Unified Shortcuts & Aliases ---
     Duration? animationDuration,
@@ -146,6 +148,8 @@ class HyperSnackbar {
       progressBarColor: progressBarColor,
       useAdaptiveLoader: useAdaptiveLoader,
       useLocalOverlay: useLocalOverlay,
+      maxWidth: maxWidth,
+      alignment: alignment,
     );
   }
 
@@ -154,7 +158,7 @@ class HyperSnackbar {
   // ===========================================================================
 
   static void show({
-    required String title,
+    String? title,
     HyperConfig? preset,
     String? id,
     String? message,
@@ -194,6 +198,8 @@ class HyperSnackbar {
     Color? progressBarColor,
     bool? useAdaptiveLoader,
     bool? useLocalOverlay,
+    double? maxWidth,
+    AlignmentGeometry? alignment,
     BuildContext? context,
 
     // --- Unified Shortcuts & Aliases ---
@@ -203,6 +209,13 @@ class HyperSnackbar {
     Duration? duration,
     HyperSnackPosition? snackPosition,
   }) {
+    assert(
+      (title != null && title.isNotEmpty) ||
+          (message != null && message.isNotEmpty) ||
+          content != null,
+      'HyperSnackbar requires at least a title, a message, or a custom content widget.',
+    );
+
     final baseConfig = preset ?? const HyperConfig();
 
     // Resolve Aliases/Shortcuts for overriding
@@ -260,6 +273,8 @@ class HyperSnackbar {
       progressBarColor: progressBarColor,
       useAdaptiveLoader: useAdaptiveLoader,
       useLocalOverlay: useLocalOverlay,
+      maxWidth: maxWidth ?? baseConfig.maxWidth,
+      alignment: alignment ?? baseConfig.alignment,
     );
 
     showFromConfig(config, context: context);
@@ -267,6 +282,13 @@ class HyperSnackbar {
 
   /// Shows a snackbar using a pre-configured [HyperConfig] object.
   static void showFromConfig(HyperConfig config, {BuildContext? context}) {
+    assert(
+      (config.title != null && config.title!.isNotEmpty) ||
+          (config.message != null && config.message!.isNotEmpty) ||
+          config.content != null,
+      'HyperSnackbar requires at least a title, a message, or a custom content widget.',
+    );
+
     _mountOverlayIfNeeded(context, config.useLocalOverlay);
 
     if (config.displayMode == HyperSnackDisplayMode.queue) {
@@ -412,7 +434,7 @@ class HyperSnackbar {
   // ===========================================================================
 
   static void showSuccess({
-    required String title,
+    String? title,
     String? message,
     BuildContext? context,
     EdgeInsetsGeometry? margin,
@@ -439,7 +461,7 @@ class HyperSnackbar {
   }
 
   static void showError({
-    required String title,
+    String? title,
     String? message,
     BuildContext? context,
     EdgeInsetsGeometry? margin,
@@ -466,7 +488,7 @@ class HyperSnackbar {
   }
 
   static void showWarning({
-    required String title,
+    String? title,
     String? message,
     BuildContext? context,
     EdgeInsetsGeometry? margin,
@@ -493,7 +515,7 @@ class HyperSnackbar {
   }
 
   static void showInfo({
-    required String title,
+    String? title,
     String? message,
     BuildContext? context,
     EdgeInsetsGeometry? margin,
@@ -713,7 +735,7 @@ class _HyperOverlayManager extends StatelessWidget {
 /// Extension methods for [BuildContext].
 extension HyperSnackbarExtensions on BuildContext {
   void showHyperSnackbar({
-    required String title,
+    String? title,
     HyperConfig? preset,
     String? id,
     String? message,
@@ -751,6 +773,8 @@ extension HyperSnackbarExtensions on BuildContext {
     Color? progressBarColor,
     bool? useAdaptiveLoader,
     bool? useLocalOverlay,
+    double? maxWidth,
+    AlignmentGeometry? alignment,
 
     // --- Unified Shortcuts & Aliases ---
     Duration? animationDuration,
@@ -759,6 +783,13 @@ extension HyperSnackbarExtensions on BuildContext {
     Duration? duration,
     HyperSnackPosition? snackPosition,
   }) {
+    assert(
+      (title != null && title.isNotEmpty) ||
+          (message != null && message.isNotEmpty) ||
+          content != null,
+      'HyperSnackbar requires at least a title, a message, or a custom content widget.',
+    );
+
     HyperSnackbar.show(
       title: title,
       preset: preset,
@@ -798,6 +829,8 @@ extension HyperSnackbarExtensions on BuildContext {
       progressBarColor: progressBarColor,
       useAdaptiveLoader: useAdaptiveLoader,
       useLocalOverlay: useLocalOverlay,
+      maxWidth: maxWidth,
+      alignment: alignment,
 
       // Pass Aliases/Shortcuts
       animationDuration: animationDuration,

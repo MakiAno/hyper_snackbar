@@ -69,7 +69,7 @@ class HomePage extends StatelessWidget {
                 Expanded(
                   child: _ActionButton(
                     label: 'Success Preset',
-                    color: Colors.green,
+                    color: const Color.fromRGBO(76, 175, 80, 1),
                     onPressed: () => HyperSnackbar.showSuccess(
                       title: 'Success!',
                       message: 'Operation completed successfully.',
@@ -83,7 +83,7 @@ class HomePage extends StatelessWidget {
                     color: Colors.red,
                     onPressed: () => HyperSnackbar.showError(
                       title: 'Error',
-                      message: 'Something went wrong.',
+                      // message: 'Something went wrong.',
                     ),
                   ),
                 ),

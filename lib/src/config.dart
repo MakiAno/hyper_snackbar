@@ -87,6 +87,13 @@ class HyperConfig {
 
   /// Interaction & Style. ------------------------------
 
+  /// The maximum width of the snackbar.
+  /// If null, it takes the full available width.
+  final double? maxWidth;
+
+  /// The alignment of the snackbar when [maxWidth] is constrained.
+  final AlignmentGeometry alignment;
+
   /// A callback function to be executed when the snackbar is tapped.
   final VoidCallback? onTap;
 
@@ -244,6 +251,8 @@ class HyperConfig {
     this.progressBarColor,
     this.useAdaptiveLoader = false,
     this.useLocalOverlay = false,
+    this.maxWidth,
+    this.alignment = Alignment.center,
   });
 
   /// Creates a copy of this [HyperConfig] but with the given fields replaced with the new values.
@@ -285,6 +294,8 @@ class HyperConfig {
     Color? progressBarColor,
     bool? useAdaptiveLoader,
     bool? useLocalOverlay,
+    Object? maxWidth = _undefined,
+    AlignmentGeometry? alignment,
   }) {
     return HyperConfig(
       id: id ?? this.id,
@@ -328,6 +339,8 @@ class HyperConfig {
       progressBarColor: progressBarColor ?? this.progressBarColor,
       useAdaptiveLoader: useAdaptiveLoader ?? this.useAdaptiveLoader,
       useLocalOverlay: useLocalOverlay ?? this.useLocalOverlay,
+      maxWidth: maxWidth == _undefined ? this.maxWidth : maxWidth as double?,
+      alignment: alignment ?? this.alignment,
     );
   }
 }

@@ -39,7 +39,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.7.0
+  hyper_snackbar: ^0.8.0
 ```
 
 ## 🛠 Setup
@@ -137,6 +137,23 @@ final darkPreset = myBrandPreset.copyWith(
   textColor: Colors.white,
 );
 ```
+
+---
+
+### 🖥️ Web & Desktop Layout (New!)
+
+The default full-width design is perfect for mobile, but it can stretch too far on large screens. You can now easily constrain the width and align the snackbar for Web and Desktop layouts.
+
+```dart
+HyperSnackbar.show(
+  message: 'This is a compact notification.',
+  maxWidth: 400.0, // Prevents stretching on large screens
+  alignment: Alignment.centerRight, // Aligns to the right side of the window
+  showCloseButton: false, // Optional: create a clean, message-only toast
+);
+```
+
+By keeping the type as `AlignmentGeometry`, it fully supports `center`, `centerLeft`, `centerRight`, and even RTL (Right-to-Left) layouts using `AlignmentDirectional`.
 
 ---
 
@@ -252,6 +269,8 @@ All methods are static and can be called from anywhere.
 | `margin` | `EdgeInsetsGeometry` | `zero` | Margin around the snackbar. |
 | `padding` | `EdgeInsetsGeometry` | `16, 12` | Internal padding. |
 | `useLocalOverlay`| `bool` | `false` | If false, renders on the root overlay. If true, renders on the nearest overlay. |
+| `maxWidth` | `double?` | `null` | **(New)** Maximum width of the snackbar. Ideal for Web/Desktop. |
+| `alignment` | `AlignmentGeometry` | `.center` | **(New)** Alignment of the snackbar when `maxWidth` is constrained. |
 
 ### 👆 Actions & Interaction
 | Parameter | Type | Default | Description |

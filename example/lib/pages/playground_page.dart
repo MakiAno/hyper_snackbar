@@ -240,32 +240,26 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         elevation: _elevation,
         border: _useBorder ? Border.all(color: _borderColor, width: 2) : null,
         padding: EdgeInsets.all(_contentPadding),
-
         position: _position,
         margin: effectiveMargin,
         enableSwipe: _dismissible,
-
         displayMode: _displayMode,
         newestOnTop: _newestOnTop,
-        maxVisibleCount: _maxVisibleCount.toInt(), // ★ Applied here
-
+        maxVisibleCount: _maxVisibleCount.toInt(),
         maxLines: activeMaxLines,
         scrollable: _allowScroll,
         messageMaxHeight: activeMaxHeight,
-
         enterAnimationType: _enterType,
         exitAnimationType: _exitType,
         enterCurve: _useElasticCurve ? Curves.elasticOut : Curves.easeOutQuart,
         enterAnimationDuration: _useElasticCurve
             ? const Duration(milliseconds: 800)
             : const Duration(milliseconds: 400),
-
         progressBarWidth: width,
         progressBarColor: progressColor,
         displayDuration: Duration(
           milliseconds: (_durationSeconds * 1000).toInt(),
         ),
-
         action: _showAction
             ? HyperSnackAction(
                 label: 'UNDO',
@@ -522,7 +516,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                       setState(() => _displayMode = newSet.first),
                 ),
 
-                // ★ NEW: Max Visible Count Slider (Only for Stack)
+                // Max Visible Count Slider (Only for Stack)
                 if (_displayMode == HyperSnackDisplayMode.stack) ...[
                   const SizedBox(width: 16),
                   _label('Max: ${_maxVisibleCount.toInt()}'),

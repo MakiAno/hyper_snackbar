@@ -178,6 +178,75 @@ class _PresetDemoPageState extends State<PresetDemoPage> {
                 child: const Text('Queue Test (Bottom)'),
               ),
 
+              const SizedBox(height: 20),
+              const _SectionHeader(
+                  text: "6. Max Width & Alignment (Override Brand Preset)"),
+              Row(
+                children: [
+                  // alignment: left
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.deepPurple,
+                        side: BorderSide(color: Colors.deepPurple.shade200),
+                      ),
+                      onPressed: () {
+                        HyperSnackbar.show(
+                          title: 'Left Align',
+                          message: 'maxWidth: 300\nalignment: centerLeft',
+                          preset: _brandPreset,
+                          maxWidth: 300.0,
+                          alignment: Alignment.centerLeft,
+                        );
+                      },
+                      child: const Text('Left'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // alignment: center
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.deepPurple,
+                        side: BorderSide(color: Colors.deepPurple.shade200),
+                      ),
+                      onPressed: () {
+                        HyperSnackbar.show(
+                          title: 'Center Align',
+                          message: 'maxWidth: 300\nalignment: center',
+                          preset: _brandPreset,
+                          maxWidth: 300.0,
+                          alignment: Alignment.center,
+                        );
+                      },
+                      child: const Text('Center'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // alignment: right
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.deepPurple,
+                        side: BorderSide(color: Colors.deepPurple.shade200),
+                      ),
+                      onPressed: () {
+                        HyperSnackbar.show(
+                          title: 'Right Align',
+                          message: 'maxWidth: 300\nalignment: centerRight',
+                          preset: _brandPreset,
+                          maxWidth: 300.0,
+                          alignment: Alignment.centerRight,
+                        );
+                      },
+                      child: const Text('Right'),
+                    ),
+                  ),
+                ],
+              ),
+
               const SizedBox(height: 40),
               OutlinedButton.icon(
                 icon: const Icon(Icons.delete),

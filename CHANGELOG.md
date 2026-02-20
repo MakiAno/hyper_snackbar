@@ -1,3 +1,15 @@
+## 0.8.0
+
+### ✨ New Features
+* **Web/Desktop Layout Support:** Added `maxWidth` and `alignment` properties to `HyperConfig` and `show()` methods. This allows you to constrain the width of the snackbar and align it (e.g., center-right) on large screens, preventing it from stretching across the entire window.
+* **Fully Optional Title:** The `title` parameter in `HyperSnackbar.show()` and related methods is now completely optional (`String?`). You can now easily create clean, message-only or content-only snackbars.
+
+### 🐛 Bug Fixes & UI Improvements
+* **Title Height Bug:** Fixed an issue where an empty space was reserved for the title even when `title` was null. The layout now perfectly collapses when no header elements (title, icon, close button) are present.
+* **Vertical Centering:** Improved the vertical alignment of the snackbar content. When displaying a message without a title, the text is now perfectly centered vertically.
+* **Corner Radius Artifacts:** Fixed a visual bug where the bottom corners of the snackbar appeared slightly distorted when using a `progressBar`. Removed the default Material 3 border radius from the `LinearProgressIndicator` to ensure perfectly smooth corners.
+* **Validation:** Added an assertion to ensure that at least a `title`, `message`, or custom `content` is provided, preventing the display of empty, meaningless snackbars.
+
 ## 0.7.0
 
 ### ✨ New Features
