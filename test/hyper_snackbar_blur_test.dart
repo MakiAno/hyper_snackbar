@@ -43,7 +43,7 @@ void main() {
       forwardAnimationCurve: Curves.bounceIn,
       reverseAnimationCurve: Curves.bounceOut,
       duration: const Duration(seconds: 10),
-      snackPosition: HyperSnackPosition.bottom,
+      snackPosition: SnackPosition.bottom,
       colorText: Colors.red,
     );
 

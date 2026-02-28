@@ -92,7 +92,7 @@ class HyperSnackbar {
     HyperSnackAnimationType? animationType, // Added
     Color? colorText,
     Duration? duration,
-    HyperSnackPosition? snackPosition,
+    SnackPosition? snackPosition,
     Widget? mainButton,
     bool? isDismissible,
     Curve? forwardAnimationCurve,
@@ -107,7 +107,7 @@ class HyperSnackbar {
     // Convert SnackPosition to HyperSnackPosition
     HyperSnackPosition? mappedSnackPosition;
     if (snackPosition != null) {
-      mappedSnackPosition = snackPosition == SnackPosition.TOP
+      mappedSnackPosition = snackPosition == SnackPosition.top
           ? HyperSnackPosition.top
           : HyperSnackPosition.bottom;
     }
@@ -233,7 +233,7 @@ class HyperSnackbar {
     HyperSnackAnimationType? animationType, // Added
     Color? colorText,
     Duration? duration,
-    HyperSnackPosition? snackPosition,
+    SnackPosition? snackPosition,
     Widget? mainButton,
     bool? isDismissible,
     Curve? forwardAnimationCurve,
@@ -258,7 +258,7 @@ class HyperSnackbar {
     // Convert SnackPosition to HyperSnackPosition
     HyperSnackPosition? mappedSnackPosition;
     if (snackPosition != null) {
-      mappedSnackPosition = snackPosition == SnackPosition.TOP
+      mappedSnackPosition = snackPosition == SnackPosition.top
           ? HyperSnackPosition.top
           : HyperSnackPosition.bottom;
     }

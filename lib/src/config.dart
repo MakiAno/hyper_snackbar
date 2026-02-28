@@ -7,7 +7,7 @@ const _undefined = Object();
 enum HyperSnackPosition { top, bottom }
 
 /// GetX compatible alias for snackbar position.
-enum SnackPosition { TOP, BOTTOM }
+enum SnackPosition { top, bottom }
 
 /// Defines the display mode of the snackbar.
 enum HyperSnackDisplayMode {
