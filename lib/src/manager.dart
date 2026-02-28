@@ -132,6 +132,24 @@ class HyperSnackbar {
     final effectiveExitType =
         exitAnimationType ?? animationType ?? HyperSnackAnimationType.left;
 
+    // Handle Title/Message Widget aliases via Content if Text is overridden
+    Widget? finalContent = effectiveContent;
+    if (titleText != null || messageText != null) {
+        finalContent = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (titleText != null) titleText,
+            if (titleText != null && messageText != null) const SizedBox(height: 4),
+            if (messageText != null) messageText,
+            if (effectiveContent != null) ...[
+                const SizedBox(height: 8),
+                effectiveContent
+            ]
+          ]
+        );
+    }
+
     return HyperConfig(
       id: id,
       title: title,
@@ -139,7 +157,7 @@ class HyperSnackbar {
       icon: icon,
       action: action,
       actionAlignment: actionAlignment,
-      content: effectiveContent,
+      content: finalContent,
       onTap: onTap,
       titleStyle: titleStyle,
       messageStyle: messageStyle,
@@ -962,7 +980,7 @@ extension HyperSnackbarExtensions on BuildContext {
       animationType: animationType,
       colorText: colorText,
       duration: duration,
-      snackPosition: snackPosition as dynamic, // or simply don't pass it as mappedSnackPosition was already passed into position parameter
+      snackPosition: snackPosition,
       mainButton: mainButton,
       isDismissible: isDismissible,
       forwardAnimationCurve: forwardAnimationCurve,
