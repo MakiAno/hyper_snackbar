@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'config.dart';
@@ -135,34 +136,25 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
 
     final double pbHeight = isLineEffect ? config.progressBarWidth! : 0.0;
 
-    return Align(
-      alignment: config.alignment,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          // Apply maxWidth if specified, otherwise it's infinite (existing behavior)
-          maxWidth: config.maxWidth ?? double.infinity,
-        ),
-        child: Container(
-          margin: config.margin,
-          child: Material(
-            elevation: config.elevation,
-            color: bgColor,
-            borderRadius:
-                hasBorder ? null : BorderRadius.circular(config.borderRadius),
-            shape: hasBorder
-                ? RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(config.borderRadius),
-                    side: BorderSide(
-                      color: config.border!.top.color,
-                      width: config.border!.top.width,
-                    ),
-                  )
-                : null,
-            clipBehavior: Clip.none,
-            child: ClipRRect(
+    Widget materialContent = Material(
+      elevation: config.elevation,
+      color: bgColor,
+      borderRadius:
+          hasBorder ? null : BorderRadius.circular(config.borderRadius),
+      shape: hasBorder
+          ? RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(config.borderRadius),
-              clipBehavior: Clip.antiAlias,
-              child: Stack(
+              side: BorderSide(
+                color: config.border!.top.color,
+                width: config.border!.top.width,
+              ),
+            )
+          : null,
+      clipBehavior: Clip.none,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(config.borderRadius),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
                 children: [
                   // ===============================================
                   // 1. Background Wipe (Wipe Effect) - Width == 0
@@ -403,9 +395,31 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                       ),
                     ),
                 ],
-              ),
-            ),
-          ),
+        ),
+      ),
+    );
+
+    if (config.barBlur > 0.0) {
+      materialContent = ClipRRect(
+        borderRadius: BorderRadius.circular(config.borderRadius),
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(
+              sigmaX: config.barBlur, sigmaY: config.barBlur),
+          child: materialContent,
+        ),
+      );
+    }
+
+    return Align(
+      alignment: config.alignment,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          // Apply maxWidth if specified, otherwise it's infinite (existing behavior)
+          maxWidth: config.maxWidth ?? double.infinity,
+        ),
+        child: Container(
+          margin: config.margin,
+          child: materialContent,
         ),
       ),
     );

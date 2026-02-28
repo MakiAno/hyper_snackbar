@@ -6,6 +6,9 @@ const _undefined = Object();
 /// Defines the vertical position where the snackbar will appear.
 enum HyperSnackPosition { top, bottom }
 
+/// GetX compatible alias for snackbar position.
+enum SnackPosition { TOP, BOTTOM }
+
 /// Defines the display mode of the snackbar.
 enum HyperSnackDisplayMode {
   /// Stacks snackbars on top of each other.
@@ -170,6 +173,16 @@ class HyperConfig {
   /// by [maxLines] (if specified) or the available screen height.
   final double? messageMaxHeight;
 
+  /// Blur Effects. ------------------------------------
+
+  /// The amount of blur applied to the background of the snackbar itself.
+  /// Note: The [backgroundColor] must have some transparency (e.g., opacity)
+  /// for the blur effect to be visible.
+  final double barBlur;
+
+  /// The amount of blur applied to the entire screen behind the snackbars.
+  final double overlayBlur;
+
   /// Animation. ---------------------------------------
 
   /// The duration of the entry animation.
@@ -253,6 +266,8 @@ class HyperConfig {
     this.useLocalOverlay = false,
     this.maxWidth,
     this.alignment = Alignment.center,
+    this.barBlur = 0.0,
+    this.overlayBlur = 0.0,
   });
 
   /// Creates a copy of this [HyperConfig] but with the given fields replaced with the new values.
@@ -296,6 +311,8 @@ class HyperConfig {
     bool? useLocalOverlay,
     Object? maxWidth = _undefined,
     AlignmentGeometry? alignment,
+    double? barBlur,
+    double? overlayBlur,
   }) {
     return HyperConfig(
       id: id ?? this.id,
@@ -341,6 +358,8 @@ class HyperConfig {
       useLocalOverlay: useLocalOverlay ?? this.useLocalOverlay,
       maxWidth: maxWidth == _undefined ? this.maxWidth : maxWidth as double?,
       alignment: alignment ?? this.alignment,
+      barBlur: barBlur ?? this.barBlur,
+      overlayBlur: overlayBlur ?? this.overlayBlur,
     );
   }
 }
