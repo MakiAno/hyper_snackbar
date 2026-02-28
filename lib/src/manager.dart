@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:math' as math;
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'config.dart';
@@ -21,6 +23,8 @@ class HyperSnackbar {
       StreamController<List<Widget>>.broadcast();
   static final StreamController<List<Widget>> _bottomStream =
       StreamController<List<Widget>>.broadcast();
+  static final StreamController<double> _overlayBlurStream =
+      StreamController<double>.broadcast();
 
   static bool _isOverlayMounted = false;
   static OverlayState? _currentOverlayState;
@@ -80,21 +84,39 @@ class HyperSnackbar {
     bool useLocalOverlay = false,
     double? maxWidth,
     AlignmentGeometry alignment = Alignment.center,
+    double barBlur = 0.0,
+    double overlayBlur = 0.0,
 
     // --- Unified Shortcuts & Aliases ---
     Duration? animationDuration,
     HyperSnackAnimationType? animationType, // Added
     Color? colorText,
     Duration? duration,
-    HyperSnackPosition? snackPosition,
+    SnackPosition? snackPosition,
+    Widget? mainButton,
+    bool? isDismissible,
+    Curve? forwardAnimationCurve,
+    Curve? reverseAnimationCurve,
+    Widget? titleText,
+    Widget? messageText,
   }) {
     // Resolve Aliases
     final effectiveTextColor = textColor ?? colorText;
-    final effectiveDisplayDuration = displayDuration ?? duration;
-    final effectivePosition =
-        position == HyperSnackPosition.top && snackPosition != null
-            ? snackPosition
-            : position;
+    final effectiveDisplayDuration = duration ?? displayDuration;
+
+    // Convert SnackPosition to HyperSnackPosition
+    HyperSnackPosition? mappedSnackPosition;
+    if (snackPosition != null) {
+      mappedSnackPosition = snackPosition == SnackPosition.top
+          ? HyperSnackPosition.top
+          : HyperSnackPosition.bottom;
+    }
+    final effectivePosition = mappedSnackPosition ?? position;
+
+    final effectiveContent = content ?? mainButton;
+    final effectiveEnableSwipe = isDismissible ?? enableSwipe;
+    final effectiveEnterCurve = forwardAnimationCurve ?? enterCurve;
+    final effectiveExitCurve = reverseAnimationCurve ?? exitCurve;
 
     // Resolve Animation Duration (Specific > Unified > Default)
     final effectiveEnterDuration = enterAnimationDuration ??
@@ -117,7 +139,7 @@ class HyperSnackbar {
       icon: icon,
       action: action,
       actionAlignment: actionAlignment,
-      content: content,
+      content: effectiveContent,
       onTap: onTap,
       titleStyle: titleStyle,
       messageStyle: messageStyle,
@@ -130,7 +152,7 @@ class HyperSnackbar {
       elevation: elevation,
       displayDuration: effectiveDisplayDuration,
       showCloseButton: showCloseButton,
-      enableSwipe: enableSwipe,
+      enableSwipe: effectiveEnableSwipe,
       newestOnTop: newestOnTop,
       maxVisibleCount: maxVisibleCount,
       position: effectivePosition,
@@ -140,8 +162,8 @@ class HyperSnackbar {
       messageMaxHeight: messageMaxHeight,
       enterAnimationDuration: effectiveEnterDuration,
       exitAnimationDuration: effectiveExitDuration,
-      enterCurve: enterCurve,
-      exitCurve: exitCurve,
+      enterCurve: effectiveEnterCurve,
+      exitCurve: effectiveExitCurve,
       enterAnimationType: effectiveEnterType,
       exitAnimationType: effectiveExitType,
       progressBarWidth: progressBarWidth,
@@ -150,6 +172,8 @@ class HyperSnackbar {
       useLocalOverlay: useLocalOverlay,
       maxWidth: maxWidth,
       alignment: alignment,
+      barBlur: barBlur,
+      overlayBlur: overlayBlur,
     );
   }
 
@@ -200,6 +224,8 @@ class HyperSnackbar {
     bool? useLocalOverlay,
     double? maxWidth,
     AlignmentGeometry? alignment,
+    double? barBlur,
+    double? overlayBlur,
     BuildContext? context,
 
     // --- Unified Shortcuts & Aliases ---
@@ -207,12 +233,19 @@ class HyperSnackbar {
     HyperSnackAnimationType? animationType, // Added
     Color? colorText,
     Duration? duration,
-    HyperSnackPosition? snackPosition,
+    SnackPosition? snackPosition,
+    Widget? mainButton,
+    bool? isDismissible,
+    Curve? forwardAnimationCurve,
+    Curve? reverseAnimationCurve,
+    Widget? titleText,
+    Widget? messageText,
   }) {
     assert(
       (title != null && title.isNotEmpty) ||
           (message != null && message.isNotEmpty) ||
-          content != null,
+          content != null || mainButton != null ||
+          titleText != null || messageText != null,
       'HyperSnackbar requires at least a title, a message, or a custom content widget.',
     );
 
@@ -220,8 +253,21 @@ class HyperSnackbar {
 
     // Resolve Aliases/Shortcuts for overriding
     final effectiveTextColor = textColor ?? colorText;
-    final effectiveDisplayDuration = displayDuration ?? duration;
-    final effectivePosition = position ?? snackPosition;
+    final effectiveDisplayDuration = duration ?? displayDuration;
+
+    // Convert SnackPosition to HyperSnackPosition
+    HyperSnackPosition? mappedSnackPosition;
+    if (snackPosition != null) {
+      mappedSnackPosition = snackPosition == SnackPosition.top
+          ? HyperSnackPosition.top
+          : HyperSnackPosition.bottom;
+    }
+    final effectivePosition = mappedSnackPosition ?? position;
+
+    final effectiveContent = content ?? mainButton;
+    final effectiveEnableSwipe = isDismissible ?? enableSwipe;
+    final effectiveEnterCurve = forwardAnimationCurve ?? enterCurve;
+    final effectiveExitCurve = reverseAnimationCurve ?? exitCurve;
 
     // Resolve Animation Durations
     // Arg > Unified > null (keep preset)
@@ -235,6 +281,27 @@ class HyperSnackbar {
     final effectiveEnterAnimType = enterAnimationType ?? animationType;
     final effectiveExitAnimType = exitAnimationType ?? animationType;
 
+    // Handle Title/Message Widget aliases via Content if Text is overridden, though the current Widget strictly takes strings for title/message.
+    // To cleanly map titleText/messageText without breaking the Widget, we can map them to custom content if provided.
+    // However, if the user provides `messageText` or `titleText` specifically, GetX displays them instead of strings.
+    // Since `HyperConfig` title/message are strictly strings, we will map them into a `Column` via `content` if not null.
+    Widget? finalContent = effectiveContent;
+    if (titleText != null || messageText != null) {
+        finalContent = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (titleText != null) titleText,
+            if (titleText != null && messageText != null) const SizedBox(height: 4),
+            if (messageText != null) messageText,
+            if (effectiveContent != null) ...[
+                const SizedBox(height: 8),
+                effectiveContent
+            ]
+          ]
+        );
+    }
+
     final config = baseConfig.copyWith(
       title: title,
       message: message ?? baseConfig.message,
@@ -244,7 +311,7 @@ class HyperSnackbar {
       icon: icon,
       action: action,
       actionAlignment: actionAlignment,
-      content: content,
+      content: finalContent,
       onTap: onTap,
       titleStyle: titleStyle,
       messageStyle: messageStyle,
@@ -257,7 +324,7 @@ class HyperSnackbar {
       elevation: elevation,
       displayDuration: effectiveDisplayDuration,
       showCloseButton: showCloseButton,
-      enableSwipe: enableSwipe,
+      enableSwipe: effectiveEnableSwipe,
       newestOnTop: newestOnTop,
       maxVisibleCount: maxVisibleCount,
       position: effectivePosition,
@@ -265,8 +332,8 @@ class HyperSnackbar {
       scrollable: scrollable,
       enterAnimationDuration: effectiveEnterAnimDuration,
       exitAnimationDuration: effectiveExitAnimDuration,
-      enterCurve: enterCurve,
-      exitCurve: exitCurve,
+      enterCurve: effectiveEnterCurve,
+      exitCurve: effectiveExitCurve,
       enterAnimationType: effectiveEnterAnimType,
       exitAnimationType: effectiveExitAnimType,
       progressBarWidth: progressBarWidth,
@@ -275,12 +342,24 @@ class HyperSnackbar {
       useLocalOverlay: useLocalOverlay,
       maxWidth: maxWidth ?? baseConfig.maxWidth,
       alignment: alignment ?? baseConfig.alignment,
+      barBlur: barBlur ?? baseConfig.barBlur,
+      overlayBlur: overlayBlur ?? baseConfig.overlayBlur,
     );
 
     showFromConfig(config, context: context);
   }
 
   /// Shows a snackbar using a pre-configured [HyperConfig] object.
+  static void _updateOverlayBlur() {
+    double maxBlur = 0.0;
+    for (final widget in [..._topEntries, ..._bottomEntries]) {
+      if (widget is HyperSnackBarContainer) {
+        maxBlur = math.max(maxBlur, widget.config.overlayBlur);
+      }
+    }
+    _overlayBlurStream.add(maxBlur);
+  }
+
   static void showFromConfig(HyperConfig config, {BuildContext? context}) {
     assert(
       (config.title != null && config.title!.isNotEmpty) ||
@@ -300,8 +379,14 @@ class HyperSnackbar {
     }
 
     if (config.id != null) {
-      if (_tryUpdate(config, _topEntries, _topStream)) return;
-      if (_tryUpdate(config, _bottomEntries, _bottomStream)) return;
+      if (_tryUpdate(config, _topEntries, _topStream)) {
+        _updateOverlayBlur();
+        return;
+      }
+      if (_tryUpdate(config, _bottomEntries, _bottomStream)) {
+        _updateOverlayBlur();
+        return;
+      }
     }
 
     final targetList = (config.position == HyperSnackPosition.top)
@@ -333,6 +418,7 @@ class HyperSnackbar {
       }
       _bottomStream.add(_bottomEntries);
     }
+    _updateOverlayBlur();
   }
 
   static void _processQueue() {
@@ -364,6 +450,7 @@ class HyperSnackbar {
       _bottomEntries.add(widget);
       _bottomStream.add(_bottomEntries);
     }
+    _updateOverlayBlur();
   }
 
   static void dismissById(String id) {
@@ -410,6 +497,7 @@ class HyperSnackbar {
       _bottomEntries.clear();
       _topStream.add([]);
       _bottomStream.add([]);
+      _updateOverlayBlur();
       if (_overlayEntry != null) {
         try {
           _overlayEntry?.remove();
@@ -589,6 +677,7 @@ class HyperSnackbar {
     } else {
       finalizeRemoval(_bottomEntries, _bottomStream);
     }
+    _updateOverlayBlur();
   }
 
   static void _forceRemoveOldest(HyperSnackPosition position,
@@ -638,6 +727,7 @@ class HyperSnackbar {
       builder: (context) => _HyperOverlayManager(
         topStream: _topStream.stream,
         bottomStream: _bottomStream.stream,
+        overlayBlurStream: _overlayBlurStream.stream,
         initialTopData: _topEntries,
         initialBottomData: _bottomEntries,
       ),
@@ -678,12 +768,14 @@ class HyperSnackbar {
 
     _topStream.add([]);
     _bottomStream.add([]);
+    _overlayBlurStream.add(0.0);
   }
 }
 
 class _HyperOverlayManager extends StatelessWidget {
   final Stream<List<Widget>> topStream;
   final Stream<List<Widget>> bottomStream;
+  final Stream<double> overlayBlurStream;
 
   final List<Widget> initialTopData;
   final List<Widget> initialBottomData;
@@ -691,6 +783,7 @@ class _HyperOverlayManager extends StatelessWidget {
   const _HyperOverlayManager({
     required this.topStream,
     required this.bottomStream,
+    required this.overlayBlurStream,
     required this.initialTopData,
     required this.initialBottomData,
   });
@@ -699,6 +792,27 @@ class _HyperOverlayManager extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        // Background blur effect
+        Positioned.fill(
+          child: StreamBuilder<double>(
+            stream: overlayBlurStream,
+            initialData: 0.0,
+            builder: (context, snapshot) {
+              final blurValue = snapshot.data ?? 0.0;
+              return TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0.0, end: blurValue),
+                duration: const Duration(milliseconds: 300),
+                builder: (context, blur, child) {
+                  if (blur == 0.0) return const SizedBox.shrink();
+                  return BackdropFilter(
+                    filter: ui.ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                    child: Container(color: Colors.transparent),
+                  );
+                },
+              );
+            },
+          ),
+        ),
         Positioned(
           top: 0,
           left: 0,
@@ -775,18 +889,27 @@ extension HyperSnackbarExtensions on BuildContext {
     bool? useLocalOverlay,
     double? maxWidth,
     AlignmentGeometry? alignment,
+    double? barBlur,
+    double? overlayBlur,
 
     // --- Unified Shortcuts & Aliases ---
     Duration? animationDuration,
     HyperSnackAnimationType? animationType, // Added
     Color? colorText,
     Duration? duration,
-    HyperSnackPosition? snackPosition,
+    SnackPosition? snackPosition,
+    Widget? mainButton,
+    bool? isDismissible,
+    Curve? forwardAnimationCurve,
+    Curve? reverseAnimationCurve,
+    Widget? titleText,
+    Widget? messageText,
   }) {
     assert(
       (title != null && title.isNotEmpty) ||
           (message != null && message.isNotEmpty) ||
-          content != null,
+          content != null || mainButton != null ||
+          titleText != null || messageText != null,
       'HyperSnackbar requires at least a title, a message, or a custom content widget.',
     );
 
@@ -831,13 +954,21 @@ extension HyperSnackbarExtensions on BuildContext {
       useLocalOverlay: useLocalOverlay,
       maxWidth: maxWidth,
       alignment: alignment,
+      barBlur: barBlur,
+      overlayBlur: overlayBlur,
 
       // Pass Aliases/Shortcuts
       animationDuration: animationDuration,
       animationType: animationType,
       colorText: colorText,
       duration: duration,
-      snackPosition: snackPosition,
+      snackPosition: snackPosition as dynamic, // or simply don't pass it as mappedSnackPosition was already passed into position parameter
+      mainButton: mainButton,
+      isDismissible: isDismissible,
+      forwardAnimationCurve: forwardAnimationCurve,
+      reverseAnimationCurve: reverseAnimationCurve,
+      titleText: titleText,
+      messageText: messageText,
 
       context: this,
     );
