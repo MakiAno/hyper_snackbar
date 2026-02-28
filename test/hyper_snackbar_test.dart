@@ -336,5 +336,242 @@ void main() {
 
       await tester.pumpAndSettle();
     });
+
+    testWidgets('displayDuration controls how long the snackbar stays visible',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createTestApp(Container()));
+
+      HyperSnackbar.show(
+        title: 'Duration Test',
+        displayDuration: const Duration(seconds: 2),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100)); // animation in
+
+      expect(find.text('Duration Test'), findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 1)); // wait 1s
+
+      expect(find.text('Duration Test'), findsOneWidget); // still there
+
+      await tester.pump(const Duration(seconds: 1)); // wait another 1s
+      await tester.pump(const Duration(milliseconds: 600)); // wait for exit animation
+
+      expect(find.text('Duration Test'), findsNothing); // should be gone
+    });
+
+    testWidgets('Colors are applied correctly to background and text',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createTestApp(Container()));
+
+      const bgColor = Colors.purple;
+      const txtColor = Colors.yellow;
+
+      HyperSnackbar.show(
+        title: 'Color Test',
+        message: 'Message test',
+        backgroundColor: bgColor,
+        textColor: txtColor,
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // In the implementation, Material color is set to bgColor
+      final materialFinder = find.byType(Material).last;
+      final materialWidget = tester.widget<Material>(materialFinder);
+      expect(materialWidget.color, bgColor);
+
+      final titleTextFinder = find.text('Color Test');
+      final titleWidget = tester.widget<Text>(titleTextFinder);
+      expect(titleWidget.style?.color, txtColor);
+
+      final messageTextFinder = find.text('Message test');
+      final messageWidget = tester.widget<Text>(messageTextFinder);
+      expect(messageWidget.style?.color, txtColor.withAlpha(230));
+
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('Action button triggers callback and auto-dismisses',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createTestApp(Container()));
+
+      bool actionTriggered = false;
+
+      HyperSnackbar.show(
+        title: 'Action Test',
+        action: HyperSnackAction(
+          label: 'UNDO',
+          onPressed: () {
+            actionTriggered = true;
+          },
+          autoDismiss: true,
+        ),
+        displayDuration: const Duration(seconds: 10), // keep it open
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final buttonFinder = find.text('UNDO');
+      expect(buttonFinder, findsOneWidget);
+
+      await tester.tap(buttonFinder);
+      await tester.pump();
+
+      expect(actionTriggered, isTrue);
+
+      await tester.pump(const Duration(milliseconds: 600)); // wait for exit animation
+      expect(find.text('Action Test'), findsNothing); // it should be dismissed
+    });
+
+    testWidgets('Action button triggers callback without auto-dismissing',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createTestApp(Container()));
+
+      bool actionTriggered = false;
+
+      HyperSnackbar.show(
+        title: 'Action Test 2',
+        action: HyperSnackAction(
+          label: 'RETRY',
+          onPressed: () {
+            actionTriggered = true;
+          },
+          autoDismiss: false,
+        ),
+        displayDuration: const Duration(seconds: 10), // keep it open
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final buttonFinder = find.text('RETRY');
+      expect(buttonFinder, findsOneWidget);
+
+      await tester.tap(buttonFinder);
+      await tester.pump();
+
+      expect(actionTriggered, isTrue);
+
+      await tester.pump(const Duration(milliseconds: 600)); // wait for exit animation
+      expect(find.text('Action Test 2'), findsOneWidget); // it should NOT be dismissed
+
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('Very long text in non-scrollable mode applies ellipsis',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createTestApp(Container()));
+
+      final longText = 'A' * 1000;
+
+      HyperSnackbar.show(
+        title: 'Long Text Test',
+        message: longText,
+        maxLines: 2,
+        scrollable: false,
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final textFinder = find.textContaining('A' * 10);
+      expect(textFinder, findsOneWidget);
+      final textWidget = tester.widget<Text>(textFinder.last);
+
+      expect(textWidget.maxLines, 2);
+      expect(textWidget.overflow, TextOverflow.ellipsis);
+
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('Very long text in scrollable mode allows scrolling',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createTestApp(Container()));
+
+      final longText = 'A\n' * 100;
+
+      HyperSnackbar.show(
+        title: 'Scrollable Text Test',
+        message: longText,
+        scrollable: true,
+        messageMaxHeight: 100,
+        displayDuration: null,
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final scrollableFinder = find.byType(SingleChildScrollView);
+      expect(scrollableFinder, findsOneWidget);
+
+      final textFinder = find.textContaining('A');
+      expect(textFinder, findsOneWidget);
+      final textWidget = tester.widget<Text>(textFinder.last);
+
+      expect(textWidget.maxLines, isNull);
+      expect(textWidget.overflow, TextOverflow.visible);
+
+      // Try scrolling
+      await tester.drag(scrollableFinder, const Offset(0, -500));
+      await tester.pump();
+
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('Progress bar renders correctly based on progressBarWidth',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createTestApp(Container()));
+
+      // 1. Line Effect
+      HyperSnackbar.show(
+        title: 'Line Progress',
+        progressBarWidth: 4.0,
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+
+      HyperSnackbar.clearAll();
+      await tester.pumpAndSettle();
+
+      // 2. Wipe Effect
+      HyperSnackbar.show(
+        title: 'Wipe Progress',
+        progressBarWidth: 0.0,
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Wipe effect uses a FractionallySizedBox in AnimatedBuilder
+      expect(find.byType(FractionallySizedBox), findsOneWidget);
+
+      HyperSnackbar.clearAll();
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('useAdaptiveLoader shows platform-specific loader instead of icon',
+        (WidgetTester tester) async {
+      // Test for non-Cupertino platform (Android by default in test)
+      await tester.pumpWidget(createTestApp(Container()));
+
+      HyperSnackbar.show(
+        title: 'Loader Test',
+        icon: const Icon(Icons.star), // should be ignored
+        useAdaptiveLoader: true,
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byIcon(Icons.star), findsNothing);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pumpAndSettle();
+    });
   }); // End of group
 }
