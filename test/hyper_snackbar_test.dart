@@ -378,10 +378,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // In the implementation, Material color is set to bgColor
-      final materialFinder = find.byType(Material).last;
-      final materialWidget = tester.widget<Material>(materialFinder);
-      expect(materialWidget.color, bgColor);
+      // In the implementation, color is now handled by Container decoration
+      final containerFinder = find.ancestor(of: find.byType(Material).last, matching: find.byType(Container)).first;
+      final containerWidget = tester.widget<Container>(containerFinder);
+      expect((containerWidget.decoration as BoxDecoration).color, bgColor);
 
       final titleTextFinder = find.text('Color Test');
       final titleWidget = tester.widget<Text>(titleTextFinder);

@@ -99,6 +99,8 @@ class HyperSnackbar {
     Curve? reverseAnimationCurve,
     Widget? titleText,
     Widget? messageText,
+    List<BoxShadow>? boxShadows,
+    bool? shouldIconPulse,
   }) {
     // Resolve Aliases
     final effectiveTextColor = textColor ?? colorText;
@@ -107,7 +109,7 @@ class HyperSnackbar {
     // Convert SnackPosition to HyperSnackPosition
     HyperSnackPosition? mappedSnackPosition;
     if (snackPosition != null) {
-      mappedSnackPosition = snackPosition == SnackPosition.top
+      mappedSnackPosition = snackPosition == SnackPosition.TOP
           ? HyperSnackPosition.top
           : HyperSnackPosition.bottom;
     }
@@ -132,18 +134,38 @@ class HyperSnackbar {
     final effectiveExitType =
         exitAnimationType ?? animationType ?? HyperSnackAnimationType.left;
 
+    // Handle Title/Message Widget aliases via Content if Text is overridden
+    Widget? finalContent = effectiveContent;
+    if (titleText != null || messageText != null) {
+        finalContent = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (titleText != null) titleText,
+            if (titleText != null && messageText != null) const SizedBox(height: 4),
+            if (messageText != null) messageText,
+            if (effectiveContent != null) ...[
+                const SizedBox(height: 8),
+                effectiveContent
+            ]
+          ]
+        );
+    }
+
     return HyperConfig(
       id: id,
       title: title,
       message: message,
       icon: icon,
+      shouldIconPulse: shouldIconPulse ?? false,
       action: action,
       actionAlignment: actionAlignment,
-      content: effectiveContent,
+      content: finalContent,
       onTap: onTap,
       titleStyle: titleStyle,
       messageStyle: messageStyle,
       border: border,
+      boxShadows: boxShadows,
       margin: margin,
       padding: padding,
       backgroundColor: backgroundColor,
@@ -240,6 +262,8 @@ class HyperSnackbar {
     Curve? reverseAnimationCurve,
     Widget? titleText,
     Widget? messageText,
+    List<BoxShadow>? boxShadows,
+    bool? shouldIconPulse,
   }) {
     assert(
       (title != null && title.isNotEmpty) ||
@@ -258,7 +282,7 @@ class HyperSnackbar {
     // Convert SnackPosition to HyperSnackPosition
     HyperSnackPosition? mappedSnackPosition;
     if (snackPosition != null) {
-      mappedSnackPosition = snackPosition == SnackPosition.top
+      mappedSnackPosition = snackPosition == SnackPosition.TOP
           ? HyperSnackPosition.top
           : HyperSnackPosition.bottom;
     }
@@ -309,6 +333,7 @@ class HyperSnackbar {
       messageMaxHeight: messageMaxHeight ?? baseConfig.messageMaxHeight,
       id: id,
       icon: icon,
+      shouldIconPulse: shouldIconPulse ?? baseConfig.shouldIconPulse,
       action: action,
       actionAlignment: actionAlignment,
       content: finalContent,
@@ -316,6 +341,7 @@ class HyperSnackbar {
       titleStyle: titleStyle,
       messageStyle: messageStyle,
       border: border,
+      boxShadows: boxShadows ?? baseConfig.boxShadows,
       margin: margin,
       padding: padding,
       backgroundColor: backgroundColor,
@@ -904,6 +930,8 @@ extension HyperSnackbarExtensions on BuildContext {
     Curve? reverseAnimationCurve,
     Widget? titleText,
     Widget? messageText,
+    List<BoxShadow>? boxShadows,
+    bool? shouldIconPulse,
   }) {
     assert(
       (title != null && title.isNotEmpty) ||
@@ -962,13 +990,15 @@ extension HyperSnackbarExtensions on BuildContext {
       animationType: animationType,
       colorText: colorText,
       duration: duration,
-      snackPosition: snackPosition as dynamic, // or simply don't pass it as mappedSnackPosition was already passed into position parameter
+      snackPosition: snackPosition,
       mainButton: mainButton,
       isDismissible: isDismissible,
       forwardAnimationCurve: forwardAnimationCurve,
       reverseAnimationCurve: reverseAnimationCurve,
       titleText: titleText,
       messageText: messageText,
+      boxShadows: boxShadows,
+      shouldIconPulse: shouldIconPulse,
 
       context: this,
     );

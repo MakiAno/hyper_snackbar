@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hyper_snackbar/hyper_snackbar.dart';
 
+import 'pages/getx_like_page.dart';
 import 'pages/playground_page.dart';
 import 'pages/scenario_page.dart';
 import 'pages/preset_demo_page.dart'; // Import added
@@ -139,6 +140,22 @@ class HomePage extends StatelessWidget {
                   context,
                 ).push(
                     MaterialPageRoute(builder: (_) => const PresetDemoPage()));
+              },
+            ),
+
+            const SizedBox(height: 16),
+
+            // GetX & Blur Compatibility Demo Button
+            _MenuCard(
+              title: '⚡ GetX Compatibility & Blurs',
+              subtitle: 'Explore GetX aliases and frosted glass blur effects.',
+              color: Colors.orange,
+              icon: Icons.blur_on,
+              onTap: () {
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(
+                    builder: (_) => const GetxLikeDemoPage()));
               },
             ),
           ],

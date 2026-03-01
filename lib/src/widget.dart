@@ -55,9 +55,6 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
     final txtColor = config.textColor ?? Colors.white;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    // Border (Shape) check
-    final hasBorder = config.border != null;
-
     // Get padding from config
     final EdgeInsetsGeometry basePadding = config.padding;
     final double leftPad = basePadding is EdgeInsets ? basePadding.left : 16.0;
@@ -128,6 +125,16 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
     } else {
       // --- Icon ---
       iconWidget = config.icon;
+      if (iconWidget != null && config.shouldIconPulse && widget.durationAnimation != null) {
+        iconWidget = AnimatedBuilder(
+          animation: widget.durationAnimation!,
+          builder: (context, child) {
+            final double scale = 1.0 + (widget.durationAnimation!.value * 10 % 1.0) * 0.2;
+            return Transform.scale(scale: scale, child: child);
+          },
+          child: iconWidget,
+        );
+      }
     }
 
     final bool hasTitle = config.title != null && config.title!.isNotEmpty;
@@ -136,22 +143,25 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
 
     final double pbHeight = isLineEffect ? config.progressBarWidth! : 0.0;
 
-    Widget materialContent = Material(
-      elevation: config.elevation,
-      color: bgColor,
-      borderRadius:
-          hasBorder ? null : BorderRadius.circular(config.borderRadius),
-      shape: hasBorder
-          ? RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(config.borderRadius),
-              side: BorderSide(
-                color: config.border!.top.color,
-                width: config.border!.top.width,
-              ),
-            )
-          : null,
-      clipBehavior: Clip.none,
-      child: ClipRRect(
+    Widget materialContent = Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(config.borderRadius),
+        border: config.border,
+        boxShadow: config.boxShadows ??
+            (config.elevation > 0
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(50),
+                      blurRadius: config.elevation,
+                      offset: Offset(0, config.elevation / 2),
+                    )
+                  ]
+                : null),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: ClipRRect(
         borderRadius: BorderRadius.circular(config.borderRadius),
         clipBehavior: Clip.antiAlias,
         child: Stack(
@@ -396,6 +406,7 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                     ),
                 ],
         ),
+      ),
       ),
     );
 

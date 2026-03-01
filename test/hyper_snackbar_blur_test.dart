@@ -36,6 +36,29 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500)); // exit animation
   });
 
+  testWidgets('overlayBlur creates a full-screen BackdropFilter', (WidgetTester tester) async {
+    await tester.pumpWidget(createTestApp(Container()));
+
+    HyperSnackbar.show(
+      title: 'Overlay Blur Test',
+      message: 'Testing overlay blur',
+      overlayBlur: 10.0,
+      displayDuration: const Duration(seconds: 1),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300)); // enter animation
+
+    // Pump stream events and animation for overlay
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Overlay Blur Test'), findsOneWidget);
+
+    // wait for it to dismiss to not leak animations
+    await tester.pump(const Duration(seconds: 1)); // wait for display
+    await tester.pumpAndSettle(const Duration(milliseconds: 500)); // exit animation
+  });
+
   testWidgets('GetX aliases map correctly', (WidgetTester tester) async {
     final config = HyperSnackbar.preset(
       mainButton: const Text('MainButton'),
@@ -43,7 +66,7 @@ void main() {
       forwardAnimationCurve: Curves.bounceIn,
       reverseAnimationCurve: Curves.bounceOut,
       duration: const Duration(seconds: 10),
-      snackPosition: SnackPosition.bottom,
+      snackPosition: SnackPosition.BOTTOM,
       colorText: Colors.red,
     );
 
@@ -54,5 +77,10 @@ void main() {
     expect(config.displayDuration, const Duration(seconds: 10));
     expect(config.position, HyperSnackPosition.bottom);
     expect(config.textColor, Colors.red);
+
+    final configTop = HyperSnackbar.preset(
+      snackPosition: SnackPosition.TOP,
+    );
+    expect(configTop.position, HyperSnackPosition.top);
   });
 }
