@@ -1,3 +1,10 @@
+## 0.9.0
+
+### ✨ New Features
+* **GetX Full Compatibility:** Achieved seamless migration for GetX users. Added full support and aliases for `SnackPosition` (TOP/BOTTOM), `icon`, `mainButton`, `onTap`, `isDismissible`, `shouldIconPulse`, and `boxShadows`. You can now copy-paste most `Get.snackbar` code directly into `HyperSnackbar.show()`!
+* **Blur Effects (Frosted Glass & Focus Mode):** * `barBlur`: Applies a beautiful frosted glass blur effect to the snackbar background itself (requires a semi-transparent `backgroundColor`).
+    * `overlayBlur`: Blurs the entire screen behind the snackbar, creating a highly focused modal-like feel.
+
 ## 0.8.0
 
 ### ✨ New Features

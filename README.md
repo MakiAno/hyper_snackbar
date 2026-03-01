@@ -39,7 +39,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.8.0
+  hyper_snackbar: ^0.9.0
 ```
 
 ## 🛠 Setup
@@ -102,7 +102,7 @@ HyperSnackbar.showInfo(title: 'New Message');
 
 ---
 
-### 🎨 Creating Custom Presets (New!)
+### 🎨 Creating Custom Presets
 
 Stop repeating yourself! Define reusable styles using `HyperSnackbar.preset` and reuse them across your app.
 
@@ -159,23 +159,34 @@ By keeping the type as `AlignmentGeometry`, it fully supports `center`, `centerL
 
 ### ⚡ GetX Migration Guide
 
-Coming from GetX? `HyperSnackbar` now supports familiar parameter aliases to assist with migration.
+Coming from GetX? `HyperSnackbar` now supports familiar parameter aliases to assist with seamless migration. You can copy-paste most of your existing `Get.snackbar` code!
 
-| HyperSnackbar Param | GetX Alias |
+| GetX Parameter | HyperSnackbar Equivalent / Alias |
 |---|---|
-| `displayDuration` | `duration` |
-| `position` | `snackPosition` |
-| `textColor` | `colorText` |
-| `enter/exitAnimationDuration` | `animationDuration` |
+| `duration` | Supported directly (alias for `displayDuration`) |
+| `snackPosition` | Supported directly (`SnackPosition.TOP` / `BOTTOM`) |
+| `colorText` | Supported directly (alias for `textColor`) |
+| `isDismissible` | Supported directly (alias for `enableSwipe`) |
+| `icon` | Supported directly |
+| `mainButton` | Supported directly (alias for `action`) |
+| `onTap` | Supported directly |
+| `shouldIconPulse` | Supported directly |
+| `boxShadows` | Supported directly |
 
 ```dart
 // You can use GetX-style parameters directly:
 HyperSnackbar.show(
-  title: 'Familiar?',
+  title: 'Action Required',
   message: 'It works just like you expect.',
-  snackPosition: HyperSnackPosition.bottom, // Alias for position
-  duration: Duration(seconds: 3),           // Alias for displayDuration
-  colorText: Colors.white,                  // Alias for textColor
+  snackPosition: SnackPosition.TOP,
+  icon: const Icon(Icons.warning, color: Colors.white),
+  shouldIconPulse: true,
+  isDismissible: false,
+  mainButton: TextButton(
+    onPressed: () => print('Action!'),
+    child: const Text('UNDO'),
+  ),
+  onTap: () => print('Tapped!'),
 );
 ```
 
@@ -192,6 +203,25 @@ HyperSnackbar.show(
   progressBarWidth: 4.0, // Line effect
   // progressBarWidth: 0.0, // Wipe effect (background fill)
   displayDuration: const Duration(seconds: 5),
+);
+```
+
+#### Frosted Glass & Background Blur (New!)
+Add beautiful blur effects to your snackbars or the entire screen.
+
+```dart
+// Frosted Glass Effect (blur the snackbar itself)
+HyperSnackbar.show(
+  title: 'Frosted Glass',
+  barBlur: 20.0,
+  backgroundColor: Colors.black.withAlpha(100), // Must be semi-transparent
+);
+
+// Focus Mode (blur the entire background screen)
+HyperSnackbar.show(
+  title: 'Focus Mode',
+  overlayBlur: 5.0,
+  snackPosition: SnackPosition.BOTTOM,
 );
 ```
 
@@ -304,10 +334,10 @@ All methods are static and can be called from anywhere.
 ### ✨ Animation
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `animationType` | `HyperSnackAnimationType?`| `null` | **(New)** Sets both enter and exit animation types simultaneously. |
+| `animationType` | `HyperSnackAnimationType?`| `null` | Sets both enter and exit animation types simultaneously. |
 | `enterAnimationType` | `HyperSnackAnimationType` | `.top` | Animation style for entry (`scale`, `fade`, `left`, etc.). |
 | `exitAnimationType` | `HyperSnackAnimationType` | `.left` | Animation style for exit. |
-| `animationDuration` | `Duration?` | `null` | **(New)** Sets both enter and exit durations simultaneously. |
+| `animationDuration` | `Duration?` | `null` | Sets both enter and exit durations simultaneously. |
 | `enterAnimationDuration`| `Duration` | `300ms` | Duration of entry animation. |
 | `exitAnimationDuration` | `Duration` | `500ms` | Duration of exit animation. |
 | `enterCurve` | `Curve` | `easeOutQuart`| Animation curve for entry. |

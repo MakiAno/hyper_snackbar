@@ -356,7 +356,8 @@ void main() {
       expect(find.text('Duration Test'), findsOneWidget); // still there
 
       await tester.pump(const Duration(seconds: 1)); // wait another 1s
-      await tester.pump(const Duration(milliseconds: 600)); // wait for exit animation
+      await tester
+          .pump(const Duration(milliseconds: 600)); // wait for exit animation
 
       expect(find.text('Duration Test'), findsNothing); // should be gone
     });
@@ -379,7 +380,10 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // In the implementation, color is now handled by Container decoration
-      final containerFinder = find.ancestor(of: find.byType(Material).last, matching: find.byType(Container)).first;
+      final containerFinder = find
+          .ancestor(
+              of: find.byType(Material).last, matching: find.byType(Container))
+          .first;
       final containerWidget = tester.widget<Container>(containerFinder);
       expect((containerWidget.decoration as BoxDecoration).color, bgColor);
 
@@ -423,7 +427,8 @@ void main() {
 
       expect(actionTriggered, isTrue);
 
-      await tester.pump(const Duration(milliseconds: 600)); // wait for exit animation
+      await tester
+          .pump(const Duration(milliseconds: 600)); // wait for exit animation
       expect(find.text('Action Test'), findsNothing); // it should be dismissed
     });
 
@@ -456,8 +461,10 @@ void main() {
 
       expect(actionTriggered, isTrue);
 
-      await tester.pump(const Duration(milliseconds: 600)); // wait for exit animation
-      expect(find.text('Action Test 2'), findsOneWidget); // it should NOT be dismissed
+      await tester
+          .pump(const Duration(milliseconds: 600)); // wait for exit animation
+      expect(find.text('Action Test 2'),
+          findsOneWidget); // it should NOT be dismissed
 
       await tester.pumpAndSettle();
     });
@@ -554,7 +561,8 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('useAdaptiveLoader shows platform-specific loader instead of icon',
+    testWidgets(
+        'useAdaptiveLoader shows platform-specific loader instead of icon',
         (WidgetTester tester) async {
       // Test for non-Cupertino platform (Android by default in test)
       await tester.pumpWidget(createTestApp(Container()));
