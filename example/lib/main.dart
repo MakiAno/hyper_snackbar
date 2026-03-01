@@ -273,12 +273,12 @@ class GetxLikeDemoPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   _ActionButton(
-                    label: '5. All-in-One (GetX Full)',
+                    label: '5. Full Action & Icon (GetX)',
                     color: Colors.deepOrange,
                     onPressed: () {
                       HyperSnackbar.show(
                         title: "Action Required",
-                        message: "This snackbar has icon pulsing, a main button, custom box shadows, and margins!",
+                        message: "This snackbar uses icon, mainButton, and onTap in a GetX-like rich notification!",
                         snackPosition: SnackPosition.TOP,
                         duration: const Duration(seconds: 6),
                         backgroundColor: Colors.deepOrange,
