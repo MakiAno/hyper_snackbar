@@ -209,7 +209,6 @@ class HyperSnackbar {
     String? id,
     String? message,
     Widget? icon,
-    bool? shouldIconPulse,
     HyperSnackAction? action,
     MainAxisAlignment? actionAlignment,
     Widget? content,
@@ -217,7 +216,6 @@ class HyperSnackbar {
     TextStyle? titleStyle,
     TextStyle? messageStyle,
     BoxBorder? border,
-    List<BoxShadow>? boxShadows,
     EdgeInsetsGeometry? margin,
     EdgeInsetsGeometry? padding,
     Color? backgroundColor,
@@ -264,6 +262,8 @@ class HyperSnackbar {
     Curve? reverseAnimationCurve,
     Widget? titleText,
     Widget? messageText,
+    List<BoxShadow>? boxShadows,
+    bool? shouldIconPulse,
   }) {
     assert(
       (title != null && title.isNotEmpty) ||
@@ -305,10 +305,7 @@ class HyperSnackbar {
     final effectiveEnterAnimType = enterAnimationType ?? animationType;
     final effectiveExitAnimType = exitAnimationType ?? animationType;
 
-    // Handle Title/Message Widget aliases via Content if Text is overridden, though the current Widget strictly takes strings for title/message.
-    // To cleanly map titleText/messageText without breaking the Widget, we can map them to custom content if provided.
-    // However, if the user provides `messageText` or `titleText` specifically, GetX displays them instead of strings.
-    // Since `HyperConfig` title/message are strictly strings, we will map them into a `Column` via `content` if not null.
+    // Handle Title/Message Widget aliases via Content if Text is overridden
     Widget? finalContent = effectiveContent;
     if (titleText != null || messageText != null) {
         finalContent = Column(
@@ -375,7 +372,6 @@ class HyperSnackbar {
     showFromConfig(config, context: context);
   }
 
-  /// Shows a snackbar using a pre-configured [HyperConfig] object.
   static void _updateOverlayBlur() {
     double maxBlur = 0.0;
     for (final widget in [..._topEntries, ..._bottomEntries]) {
@@ -386,6 +382,7 @@ class HyperSnackbar {
     _overlayBlurStream.add(maxBlur);
   }
 
+  /// Shows a snackbar using a pre-configured [HyperConfig] object.
   static void showFromConfig(HyperConfig config, {BuildContext? context}) {
     assert(
       (config.title != null && config.title!.isNotEmpty) ||
@@ -880,7 +877,6 @@ extension HyperSnackbarExtensions on BuildContext {
     String? id,
     String? message,
     Widget? icon,
-    bool? shouldIconPulse,
     HyperSnackAction? action,
     MainAxisAlignment? actionAlignment,
     Widget? content,
@@ -888,7 +884,6 @@ extension HyperSnackbarExtensions on BuildContext {
     TextStyle? titleStyle,
     TextStyle? messageStyle,
     BoxBorder? border,
-    List<BoxShadow>? boxShadows,
     EdgeInsetsGeometry? margin,
     EdgeInsetsGeometry? padding,
     Color? backgroundColor,
@@ -932,6 +927,8 @@ extension HyperSnackbarExtensions on BuildContext {
     Curve? reverseAnimationCurve,
     Widget? titleText,
     Widget? messageText,
+    List<BoxShadow>? boxShadows,
+    bool? shouldIconPulse,
   }) {
     assert(
       (title != null && title.isNotEmpty) ||
@@ -947,7 +944,6 @@ extension HyperSnackbarExtensions on BuildContext {
       id: id,
       message: message,
       icon: icon,
-      shouldIconPulse: shouldIconPulse,
       action: action,
       actionAlignment: actionAlignment,
       content: content,
@@ -955,7 +951,6 @@ extension HyperSnackbarExtensions on BuildContext {
       titleStyle: titleStyle,
       messageStyle: messageStyle,
       border: border,
-      boxShadows: boxShadows,
       margin: margin,
       padding: padding,
       backgroundColor: backgroundColor,
@@ -999,6 +994,8 @@ extension HyperSnackbarExtensions on BuildContext {
       reverseAnimationCurve: reverseAnimationCurve,
       titleText: titleText,
       messageText: messageText,
+      boxShadows: boxShadows,
+      shouldIconPulse: shouldIconPulse,
 
       context: this,
     );
