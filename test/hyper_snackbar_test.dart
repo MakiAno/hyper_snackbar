@@ -155,7 +155,7 @@ void main() {
       expect(HyperSnackbar.isSnackbarOpen, isFalse);
     });
 
-    // ▼ New tests added below
+    // --- New tests added below ---
 
     testWidgets('Test whether swiping can dismiss the SnackBar',
         (WidgetTester tester) async {
@@ -580,6 +580,37 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
       await tester.pumpAndSettle();
+    });
+
+    testWidgets('Convenience methods and animations coverage',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createTestApp(Container()));
+
+      // 1. Test various convenience methods
+      HyperSnackbar.showSuccess(title: 'Success');
+      HyperSnackbar.showError(title: 'Error');
+      HyperSnackbar.showWarning(title: 'Warning');
+      HyperSnackbar.showInfo(title: 'Info');
+
+      // 2. Test updating and dismissing by ID
+      HyperSnackbar.show(title: 'Initial', id: 'update_test');
+      await tester.pump();
+      HyperSnackbar.show(
+          title: 'Updated', id: 'update_test'); // Passes through _tryUpdate
+      await tester.pump();
+      HyperSnackbar.dismissById('update_test'); // Passes through dismissById
+
+      // 3. Cover all animation types
+      for (var type in HyperSnackAnimationType.values) {
+        HyperSnackbar.show(
+          title: 'Anim Test',
+          enterAnimationType: type,
+          exitAnimationType: type,
+        );
+        await tester.pump();
+        HyperSnackbar.clearAll();
+        await tester.pumpAndSettle();
+      }
     });
   }); // End of group
 }
