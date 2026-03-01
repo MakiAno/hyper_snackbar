@@ -271,6 +271,42 @@ class GetxLikeDemoPage extends StatelessWidget {
                       );
                     },
                   ),
+                  const SizedBox(height: 16),
+                  _ActionButton(
+                    label: '5. All-in-One (GetX Full)',
+                    color: Colors.deepOrange,
+                    onPressed: () {
+                      HyperSnackbar.show(
+                        title: "Action Required",
+                        message: "This snackbar has icon pulsing, a main button, custom box shadows, and margins!",
+                        snackPosition: SnackPosition.TOP,
+                        duration: const Duration(seconds: 6),
+                        backgroundColor: Colors.deepOrange,
+                        colorText: Colors.white,
+                        icon: const Icon(Icons.warning_amber_rounded, color: Colors.white),
+                        shouldIconPulse: true,
+                        mainButton: TextButton(
+                          onPressed: () => HyperSnackbar.clearAll(),
+                          child: const Text(
+                            'DISMISS',
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        margin: const EdgeInsets.all(24),
+                        borderRadius: 24,
+                        boxShadows: [
+                          BoxShadow(
+                            color: Colors.deepOrange.withAlpha(150),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          )
+                        ],
+                        onTap: () {
+                          debugPrint('Snackbar Tapped!');
+                        },
+                      );
+                    },
+                  ),
                 ],
               ),
             ),

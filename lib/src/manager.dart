@@ -99,6 +99,8 @@ class HyperSnackbar {
     Curve? reverseAnimationCurve,
     Widget? titleText,
     Widget? messageText,
+    List<BoxShadow>? boxShadows,
+    bool? shouldIconPulse,
   }) {
     // Resolve Aliases
     final effectiveTextColor = textColor ?? colorText;
@@ -155,6 +157,7 @@ class HyperSnackbar {
       title: title,
       message: message,
       icon: icon,
+      shouldIconPulse: shouldIconPulse ?? false,
       action: action,
       actionAlignment: actionAlignment,
       content: finalContent,
@@ -162,6 +165,7 @@ class HyperSnackbar {
       titleStyle: titleStyle,
       messageStyle: messageStyle,
       border: border,
+      boxShadows: boxShadows,
       margin: margin,
       padding: padding,
       backgroundColor: backgroundColor,
@@ -258,6 +262,8 @@ class HyperSnackbar {
     Curve? reverseAnimationCurve,
     Widget? titleText,
     Widget? messageText,
+    List<BoxShadow>? boxShadows,
+    bool? shouldIconPulse,
   }) {
     assert(
       (title != null && title.isNotEmpty) ||
@@ -327,6 +333,7 @@ class HyperSnackbar {
       messageMaxHeight: messageMaxHeight ?? baseConfig.messageMaxHeight,
       id: id,
       icon: icon,
+      shouldIconPulse: shouldIconPulse ?? baseConfig.shouldIconPulse,
       action: action,
       actionAlignment: actionAlignment,
       content: finalContent,
@@ -334,6 +341,7 @@ class HyperSnackbar {
       titleStyle: titleStyle,
       messageStyle: messageStyle,
       border: border,
+      boxShadows: boxShadows ?? baseConfig.boxShadows,
       margin: margin,
       padding: padding,
       backgroundColor: backgroundColor,
@@ -922,6 +930,8 @@ extension HyperSnackbarExtensions on BuildContext {
     Curve? reverseAnimationCurve,
     Widget? titleText,
     Widget? messageText,
+    List<BoxShadow>? boxShadows,
+    bool? shouldIconPulse,
   }) {
     assert(
       (title != null && title.isNotEmpty) ||
@@ -987,6 +997,8 @@ extension HyperSnackbarExtensions on BuildContext {
       reverseAnimationCurve: reverseAnimationCurve,
       titleText: titleText,
       messageText: messageText,
+      boxShadows: boxShadows,
+      shouldIconPulse: shouldIconPulse,
 
       context: this,
     );

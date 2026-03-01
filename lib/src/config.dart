@@ -79,6 +79,11 @@ class HyperConfig {
   /// If [useAdaptiveLoader] is set to `true`, this property will be ignored.
   final Widget? icon;
 
+  /// Determines whether the [icon] should pulse (animate scaling).
+  ///
+  /// This is a GetX compatibility property. Defaults to false.
+  final bool shouldIconPulse;
+
   /// An optional action button to display.
   final HyperSnackAction? action;
 
@@ -109,6 +114,10 @@ class HyperConfig {
 
   /// The border of the snackbar.
   final BoxBorder? border;
+
+  /// Custom box shadows applied to the snackbar.
+  /// If provided, this overrides the default [elevation] shadows.
+  final List<BoxShadow>? boxShadows;
 
   /// The margin around the snackbar.
   final EdgeInsetsGeometry margin;
@@ -232,6 +241,7 @@ class HyperConfig {
     this.id,
     this.message,
     this.icon,
+    this.shouldIconPulse = false,
     this.action,
     this.actionAlignment = MainAxisAlignment.end,
     this.content,
@@ -239,6 +249,7 @@ class HyperConfig {
     this.titleStyle,
     this.messageStyle,
     this.border,
+    this.boxShadows,
     this.margin = EdgeInsets.zero,
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     this.backgroundColor,
@@ -277,6 +288,7 @@ class HyperConfig {
     String? title,
     Object? message = _undefined,
     Widget? icon,
+    bool? shouldIconPulse,
     HyperSnackAction? action,
     MainAxisAlignment? actionAlignment,
     Widget? content,
@@ -284,6 +296,7 @@ class HyperConfig {
     TextStyle? titleStyle,
     TextStyle? messageStyle,
     BoxBorder? border,
+    List<BoxShadow>? boxShadows,
     EdgeInsetsGeometry? margin,
     EdgeInsetsGeometry? padding,
     Color? backgroundColor,
@@ -320,6 +333,7 @@ class HyperConfig {
       title: title ?? this.title,
       message: message == _undefined ? this.message : message as String?,
       icon: icon ?? this.icon,
+      shouldIconPulse: shouldIconPulse ?? this.shouldIconPulse,
       action: action ?? this.action,
       actionAlignment: actionAlignment ?? this.actionAlignment,
       content: content ?? this.content,
@@ -327,6 +341,7 @@ class HyperConfig {
       titleStyle: titleStyle ?? this.titleStyle,
       messageStyle: messageStyle ?? this.messageStyle,
       border: border ?? this.border,
+      boxShadows: boxShadows ?? this.boxShadows,
       margin: margin ?? this.margin,
       padding: padding ?? this.padding,
       backgroundColor: backgroundColor ?? this.backgroundColor,
