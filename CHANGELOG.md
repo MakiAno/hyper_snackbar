@@ -1,3 +1,10 @@
+## 0.9.1
+
+### 🛠 Improvements
+* **Test Coverage:** Achieved >90% test coverage for `manager.dart` and `container.dart`, ensuring high reliability for core features and animations.
+* **Refactoring:** Refactored `HyperSnackbar` manager internal logic to improve testability and robustness.
+* **GetX Aliases:** Fortified the GetX compatibility aliases mapping logic.
+  
 ## 0.9.0
 
 ### ✨ New Features
