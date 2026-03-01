@@ -137,19 +137,19 @@ class HyperSnackbar {
     // Handle Title/Message Widget aliases via Content if Text is overridden
     Widget? finalContent = effectiveContent;
     if (titleText != null || messageText != null) {
-        finalContent = Column(
+      finalContent = Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (titleText != null) titleText,
-            if (titleText != null && messageText != null) const SizedBox(height: 4),
+            if (titleText != null && messageText != null)
+              const SizedBox(height: 4),
             if (messageText != null) messageText,
             if (effectiveContent != null) ...[
-                const SizedBox(height: 8),
-                effectiveContent
+              const SizedBox(height: 8),
+              effectiveContent
             ]
-          ]
-        );
+          ]);
     }
 
     return HyperConfig(
@@ -268,8 +268,10 @@ class HyperSnackbar {
     assert(
       (title != null && title.isNotEmpty) ||
           (message != null && message.isNotEmpty) ||
-          content != null || mainButton != null ||
-          titleText != null || messageText != null,
+          content != null ||
+          mainButton != null ||
+          titleText != null ||
+          messageText != null,
       'HyperSnackbar requires at least a title, a message, or a custom content widget.',
     );
 
@@ -311,19 +313,19 @@ class HyperSnackbar {
     // Since `HyperConfig` title/message are strictly strings, we will map them into a `Column` via `content` if not null.
     Widget? finalContent = effectiveContent;
     if (titleText != null || messageText != null) {
-        finalContent = Column(
+      finalContent = Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (titleText != null) titleText,
-            if (titleText != null && messageText != null) const SizedBox(height: 4),
+            if (titleText != null && messageText != null)
+              const SizedBox(height: 4),
             if (messageText != null) messageText,
             if (effectiveContent != null) ...[
-                const SizedBox(height: 8),
-                effectiveContent
+              const SizedBox(height: 8),
+              effectiveContent
             ]
-          ]
-        );
+          ]);
     }
 
     final config = baseConfig.copyWith(
@@ -936,8 +938,10 @@ extension HyperSnackbarExtensions on BuildContext {
     assert(
       (title != null && title.isNotEmpty) ||
           (message != null && message.isNotEmpty) ||
-          content != null || mainButton != null ||
-          titleText != null || messageText != null,
+          content != null ||
+          mainButton != null ||
+          titleText != null ||
+          messageText != null,
       'HyperSnackbar requires at least a title, a message, or a custom content widget.',
     );
 

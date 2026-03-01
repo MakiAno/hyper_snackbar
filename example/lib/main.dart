@@ -153,8 +153,8 @@ class HomePage extends StatelessWidget {
               onTap: () {
                 Navigator.of(
                   context,
-                ).push(
-                    MaterialPageRoute(builder: (_) => const GetxLikeDemoPage()));
+                ).push(MaterialPageRoute(
+                    builder: (_) => const GetxLikeDemoPage()));
               },
             ),
           ],
@@ -211,7 +211,8 @@ class GetxLikeDemoPage extends StatelessWidget {
                     onPressed: () {
                       HyperSnackbar.show(
                         title: "GetX Style Notification",
-                        message: "Uses title, message, TOP position, duration, and isDismissible: false",
+                        message:
+                            "Uses title, message, TOP position, duration, and isDismissible: false",
                         snackPosition: SnackPosition.TOP,
                         duration: const Duration(seconds: 4),
                         isDismissible: false,
@@ -227,7 +228,8 @@ class GetxLikeDemoPage extends StatelessWidget {
                     onPressed: () {
                       HyperSnackbar.show(
                         title: "Frosted Glass Effect",
-                        message: "barBlur: 20.0 with highly transparent background.",
+                        message:
+                            "barBlur: 20.0 with highly transparent background.",
                         snackPosition: SnackPosition.TOP,
                         barBlur: 20.0,
                         backgroundColor: Colors.purple.withAlpha(50),
@@ -245,10 +247,12 @@ class GetxLikeDemoPage extends StatelessWidget {
                     onPressed: () {
                       HyperSnackbar.show(
                         title: "Focus Mode",
-                        message: "overlayBlur covers the background. Positioned BOTTOM.",
+                        message:
+                            "overlayBlur covers the background. Positioned BOTTOM.",
                         snackPosition: SnackPosition.BOTTOM,
                         overlayBlur: 10.0,
-                        margin: const EdgeInsets.only(bottom: 40, left: 16, right: 16),
+                        margin: const EdgeInsets.only(
+                            bottom: 40, left: 16, right: 16),
                         duration: const Duration(seconds: 4),
                         backgroundColor: Colors.redAccent,
                         colorText: Colors.white,
@@ -278,18 +282,22 @@ class GetxLikeDemoPage extends StatelessWidget {
                     onPressed: () {
                       HyperSnackbar.show(
                         title: "Action Required",
-                        message: "This snackbar uses icon, mainButton, and onTap in a GetX-like rich notification!",
+                        message:
+                            "This snackbar uses icon, mainButton, and onTap in a GetX-like rich notification!",
                         snackPosition: SnackPosition.TOP,
                         duration: const Duration(seconds: 6),
                         backgroundColor: Colors.deepOrange,
                         colorText: Colors.white,
-                        icon: const Icon(Icons.warning_amber_rounded, color: Colors.white),
+                        icon: const Icon(Icons.warning_amber_rounded,
+                            color: Colors.white),
                         shouldIconPulse: true,
                         mainButton: TextButton(
                           onPressed: () => HyperSnackbar.clearAll(),
                           child: const Text(
                             'DISMISS',
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                         margin: const EdgeInsets.all(24),
