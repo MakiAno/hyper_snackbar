@@ -39,7 +39,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.9.1
+  hyper_snackbar: ^0.10.0
 ```
 
 ## 🛠 Setup
@@ -140,7 +140,7 @@ final darkPreset = myBrandPreset.copyWith(
 
 ---
 
-### 🖥️ Web & Desktop Layout (New!)
+### 🖥️ Web & Desktop Layout
 
 The default full-width design is perfect for mobile, but it can stretch too far on large screens. You can now easily constrain the width and align the snackbar for Web and Desktop layouts.
 
@@ -164,21 +164,22 @@ Coming from GetX? `HyperSnackbar` now supports familiar parameter aliases to ass
 | GetX Parameter | HyperSnackbar Equivalent / Alias |
 |---|---|
 | `duration` | Supported directly (alias for `displayDuration`) |
-| `snackPosition` | Supported directly (`SnackPosition.TOP` / `BOTTOM`) |
+| `snackPosition` | Supported directly (`HyperSnackPosition.top` / `.bottom`) |
+| `snackStyle` | Supported directly (`HyperSnackStyle.grounded` / `.floating`) |
 | `colorText` | Supported directly (alias for `textColor`) |
 | `isDismissible` | Supported directly (alias for `enableSwipe`) |
-| `icon` | Supported directly |
-| `mainButton` | Supported directly (alias for `action`) |
-| `onTap` | Supported directly |
-| `shouldIconPulse` | Supported directly |
-| `boxShadows` | Supported directly |
+| `dismissDirection` | Supported directly (Overrides dynamic directional swipe) |
+| `snackbarStatus` | Supported directly (Lifecycle callbacks) |
+| `userInputForm` | Supported directly (Embed a `Form` or `TextField`) |
+| `icon`, `mainButton`, `onTap`, `shouldIconPulse`, `boxShadows` | Supported directly |
 
 ```dart
 // You can use GetX-style parameters directly:
 HyperSnackbar.show(
   title: 'Action Required',
   message: 'It works just like you expect.',
-  snackPosition: SnackPosition.TOP,
+  snackPosition: HyperSnackPosition.top,
+  snackStyle: HyperSnackStyle.grounded, // Attaches directly to the screen edge
   icon: const Icon(Icons.warning, color: Colors.white),
   shouldIconPulse: true,
   isDismissible: false,
@@ -186,7 +187,7 @@ HyperSnackbar.show(
     onPressed: () => print('Action!'),
     child: const Text('UNDO'),
   ),
-  onTap: () => print('Tapped!'),
+  snackbarStatus: (status) => print('Status: $status'),
 );
 ```
 
@@ -206,7 +207,7 @@ HyperSnackbar.show(
 );
 ```
 
-#### Frosted Glass & Background Blur (New!)
+#### Frosted Glass & Background Blur
 Add beautiful blur effects to your snackbars or the entire screen.
 
 ```dart
@@ -221,7 +222,41 @@ HyperSnackbar.show(
 HyperSnackbar.show(
   title: 'Focus Mode',
   overlayBlur: 5.0,
-  snackPosition: SnackPosition.BOTTOM,
+  snackPosition: HyperSnackPosition.bottom,
+);
+```
+
+#### Rich UI & User Input Forms (New!)
+Create highly engaging notifications with gradients, side indicators, and inline text inputs.
+
+```dart
+// Neon Gradient with Left Bar
+HyperSnackbar.show(
+  title: 'Neon Cyberpunk',
+  message: 'Multiple vivid colors combined in a linear gradient.',
+  backgroundGradient: const LinearGradient(
+    colors: [Colors.purple, Colors.pinkAccent, Colors.orangeAccent],
+  ),
+  leftBarIndicatorColor: Colors.blueAccent, 
+  colorText: Colors.white,
+);
+
+// User Input Form (Quick Reply)
+final TextEditingController replyController = TextEditingController();
+HyperSnackbar.show(
+  title: 'Quick Reply',
+  message: 'Enter your response directly in the snackbar.',
+  userInputForm: Form(
+    child: TextFormField(
+      controller: replyController,
+      autofocus: true,
+      textInputAction: TextInputAction.send,
+      onFieldSubmitted: (text) {
+        HyperSnackbar.clearAll(animated: false);
+        HyperSnackbar.showSuccess(title: 'Sent!', message: text);
+      },
+    ),
+  ),
 );
 ```
 
@@ -301,6 +336,9 @@ All methods are static and can be called from anywhere.
 | `useLocalOverlay`| `bool` | `false` | If false, renders on the root overlay. If true, renders on the nearest overlay. |
 | `maxWidth` | `double?` | `null` | **(New)** Maximum width of the snackbar. Ideal for Web/Desktop. |
 | `alignment` | `AlignmentGeometry` | `.center` | **(New)** Alignment of the snackbar when `maxWidth` is constrained. |
+| `backgroundGradient` | `Gradient?` | `null` | **(New)** Custom gradient for the background (e.g., `LinearGradient`). |
+| `leftBarIndicatorColor` | `Color?` | `null` | **(New)** Adds a colored accent bar to the left edge of the snackbar. |
+| `snackStyle` | `HyperSnackStyle`| `.floating` | **(New)** Use `.grounded` to remove margins and corner radii on the attached edge. |
 
 ### 👆 Actions & Interaction
 | Parameter | Type | Default | Description |
@@ -311,6 +349,9 @@ All methods are static and can be called from anywhere.
 | `onTap` | `VoidCallback?` | `null` | Callback when the snackbar itself is tapped. |
 | `showCloseButton` | `bool` | `true` | Whether to show the "X" close button. |
 | `enableSwipe` | `bool` | `true` | Allow dismissing the snackbar by swiping horizontally. |
+| `userInputForm` | `Form?` | `null` | **(New)** Embed a `TextField` or `Form` directly inside the snackbar. |
+| `dismissDirection`| `DismissDirection?`| `null` | **(New)** Overrides default swipe direction (e.g., `horizontal`). |
+| `snackbarStatus` | `Function(Status)?`| `null` | **(New)** Lifecycle callback (`opening`, `open`, `closing`, `closed`). |
 
 ### ⏱️ Behavior & Positioning
 | Parameter | Type | Default | Description |
@@ -321,6 +362,9 @@ All methods are static and can be called from anywhere.
 | `displayMode` | `HyperSnackDisplayMode` | `.stack` | `.stack` (overlays on top) or `.queue` (shows one by one). |
 | `newestOnTop` | `bool` | `true` | (Stack mode) If `true`, new snackbars appear on top of the stack. |
 | `maxVisibleCount` | `int` | `3` | Maximum number of snackbars visible at once (Stack mode). |
+| `userInputForm` | `Form?` | `null` | **(New)** Embed a `TextField` or `Form` directly inside the snackbar. |
+| `dismissDirection`| `DismissDirection?`| `null` | **(New)** Overrides default swipe direction (e.g., `horizontal`). |
+| `snackbarStatus` | `Function(Status)?`| `null` | **(New)** Lifecycle callback (`opening`, `open`, `closing`, `closed`). |
 
 ### 📝 Text Handling
 | Parameter | Type | Default | Description |
@@ -348,6 +392,16 @@ All methods are static and can be called from anywhere.
 |---|---|---|---|
 | `progressBarWidth` | `double?` | `null` | Height of the progress bar. `0.0` creates a background "wipe" effect. `null` disables it. |
 | `progressBarColor` | `Color?` | `null` | Color of the progress bar. Defaults to a semi-transparent contrast color. |
+| `showProgressIndicator` | `bool` | `false` | Explicitly enable or disable the progress indicator. |
+| `progressBarWidth` | `double?` | `null` | Height of the progress bar. `0.0` creates a background "wipe" effect. |
+| `progressBarColor` | `Color?` | `null` | Color of the progress bar. |
+| `progressIndicatorBackgroundColor` | `Color?` | `null` | Custom background track color for the progress bar. |
+| `progressIndicatorValueColor` | `Animation<Color>?` | `null` | Custom active value color (e.g., `AlwaysStoppedAnimation(Colors.red)`). |
+| `showProgressIndicator` | `bool` | `false` | **(New)** Explicitly enable or disable the progress indicator. |
+| `progressBarWidth` | `double?` | `null` | Height of the progress bar. `0.0` creates a background "wipe" effect. |
+| `progressBarColor` | `Color?` | `null` | Color of the progress bar. |
+| `progressIndicatorBackgroundColor` | `Color?` | `null` | **(New)** Custom background track color for the progress bar. |
+| `progressIndicatorValueColor` | `Animation<Color>?` | `null` | **(New)** Custom active value color (e.g., `AlwaysStoppedAnimation(Colors.red)`). |
 
 ## 📄 License
 

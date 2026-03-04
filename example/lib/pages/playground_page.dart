@@ -391,7 +391,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            SizedBox(height: 650, child: _buildPhonePreview()),
+                            _buildPhonePreview(),
                           ],
                         ),
                       ),
@@ -999,131 +999,137 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
 
   Widget _buildPhonePreview() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Device Frame (Notch Removed)
-          Container(
-            width: 380,
-            height: 750,
-            decoration: BoxDecoration(
-              color: Colors.black, // Device body
-              borderRadius: BorderRadius.circular(40),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(102),
-                  blurRadius: 30,
-                  offset: const Offset(0, 20),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.all(12), // Bezel width
-            child: Stack(
-              children: [
-                // Screen Content
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: Navigator(
-                    onGenerateRoute: (settings) {
-                      return MaterialPageRoute(
-                        builder: (context) => Scaffold(
-                          key: _innerScaffoldKey, // Key for context
-                          extendBodyBehindAppBar: true,
-                          appBar: AppBar(
-                            title: const Text(
-                              'Hyper Demo',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
-                            backgroundColor: Colors.transparent,
-                            elevation: 0,
-                            centerTitle: true,
-                          ),
-                          body: Container(
-                            decoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [Color(0xFF2A2D3E), Color(0xFF1F1F2E)],
-                              ),
-                            ),
-                            child: Stack(
-                              children: [
-                                // Mock Content
-                                Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.touch_app,
-                                        size: 64,
-                                        color: Colors.white.withAlpha(25),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        'Preview Screen',
-                                        style: TextStyle(
-                                          color: Colors.white.withAlpha(51),
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Device Frame (Notch Removed)
+            Container(
+              width: 380,
+              height: 750,
+              decoration: BoxDecoration(
+                color: Colors.black, // Device body
+                borderRadius: BorderRadius.circular(40),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(102),
+                    blurRadius: 30,
+                    offset: const Offset(0, 20),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(12), // Bezel width
+              child: Stack(
+                children: [
+                  // Screen Content
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: Navigator(
+                      onGenerateRoute: (settings) {
+                        return MaterialPageRoute(
+                          builder: (context) => Scaffold(
+                            key: _innerScaffoldKey, // Key for context
+                            extendBodyBehindAppBar: true,
+                            appBar: AppBar(
+                              title: const Text(
+                                'Hyper Demo',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
                                 ),
-                                // Code Overlay
-                                Positioned(
-                                  left: 0,
-                                  right: 0,
-                                  bottom: 0,
-                                  child: ClipRRect(
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(
-                                        sigmaX: 10,
-                                        sigmaY: 10,
-                                      ),
-                                      child: Container(
-                                        height: 220,
-                                        padding: const EdgeInsets.all(16),
-                                        color: Colors.black.withAlpha(153),
-                                        child: SingleChildScrollView(
-                                          child: SelectableText(
-                                            _generateCode(),
-                                            style: const TextStyle(
-                                              fontFamily: 'Courier',
-                                              color: Color(0xFF00FFC6),
-                                              fontSize: 10,
-                                              height: 1.4,
+                              ),
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              centerTitle: true,
+                            ),
+                            body: Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Color(0xFF2A2D3E),
+                                    Color(0xFF1F1F2E)
+                                  ],
+                                ),
+                              ),
+                              child: Stack(
+                                children: [
+                                  // Mock Content
+                                  Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.touch_app,
+                                          size: 64,
+                                          color: Colors.white.withAlpha(25),
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          'Preview Screen',
+                                          style: TextStyle(
+                                            color: Colors.white.withAlpha(51),
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // Code Overlay
+                                  Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    child: ClipRRect(
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                          sigmaX: 10,
+                                          sigmaY: 10,
+                                        ),
+                                        child: Container(
+                                          height: 220,
+                                          padding: const EdgeInsets.all(16),
+                                          color: Colors.black.withAlpha(153),
+                                          child: SingleChildScrollView(
+                                            child: SelectableText(
+                                              _generateCode(),
+                                              style: const TextStyle(
+                                                fontFamily: 'Courier',
+                                                color: Color(0xFF00FFC6),
+                                                fontSize: 10,
+                                                height: 1.4,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Interactive Device Preview',
-            style: TextStyle(
-              color: Colors.white70,
-              fontWeight: FontWeight.bold,
-              shadows: [Shadow(color: Colors.black, blurRadius: 4)],
+            const SizedBox(height: 20),
+            const Text(
+              'Interactive Device Preview',
+              style: TextStyle(
+                color: Colors.white70,
+                fontWeight: FontWeight.bold,
+                shadows: [Shadow(color: Colors.black, blurRadius: 4)],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

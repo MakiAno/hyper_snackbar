@@ -6,6 +6,14 @@ import 'package:flutter/scheduler.dart';
 import 'config.dart';
 import 'container.dart';
 
+/// A class to manage the blur and color of the overlay (background)
+class HyperOverlayState {
+  final double blur;
+  final Color color;
+
+  const HyperOverlayState(this.blur, this.color);
+}
+
 /// A static manager class for displaying and managing HyperSnackbars.
 class HyperSnackbar {
   HyperSnackbar._();
@@ -23,8 +31,8 @@ class HyperSnackbar {
       StreamController<List<Widget>>.broadcast();
   static final StreamController<List<Widget>> _bottomStream =
       StreamController<List<Widget>>.broadcast();
-  static final StreamController<double> _overlayBlurStream =
-      StreamController<double>.broadcast();
+  static final StreamController<HyperOverlayState> _overlayStateStream =
+      StreamController<HyperOverlayState>.broadcast();
 
   static bool _isOverlayMounted = false;
   static OverlayState? _currentOverlayState;
@@ -92,7 +100,7 @@ class HyperSnackbar {
     HyperSnackAnimationType? animationType, // Added
     Color? colorText,
     Duration? duration,
-    SnackPosition? snackPosition,
+    HyperSnackPosition? snackPosition,
     Widget? mainButton,
     bool? isDismissible,
     Curve? forwardAnimationCurve,
@@ -109,7 +117,7 @@ class HyperSnackbar {
     // Convert SnackPosition to HyperSnackPosition
     HyperSnackPosition? mappedSnackPosition;
     if (snackPosition != null) {
-      mappedSnackPosition = snackPosition == SnackPosition.TOP
+      mappedSnackPosition = snackPosition == HyperSnackPosition.top
           ? HyperSnackPosition.top
           : HyperSnackPosition.bottom;
     }
@@ -255,7 +263,7 @@ class HyperSnackbar {
     HyperSnackAnimationType? animationType, // Added
     Color? colorText,
     Duration? duration,
-    SnackPosition? snackPosition,
+    HyperSnackPosition? snackPosition,
     Widget? mainButton,
     bool? isDismissible,
     Curve? forwardAnimationCurve,
@@ -264,6 +272,23 @@ class HyperSnackbar {
     Widget? messageText,
     List<BoxShadow>? boxShadows,
     bool? shouldIconPulse,
+
+    // --- Maintain compatibility with GetX ---
+    SnackbarStatusCallback? snackbarStatus,
+    DismissDirection? dismissDirection,
+    Color? leftBarIndicatorColor,
+    Gradient? backgroundGradient,
+    bool? showProgressIndicator,
+    AnimationController? progressIndicatorController,
+    Color? progressIndicatorBackgroundColor,
+    Animation<Color>? progressIndicatorValueColor,
+    Color? overlayColor,
+    Widget? userInputForm,
+    HyperSnackStyle? snackStyle,
+
+    // For GetX aliases
+    Color? borderColor,
+    double? borderWidth,
   }) {
     assert(
       (title != null && title.isNotEmpty) ||
@@ -284,7 +309,7 @@ class HyperSnackbar {
     // Convert SnackPosition to HyperSnackPosition
     HyperSnackPosition? mappedSnackPosition;
     if (snackPosition != null) {
-      mappedSnackPosition = snackPosition == SnackPosition.TOP
+      mappedSnackPosition = snackPosition == HyperSnackPosition.top
           ? HyperSnackPosition.top
           : HyperSnackPosition.bottom;
     }
@@ -328,6 +353,29 @@ class HyperSnackbar {
           ]);
     }
 
+    // Compatibility handling for borders
+    BoxBorder? effectiveBorder = border;
+    if (effectiveBorder == null && borderColor != null) {
+      effectiveBorder = Border.all(
+        color: borderColor,
+        width: borderWidth ?? 1.0,
+      );
+    }
+
+    // Compatibility handling for snackStyle
+    HyperSnackStyle effectiveSnackStyle = snackStyle ?? baseConfig.snackStyle;
+    if (snackStyle != null) {
+      effectiveSnackStyle = snackStyle == HyperSnackStyle.grounded
+          ? HyperSnackStyle.grounded
+          : HyperSnackStyle.floating;
+    }
+
+    // Grounded margin handling (it is common to set margin to zero for Grounded style)
+    EdgeInsetsGeometry effectiveMargin = margin ?? baseConfig.margin;
+    if (effectiveSnackStyle == HyperSnackStyle.grounded) {
+      effectiveMargin = EdgeInsets.zero;
+    }
+
     final config = baseConfig.copyWith(
       title: title,
       message: message ?? baseConfig.message,
@@ -342,9 +390,9 @@ class HyperSnackbar {
       onTap: onTap,
       titleStyle: titleStyle,
       messageStyle: messageStyle,
-      border: border,
+      border: effectiveBorder,
       boxShadows: boxShadows ?? baseConfig.boxShadows,
-      margin: margin,
+      margin: effectiveMargin,
       padding: padding,
       backgroundColor: backgroundColor,
       textColor: effectiveTextColor,
@@ -364,7 +412,9 @@ class HyperSnackbar {
       exitCurve: effectiveExitCurve,
       enterAnimationType: effectiveEnterAnimType,
       exitAnimationType: effectiveExitAnimType,
-      progressBarWidth: progressBarWidth,
+      progressBarWidth: progressBarWidth ?? baseConfig.progressBarWidth,
+      showProgressIndicator:
+          showProgressIndicator ?? baseConfig.showProgressIndicator,
       progressBarColor: progressBarColor,
       useAdaptiveLoader: useAdaptiveLoader,
       useLocalOverlay: useLocalOverlay,
@@ -372,20 +422,39 @@ class HyperSnackbar {
       alignment: alignment ?? baseConfig.alignment,
       barBlur: barBlur ?? baseConfig.barBlur,
       overlayBlur: overlayBlur ?? baseConfig.overlayBlur,
+      snackStyle: effectiveSnackStyle,
+      snackbarStatus: snackbarStatus ?? baseConfig.snackbarStatus,
+      dismissDirection: dismissDirection ?? baseConfig.dismissDirection,
+      leftBarIndicatorColor:
+          leftBarIndicatorColor ?? baseConfig.leftBarIndicatorColor,
+      backgroundGradient: backgroundGradient ?? baseConfig.backgroundGradient,
+      progressIndicatorController:
+          progressIndicatorController ?? baseConfig.progressIndicatorController,
+      progressIndicatorBackgroundColor: progressIndicatorBackgroundColor ??
+          baseConfig.progressIndicatorBackgroundColor,
+      progressIndicatorValueColor:
+          progressIndicatorValueColor ?? baseConfig.progressIndicatorValueColor,
+      overlayColor: overlayColor ?? baseConfig.overlayColor,
+      userInputForm: userInputForm ?? baseConfig.userInputForm,
     );
 
     showFromConfig(config, context: context);
   }
 
   /// Shows a snackbar using a pre-configured [HyperConfig] object.
-  static void _updateOverlayBlur() {
+  static void _updateOverlayState() {
     double maxBlur = 0.0;
+    Color overlayColor = Colors.transparent;
+
     for (final widget in [..._topEntries, ..._bottomEntries]) {
       if (widget is HyperSnackBarContainer) {
         maxBlur = math.max(maxBlur, widget.config.overlayBlur);
+        if (widget.config.overlayColor != null) {
+          overlayColor = widget.config.overlayColor!;
+        }
       }
     }
-    _overlayBlurStream.add(maxBlur);
+    _overlayStateStream.add(HyperOverlayState(maxBlur, overlayColor));
   }
 
   static void showFromConfig(HyperConfig config, {BuildContext? context}) {
@@ -408,11 +477,11 @@ class HyperSnackbar {
 
     if (config.id != null) {
       if (_tryUpdate(config, _topEntries, _topStream)) {
-        _updateOverlayBlur();
+        _updateOverlayState();
         return;
       }
       if (_tryUpdate(config, _bottomEntries, _bottomStream)) {
-        _updateOverlayBlur();
+        _updateOverlayState();
         return;
       }
     }
@@ -446,7 +515,7 @@ class HyperSnackbar {
       }
       _bottomStream.add(_bottomEntries);
     }
-    _updateOverlayBlur();
+    _updateOverlayState();
   }
 
   static void _processQueue() {
@@ -478,7 +547,7 @@ class HyperSnackbar {
       _bottomEntries.add(widget);
       _bottomStream.add(_bottomEntries);
     }
-    _updateOverlayBlur();
+    _updateOverlayState();
   }
 
   static void dismissById(String id) {
@@ -525,7 +594,7 @@ class HyperSnackbar {
       _bottomEntries.clear();
       _topStream.add([]);
       _bottomStream.add([]);
-      _updateOverlayBlur();
+      _updateOverlayState();
       if (_overlayEntry != null) {
         try {
           _overlayEntry?.remove();
@@ -705,7 +774,7 @@ class HyperSnackbar {
     } else {
       finalizeRemoval(_bottomEntries, _bottomStream);
     }
-    _updateOverlayBlur();
+    _updateOverlayState();
   }
 
   static void _forceRemoveOldest(HyperSnackPosition position,
@@ -755,7 +824,7 @@ class HyperSnackbar {
       builder: (context) => _HyperOverlayManager(
         topStream: _topStream.stream,
         bottomStream: _bottomStream.stream,
-        overlayBlurStream: _overlayBlurStream.stream,
+        overlayStateStream: _overlayStateStream.stream,
         initialTopData: _topEntries,
         initialBottomData: _bottomEntries,
       ),
@@ -796,14 +865,14 @@ class HyperSnackbar {
 
     _topStream.add([]);
     _bottomStream.add([]);
-    _overlayBlurStream.add(0.0);
+    _overlayStateStream.add(const HyperOverlayState(0.0, Colors.transparent));
   }
 }
 
 class _HyperOverlayManager extends StatelessWidget {
   final Stream<List<Widget>> topStream;
   final Stream<List<Widget>> bottomStream;
-  final Stream<double> overlayBlurStream;
+  final Stream<HyperOverlayState> overlayStateStream;
 
   final List<Widget> initialTopData;
   final List<Widget> initialBottomData;
@@ -811,7 +880,7 @@ class _HyperOverlayManager extends StatelessWidget {
   const _HyperOverlayManager({
     required this.topStream,
     required this.bottomStream,
-    required this.overlayBlurStream,
+    required this.overlayStateStream,
     required this.initialTopData,
     required this.initialBottomData,
   });
@@ -820,21 +889,35 @@ class _HyperOverlayManager extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Background blur effect
+        // Background blur & color effect
         Positioned.fill(
-          child: StreamBuilder<double>(
-            stream: overlayBlurStream,
-            initialData: 0.0,
+          child: StreamBuilder<HyperOverlayState>(
+            stream: overlayStateStream,
+            initialData: const HyperOverlayState(0.0, Colors.transparent),
             builder: (context, snapshot) {
-              final blurValue = snapshot.data ?? 0.0;
+              final state = snapshot.data ??
+                  const HyperOverlayState(0.0, Colors.transparent);
+              final blurValue = state.blur;
+              final colorValue = state.color;
+
               return TweenAnimationBuilder<double>(
                 tween: Tween<double>(begin: 0.0, end: blurValue),
                 duration: const Duration(milliseconds: 300),
                 builder: (context, blur, child) {
-                  if (blur == 0.0) return const SizedBox.shrink();
-                  return BackdropFilter(
-                    filter: ui.ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-                    child: Container(color: Colors.transparent),
+                  return TweenAnimationBuilder<Color?>(
+                    tween:
+                        ColorTween(begin: Colors.transparent, end: colorValue),
+                    duration: const Duration(milliseconds: 300),
+                    builder: (context, color, child) {
+                      if (blur == 0.0 &&
+                          (color == null || color == Colors.transparent)) {
+                        return const SizedBox.shrink();
+                      }
+                      return BackdropFilter(
+                        filter: ui.ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                        child: Container(color: color),
+                      );
+                    },
                   );
                 },
               );
@@ -925,7 +1008,7 @@ extension HyperSnackbarExtensions on BuildContext {
     HyperSnackAnimationType? animationType, // Added
     Color? colorText,
     Duration? duration,
-    SnackPosition? snackPosition,
+    HyperSnackPosition? snackPosition,
     Widget? mainButton,
     bool? isDismissible,
     Curve? forwardAnimationCurve,
