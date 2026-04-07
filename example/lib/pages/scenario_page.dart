@@ -100,7 +100,7 @@ class _ScenarioPageState extends State<ScenarioPage> {
       enterCurve: Curves.elasticOut,
       enterAnimationDuration: const Duration(milliseconds: 800),
       // Persistent
-      displayDuration: null,
+      displayDuration: Duration.zero,
       action: HyperSnackAction(
         label: 'RETRY',
         backgroundColor: Colors.white,
@@ -121,14 +121,14 @@ class _ScenarioPageState extends State<ScenarioPage> {
       title: 'Uploading...',
       message: 'Please wait while uploading your files.',
       backgroundColor: Colors.blue.shade600,
-      icon: SizedBox(
+      icon: const SizedBox(
         width: 20,
         height: 20,
         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
       ),
-      // const Icon(Icons.cloud_upload, color: Colors.white),
       progressBarWidth: 0.0, // Wipe Effect
-      displayDuration: null,
+
+      displayDuration: const Duration(seconds: 2),
     );
 
     // Simulate delay
