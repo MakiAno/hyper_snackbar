@@ -446,7 +446,7 @@ class HyperSnackbar {
     double maxBlur = 0.0;
     Color overlayColor = Colors.transparent;
 
-    for (final widget in [..._topEntries, ..._bottomEntries]) {
+    for (final widget in _topEntries.followedBy(_bottomEntries)) {
       if (widget is HyperSnackBarContainer) {
         maxBlur = math.max(maxBlur, widget.config.overlayBlur);
         if (widget.config.overlayColor != null) {
@@ -576,19 +576,8 @@ class HyperSnackbar {
     _queue.clear();
 
     if (animated) {
-      final allEntries = [..._topEntries, ..._bottomEntries];
-      for (final widget in allEntries) {
-        if (widget is HyperSnackBarContainer) {
-          final key = widget.key as GlobalKey<HyperSnackBarContainerState>?;
-          if (key != null &&
-              key.currentState != null &&
-              key.currentState!.mounted) {
-            key.currentState!.dismiss();
-          } else {
-            removeNotification(widget.config);
-          }
-        }
-      }
+      _dismissAllFromList(_topEntries);
+      _dismissAllFromList(_bottomEntries);
     } else {
       _topEntries.clear();
       _bottomEntries.clear();
@@ -609,8 +598,7 @@ class HyperSnackbar {
       _topEntries.isNotEmpty || _bottomEntries.isNotEmpty;
 
   static bool isSnackbarOpenById(String id) {
-    final allEntries = [..._topEntries, ..._bottomEntries];
-    return allEntries.any(
+    return _topEntries.followedBy(_bottomEntries).any(
         (widget) => widget is HyperSnackBarContainer && widget.config.id == id);
   }
 
@@ -775,6 +763,22 @@ class HyperSnackbar {
       finalizeRemoval(_bottomEntries, _bottomStream);
     }
     _updateOverlayState();
+  }
+
+  static void _dismissAllFromList(List<Widget> list) {
+    for (final widget in list.toList()) {
+      if (widget is HyperSnackBarContainer) {
+        final key = widget.key as GlobalKey<HyperSnackBarContainerState>?;
+
+        if (key != null &&
+            key.currentState != null &&
+            key.currentState!.mounted) {
+          key.currentState!.dismiss();
+        } else {
+          removeNotification(widget.config);
+        }
+      }
+    }
   }
 
   static void _forceRemoveOldest(HyperSnackPosition position,
