@@ -32,6 +32,7 @@ Now with **Presets** and **GetX-style** aliases for easier migration!
 * **Interactive**: Tap callbacks, Action buttons, and Dismissible swipes.
 * **GetX Migration Aids**: Supports parameters like `duration`, `snackPosition`, and `colorText`.
 * **No Context Required**: Uses `NavigatorKey` for easy calling from anywhere.
+* **Highly Optimized**: Zero-overhead list operations and lazy evaluations ensure smooth 60/120fps animations without unnecessary memory allocations.
 
 ## 🚀 Installation
 
@@ -39,7 +40,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.10.0
+  hyper_snackbar: ^0.10.1
 ```
 
 ## 🛠 Setup

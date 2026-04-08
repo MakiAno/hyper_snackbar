@@ -1,3 +1,11 @@
+## [0.10.1]
+
+### ⚡ Performance Improvements
+* **Memory Optimization:** Replaced spread operators (`[...]`) with lazy evaluation (`followedBy`) in list traversal operations (e.g., `_updateOverlayState`, `isSnackbarOpenById`). This significantly reduces unnecessary memory allocation and CPU overhead by eliminating the creation of temporary list instances.
+
+### 🛠 Refactoring & Stability
+* **Safe List Iteration:** Refactored the `clearAll` and multiple dismissal logics (`_dismissAllFromList`). Introduced safe shallow copying (`.toList()`) before iterating, effectively preventing potential `ConcurrentModificationError` crashes during bulk state changes.
+
 ## 0.10.0
 
 ### ✨ New Features & Advanced UI Extensions
