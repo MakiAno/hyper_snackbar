@@ -8,25 +8,24 @@ void main() {
       HyperSnackbar.resetForTest();
     });
 
-    // 1. Coverage for SnackPosition.BOTTOM mapping logic (near L112-114)
-    testWidgets('SnackPosition.BOTTOM mapping coverage', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          navigatorKey: HyperSnackbar.navigatorKey,
-          home: const Scaffold(),
-        ),
-      );
+    // 1. Coverage for HyperSnackPosition.bottom mapping logic (near L112-114)
+      testWidgets('HyperSnackPosition.bottom mapping coverage',
+          (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        navigatorKey: HyperSnackbar.navigatorKey,
+        home: const Scaffold(),
+      ));
 
       // Verify mapping in preset
-      final config = HyperSnackbar.preset(snackPosition: SnackPosition.BOTTOM);
+      final config = HyperSnackbar.preset(
+        snackPosition: HyperSnackPosition.bottom,
+      );
       expect(config.position, HyperSnackPosition.bottom);
 
       // Verify mapping via show
       HyperSnackbar.show(
         title: 'Bottom Test',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: HyperSnackPosition.bottom,
       );
       await tester.pump();
       expect(find.text('Bottom Test'), findsOneWidget);

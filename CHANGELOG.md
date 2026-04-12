@@ -1,3 +1,35 @@
+## [0.10.1]
+
+### ⚡ Performance Improvements
+* **Memory Optimization:** Replaced spread operators (`[...]`) with lazy evaluation (`followedBy`) in list traversal operations (e.g., `_updateOverlayState`, `isSnackbarOpenById`). This significantly reduces unnecessary memory allocation and CPU overhead by eliminating the creation of temporary list instances.
+
+### 🛠 Refactoring & Stability
+* **Safe List Iteration:** Refactored the `clearAll` and multiple dismissal logics (`_dismissAllFromList`). Introduced safe shallow copying (`.toList()`) before iterating, effectively preventing potential `ConcurrentModificationError` crashes during bulk state changes.
+
+## 0.10.0
+
+### ✨ New Features & Advanced UI Extensions
+* **Advanced UI Controls (GetX Style):** Added a suite of new parameters to provide ultimate styling freedom and further complete GetX compatibility:
+  * `backgroundGradient`: Apply beautiful gradients (e.g., `LinearGradient`) to the snackbar background.
+  * `leftBarIndicatorColor`: Add a highly visible colored accent bar to the left edge of the snackbar.
+  * `userInputForm`: Embed a `Form` or `TextField` directly into the snackbar for quick inline replies or inputs.
+  * ` snackStyle`: Introduced `HyperSnackStyle.grounded`. When used, the snackbar automatically attaches to the screen edge and elegantly removes border radii.
+  * `dismissDirection`: Explicitly override the default swipe dismissal direction (e.g., force horizontal swipe). By default, it dynamically sets to `up` for Top and `down` for Bottom positioning.
+  * `snackbarStatus`: Added lifecycle callbacks (`opening`, `open`, `closing`, `closed`) to react precisely to the snackbar's animation state.
+
+* **Enhanced Progress Bar:**
+  * Added `showProgressIndicator` flag for explicit control.
+  * Added `progressIndicatorBackgroundColor` and `progressIndicatorValueColor` to fully customize the progress bar's track and progress colors.
+
+### 🐛 Bug Fixes & Layout Improvements
+* **Slim/Toast-style Layouts:** Optimized internal padding and constraints. Creating a slim, message-only toast without a title now looks perfectly proportioned with minimal wasted space.
+* **Flexible Constraints Fix:** Resolved an issue where scrollable text constraints (`double.infinity`) could cause the snackbar to unexpectedly expand and push footer buttons out of view.
+* **Wipe Effect Animation:** Fixed the progress bar's "Wipe" effect (`progressBarWidth: 0.0`) to correctly and beautifully animate from left to right (0% to 100%).
+* **Action Button Visibility:** Fixed a bug where the footer containing action buttons was occasionally hidden.
+
+### 🧪 Testing
+* Added a dedicated and highly robust test suite (`hyper_snackbar_getx_test.dart`) for the new UI features and GetX compatibility. Thoroughly handled async stream timing and animation evaluations to ensure 0% flakiness.
+
 ## 0.9.1
 
 ### 🛠 Improvements

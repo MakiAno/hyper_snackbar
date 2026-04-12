@@ -124,7 +124,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Scroll start (_handleScrollStart)
-      await tester.drag(find.text('Item 0'), const Offset(0, -300));
+      await tester.drag(find.text('Item 0'), const Offset(0, -300),
+          warnIfMissed: false);
       await tester.pump();
 
       // Scroll end (_handleScrollEnd)

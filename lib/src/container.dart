@@ -68,8 +68,14 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   }
 
   void _startEntryAnimation() {
-    _animationController.forward();
-    _startDurationTimer(); // Start timer (controller) here!
+    config.snackbarStatus?.call(HyperSnackbarStatus.opening);
+
+    _animationController.forward().then((_) {
+      if (mounted && !_isExiting) {
+        config.snackbarStatus?.call(HyperSnackbarStatus.open);
+      }
+    });
+    _startDurationTimer();
   }
 
   // Method to start Controller instead of Timer
@@ -130,12 +136,14 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   void dismiss() {
     if (!mounted || _isExiting) return;
 
-    _scrollEndTimer?.cancel(); // Cancel resume timer
-    _durationController.stop(); // Stop animation timer
+    _scrollEndTimer?.cancel();
+    _durationController.stop();
 
     setState(() {
       _isExiting = true;
     });
+
+    config.snackbarStatus?.call(HyperSnackbarStatus.closing);
 
     _animationController.stop();
     _animationController.duration = config.exitAnimationDuration;
@@ -143,6 +151,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
 
     _animationController.forward().then((_) {
       if (mounted && _isExiting) {
+        config.snackbarStatus?.call(HyperSnackbarStatus.closed);
         widget.onDismiss();
       }
     });
@@ -178,9 +187,14 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     );
 
     if (config.enableSwipe) {
+      DismissDirection effectiveDirection = config.dismissDirection ??
+          (config.position == HyperSnackPosition.top
+              ? DismissDirection.up
+              : DismissDirection.down);
+
       child = Dismissible(
         key: ValueKey(config.id ?? DateTime.now().toString()),
-        direction: DismissDirection.horizontal,
+        direction: effectiveDirection,
         onUpdate: (details) {
           // Stop timer during swipe
           if (details.progress > 0) {

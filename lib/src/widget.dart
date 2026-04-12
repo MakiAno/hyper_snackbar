@@ -73,7 +73,11 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
     final bool showProgressBar =
         config.progressBarWidth != null && widget.durationAnimation != null;
     final bool isWipeEffect = showProgressBar && config.progressBarWidth == 0.0;
-    final bool isLineEffect = showProgressBar && config.progressBarWidth! > 0.0;
+    final Animation<double>? effectiveProgressAnimation =
+        config.progressIndicatorController ?? widget.durationAnimation;
+    final bool isLineEffect = config.showProgressIndicator ||
+        (config.progressBarWidth != null && config.progressBarWidth! > 0.0);
+    // final bool isLineEffect = showProgressBar && config.progressBarWidth! > 0.0;
 
     // Progress bar color (default is faint white)
     final progressColor = config.progressBarColor ?? Colors.white.withAlpha(51);
@@ -143,16 +147,24 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
       }
     }
 
+    BorderRadius effectiveBorderRadius =
+        BorderRadius.circular(config.borderRadius);
+    if (config.snackStyle == HyperSnackStyle.grounded) {
+      effectiveBorderRadius = BorderRadius.zero;
+    }
+
     final bool hasTitle = config.title != null && config.title!.isNotEmpty;
     final bool hasHeader =
         hasTitle || iconWidget != null || config.showCloseButton;
 
-    final double pbHeight = isLineEffect ? config.progressBarWidth! : 0.0;
+    final double pbHeight =
+        isLineEffect ? (config.progressBarWidth ?? 4.0) : 0.0;
 
     Widget materialContent = Container(
       decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(config.borderRadius),
+        color: config.backgroundGradient == null ? bgColor : null,
+        gradient: config.backgroundGradient,
+        borderRadius: effectiveBorderRadius,
         border: config.border,
         boxShadow:
             config.boxShadows ??
@@ -169,7 +181,7 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
       child: Material(
         type: MaterialType.transparency,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(config.borderRadius),
+          borderRadius: effectiveBorderRadius,
           clipBehavior: Clip.antiAlias,
           child: Stack(
             children: [
@@ -181,13 +193,33 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                   child: AnimatedBuilder(
                     animation: widget.durationAnimation!,
                     builder: (context, child) {
+                      final double fillValue = widget.durationAnimation!.value;
+
                       return FractionallySizedBox(
-                        alignment: Alignment.centerLeft,
-                        widthFactor:
-                            widget.durationAnimation!.value, // 0.0 -> 1.0
-                        child: Container(color: progressColor),
+                        alignment: Alignment.centerLeft, // Align to the left
+                        widthFactor: fillValue.clamp(
+                            0.0, 1.0), // Expands from 0% to 100%
+                        heightFactor: 1.0,
+                        child: Container(
+                          color: config.progressBarColor ??
+                              Colors.white.withAlpha(77),
+                        ),
                       );
                     },
+                  ),
+                ),
+
+              // ===============================================
+              // 1.5. Accent color bar on the left edge
+              // ===============================================
+              if (config.leftBarIndicatorColor != null)
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 5.0, // Thickness matching GetX default
+                    color: config.leftBarIndicatorColor,
                   ),
                 ),
 
@@ -203,26 +235,29 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // ---------------------------------------------------
-                      // Header (Icon + Title + Close Button)
-                      // ---------------------------------------------------
-                      if (hasHeader) // Add: Render only when the header element exists
+                      // --- Header ---
+                      if (hasHeader)
                         Padding(
                           padding: EdgeInsets.only(
-                            left: leftPad,
+                            left: leftPad +
+                                (config.leftBarIndicatorColor != null
+                                    ? 5.0
+                                    : 0.0), // Margin for the bar
                             right: rightPad,
                             top: topPad,
-                            bottom: (!hasMessage && !hasFooter) ? bottomPad : 0,
+                            bottom: (!hasMessage &&
+                                    !hasFooter &&
+                                    config.userInputForm == null)
+                                ? bottomPad
+                                : 0,
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (iconWidget != null) ...[
                                 iconWidget,
-                                const SizedBox(width: 12),
+                                const SizedBox(width: 12)
                               ],
-
-                              // Fix: Render Text only when title exists, otherwise fill with Spacer
                               if (hasTitle)
                                 Expanded(
                                   child: Text(
@@ -230,17 +265,15 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                     style:
                                         config.titleStyle ??
                                         TextStyle(
-                                          color: txtColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
+                                            color: txtColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 )
                               else
-                                const Spacer(), // Spacer to align the close button to the right end
-
+                                const Spacer(),
                               if (config.showCloseButton) ...[
                                 const SizedBox(width: 8),
                                 GestureDetector(
@@ -256,9 +289,7 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                           ),
                         ),
 
-                      // ---------------------------------------------------
-                      // Body (Message)
-                      // ---------------------------------------------------
+                      // --- Body ---
                       if (hasMessage) ...[
                         if (hasHeader) const SizedBox(height: 4),
                         Flexible(
@@ -292,10 +323,14 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                       : const NeverScrollableScrollPhysics(),
                                   child: Padding(
                                     padding: EdgeInsets.only(
-                                      left: leftPad,
+                                      left: leftPad +
+                                          (config.leftBarIndicatorColor != null
+                                              ? 5.0
+                                              : 0.0),
                                       right: rightPad,
                                       top: (!hasHeader) ? topPad : 0,
-                                      bottom: (!hasFooter)
+                                      bottom: (!hasFooter &&
+                                              config.userInputForm == null)
                                           ? (bottomPad + pbHeight)
                                           : 4.0,
                                     ),
@@ -331,14 +366,36 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                         ),
                       ],
 
+                      // --- UserInputForm (Added feature) ---
+                      if (config.userInputForm != null) ...[
+                        if (hasHeader || hasMessage) const SizedBox(height: 8),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: leftPad +
+                                (config.leftBarIndicatorColor != null
+                                    ? 5.0
+                                    : 0.0),
+                            right: rightPad,
+                            bottom: hasFooter ? 8.0 : bottomPad,
+                          ),
+                          child: config.userInputForm!,
+                        ),
+                      ],
+
                       // ---------------------------------------------------
                       // Footer (Action / Content)
                       // ---------------------------------------------------
                       if (hasFooter) ...[
-                        SizedBox(height: hasMessage ? 0 : 8),
+                        SizedBox(
+                            height: (hasMessage || config.userInputForm != null)
+                                ? 0
+                                : 8),
                         Padding(
                           padding: EdgeInsets.only(
-                            left: leftPad,
+                            left: leftPad +
+                                (config.leftBarIndicatorColor != null
+                                    ? 5.0
+                                    : 0.0),
                             right: rightPad,
                             bottom: bottomPad,
                             top: 0,
@@ -368,9 +425,7 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                         backgroundColor:
                                             config.action!.backgroundColor,
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
+                                            horizontal: 12, vertical: 8),
                                         minimumSize: Size.zero,
                                         tapTargetSize:
                                             MaterialTapTargetSize.shrinkWrap,
@@ -396,21 +451,25 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
               // ===============================================
               // 3. Thin Bar (Line Effect) - Width > 0
               // ===============================================
-              if (isLineEffect)
+              if ((config.showProgressIndicator || isLineEffect) &&
+                  effectiveProgressAnimation != null)
                 Positioned(
                   bottom: 0,
                   left: 0,
                   right: 0,
                   child: AnimatedBuilder(
-                    animation: widget.durationAnimation!,
+                    // Use external controller if provided
+                    animation: effectiveProgressAnimation,
                     builder: (context, child) {
                       return LinearProgressIndicator(
-                        value: widget.durationAnimation!.value,
-                        backgroundColor: Colors.transparent,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          progressColor,
-                        ),
-                        minHeight: config.progressBarWidth,
+                        value: effectiveProgressAnimation.value,
+                        backgroundColor:
+                            config.progressIndicatorBackgroundColor ??
+                                Colors.transparent,
+                        // Use color animation if provided
+                        valueColor: config.progressIndicatorValueColor ??
+                            AlwaysStoppedAnimation<Color>(progressColor),
+                        minHeight: config.progressBarWidth ?? 4.0,
                         borderRadius: BorderRadius.zero,
                       );
                     },

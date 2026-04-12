@@ -6,10 +6,6 @@ const _undefined = Object();
 /// Defines the vertical position where the snackbar will appear.
 enum HyperSnackPosition { top, bottom }
 
-/// GetX compatible alias for snackbar position.
-// ignore: constant_identifier_names
-enum SnackPosition { TOP, BOTTOM }
-
 /// Defines the display mode of the snackbar.
 enum HyperSnackDisplayMode {
   /// Stacks snackbars on top of each other.
@@ -21,6 +17,12 @@ enum HyperSnackDisplayMode {
 
 /// Defines the entrance and exit animation styles.
 enum HyperSnackAnimationType { top, bottom, left, right, fade, scale }
+
+enum HyperSnackStyle { floating, grounded }
+
+enum HyperSnackbarStatus { opening, open, closing, closed }
+
+typedef SnackbarStatusCallback = void Function(HyperSnackbarStatus status);
 
 /// Represents an action button displayed within the snackbar.
 class HyperSnackAction {
@@ -229,6 +231,18 @@ class HyperConfig {
 
   final bool useLocalOverlay;
 
+  final SnackbarStatusCallback? snackbarStatus;
+  final DismissDirection? dismissDirection;
+  final Color? leftBarIndicatorColor;
+  final Gradient? backgroundGradient;
+  final bool showProgressIndicator;
+  final AnimationController? progressIndicatorController;
+  final Color? progressIndicatorBackgroundColor;
+  final Animation<Color>? progressIndicatorValueColor;
+  final Color? overlayColor;
+  final Widget? userInputForm; // Equivalent to GetX's Form
+  final HyperSnackStyle snackStyle;
+
   const HyperConfig({
     this.title, // Removed required
     this.id,
@@ -273,6 +287,17 @@ class HyperConfig {
     this.alignment = Alignment.center,
     this.barBlur = 0.0,
     this.overlayBlur = 0.0,
+    this.snackbarStatus,
+    this.dismissDirection,
+    this.leftBarIndicatorColor,
+    this.backgroundGradient,
+    this.showProgressIndicator = false,
+    this.progressIndicatorController,
+    this.progressIndicatorBackgroundColor,
+    this.progressIndicatorValueColor,
+    this.overlayColor,
+    this.userInputForm,
+    this.snackStyle = HyperSnackStyle.floating,
   });
 
   /// Creates a copy of this [HyperConfig] but with the given fields replaced with the new values.
@@ -320,6 +345,17 @@ class HyperConfig {
     AlignmentGeometry? alignment,
     double? barBlur,
     double? overlayBlur,
+    snackbarStatus,
+    dismissDirection,
+    leftBarIndicatorColor,
+    backgroundGradient,
+    showProgressIndicator = false,
+    progressIndicatorController,
+    progressIndicatorBackgroundColor,
+    progressIndicatorValueColor,
+    overlayColor,
+    userInputForm,
+    snackStyle = HyperSnackStyle.floating,
   }) {
     return HyperConfig(
       id: id ?? this.id,
@@ -369,6 +405,22 @@ class HyperConfig {
       alignment: alignment ?? this.alignment,
       barBlur: barBlur ?? this.barBlur,
       overlayBlur: overlayBlur ?? this.overlayBlur,
+      snackbarStatus: snackbarStatus ?? this.snackbarStatus,
+      dismissDirection: dismissDirection ?? this.dismissDirection,
+      leftBarIndicatorColor:
+          leftBarIndicatorColor ?? this.leftBarIndicatorColor,
+      backgroundGradient: backgroundGradient ?? this.backgroundGradient,
+      showProgressIndicator:
+          showProgressIndicator ?? this.showProgressIndicator,
+      progressIndicatorController:
+          progressIndicatorController ?? this.progressIndicatorController,
+      progressIndicatorBackgroundColor: progressIndicatorBackgroundColor ??
+          this.progressIndicatorBackgroundColor,
+      progressIndicatorValueColor:
+          progressIndicatorValueColor ?? this.progressIndicatorValueColor,
+      overlayColor: overlayColor ?? this.overlayColor,
+      userInputForm: userInputForm ?? this.userInputForm,
+      snackStyle: snackStyle ?? this.snackStyle,
     );
   }
 }

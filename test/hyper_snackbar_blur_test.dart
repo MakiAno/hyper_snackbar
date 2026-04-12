@@ -70,7 +70,7 @@ void main() {
       forwardAnimationCurve: Curves.bounceIn,
       reverseAnimationCurve: Curves.bounceOut,
       duration: const Duration(seconds: 10),
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: HyperSnackPosition.bottom,
       colorText: Colors.red,
     );
 
@@ -82,7 +82,9 @@ void main() {
     expect(config.position, HyperSnackPosition.bottom);
     expect(config.textColor, Colors.red);
 
-    final configTop = HyperSnackbar.preset(snackPosition: SnackPosition.TOP);
+    final configTop = HyperSnackbar.preset(
+      snackPosition: HyperSnackPosition.top,
+    );
     expect(configTop.position, HyperSnackPosition.top);
   });
 }
