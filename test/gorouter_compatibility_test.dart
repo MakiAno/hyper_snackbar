@@ -5,8 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:hyper_snackbar/hyper_snackbar.dart';
 
 void main() {
-  testWidgets('GoRouter transition does not crash HyperSnackbar',
-      (WidgetTester tester) async {
+  testWidgets('GoRouter transition does not crash HyperSnackbar', (
+    WidgetTester tester,
+  ) async {
     // 1. Launch the app (using the router defined in this file)
     await tester.pumpWidget(_createTestApp());
 
@@ -47,7 +48,8 @@ Widget _createTestApp() {
                 );
               },
               child: const Text(
-                  'Show Snackbar'), // The text that `find.text()` is looking for.
+                'Show Snackbar',
+              ), // The text that `find.text()` is looking for.
             ),
           ),
         ),
@@ -55,7 +57,5 @@ Widget _createTestApp() {
     ],
   );
 
-  return MaterialApp.router(
-    routerConfig: router,
-  );
+  return MaterialApp.router(routerConfig: router);
 }

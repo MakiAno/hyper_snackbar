@@ -36,8 +36,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500)); // exit animation
   });
 
-  testWidgets('overlayBlur creates a full-screen BackdropFilter',
-      (WidgetTester tester) async {
+  testWidgets('overlayBlur creates a full-screen BackdropFilter', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(createTestApp(Container()));
 
     HyperSnackbar.show(
@@ -57,8 +58,9 @@ void main() {
 
     // wait for it to dismiss to not leak animations
     await tester.pump(const Duration(seconds: 1)); // wait for display
-    await tester
-        .pumpAndSettle(const Duration(milliseconds: 500)); // exit animation
+    await tester.pumpAndSettle(
+      const Duration(milliseconds: 500),
+    ); // exit animation
   });
 
   testWidgets('GetX aliases map correctly', (WidgetTester tester) async {
@@ -80,9 +82,7 @@ void main() {
     expect(config.position, HyperSnackPosition.bottom);
     expect(config.textColor, Colors.red);
 
-    final configTop = HyperSnackbar.preset(
-      snackPosition: SnackPosition.TOP,
-    );
+    final configTop = HyperSnackbar.preset(snackPosition: SnackPosition.TOP);
     expect(configTop.position, HyperSnackPosition.top);
   });
 }

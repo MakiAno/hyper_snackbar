@@ -136,10 +136,9 @@ class HomePage extends StatelessWidget {
               color: Colors.teal,
               icon: Icons.style,
               onTap: () {
-                Navigator.of(
-                  context,
-                ).push(
-                    MaterialPageRoute(builder: (_) => const PresetDemoPage()));
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const PresetDemoPage()),
+                );
               },
             ),
 
@@ -152,10 +151,9 @@ class HomePage extends StatelessWidget {
               color: Colors.orange,
               icon: Icons.blur_on,
               onTap: () {
-                Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(
-                    builder: (_) => const GetxLikeDemoPage()));
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const GetxLikeDemoPage()),
+                );
               },
             ),
           ],

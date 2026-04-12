@@ -22,8 +22,9 @@ void main() {
       );
     }
 
-    testWidgets('isSnackbarOpen reflects the visibility of a snackbar',
-        (WidgetTester tester) async {
+    testWidgets('isSnackbarOpen reflects the visibility of a snackbar', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
       expect(HyperSnackbar.isSnackbarOpen, isFalse);
 
@@ -41,8 +42,9 @@ void main() {
       expect(find.text('Test'), findsNothing);
     });
 
-    testWidgets('Queue mode displays snackbars sequentially',
-        (WidgetTester tester) async {
+    testWidgets('Queue mode displays snackbars sequentially', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       const display = Duration(milliseconds: 500);
@@ -79,8 +81,9 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('clearAll clears the queue and screen',
-        (WidgetTester tester) async {
+    testWidgets('clearAll clears the queue and screen', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       for (var i = 1; i <= 3; i++) {
@@ -104,8 +107,9 @@ void main() {
       expect(HyperSnackbar.isSnackbarOpen, isFalse);
     });
 
-    testWidgets('Queue mode handles multiple items correctly',
-        (WidgetTester tester) async {
+    testWidgets('Queue mode handles multiple items correctly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       const display = Duration(milliseconds: 500);
@@ -157,24 +161,27 @@ void main() {
 
     // --- New tests added below ---
 
-    testWidgets('Test whether swiping can dismiss the SnackBar',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: Builder(
-            builder: (context) => TextButton(
-              onPressed: () {
-                HyperSnackbar.show(
-                  title: 'Swipe to dismiss', // Title
-                  enableSwipe: true,
-                  context: context,
-                );
-              },
-              child: const Text('Show'),
+    testWidgets('Test whether swiping can dismiss the SnackBar', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () {
+                  HyperSnackbar.show(
+                    title: 'Swipe to dismiss', // Title
+                    enableSwipe: true,
+                    context: context,
+                  );
+                },
+                child: const Text('Show'),
+              ),
             ),
           ),
         ),
-      ));
+      );
 
       await tester.tap(find.text('Show'));
       await tester.pump();
@@ -192,8 +199,9 @@ void main() {
       expect(find.text('Swipe to dismiss'), findsNothing);
     });
 
-    testWidgets('maxVisibleCount limit test: UI overlap fixed version',
-        (WidgetTester tester) async {
+    testWidgets('maxVisibleCount limit test: UI overlap fixed version', (
+      WidgetTester tester,
+    ) async {
       // Thanks to setUp, resetForTest() runs automatically here.
 
       await tester.pumpWidget(
@@ -214,8 +222,9 @@ void main() {
                         message: 'Message',
                         maxVisibleCount: 2,
                         displayDuration: const Duration(seconds: 20),
-                        enterAnimationDuration:
-                            const Duration(milliseconds: 500),
+                        enterAnimationDuration: const Duration(
+                          milliseconds: 500,
+                        ),
                       );
                     },
                     child: const Text('PUSH ME'),
@@ -249,27 +258,30 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-// -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Situation 1: Template creation (Can it be instantiated without a title?)
     // -------------------------------------------------------------------------
-    test('Should instantiate HyperConfig without a title (Template Pattern)',
-        () {
-      // Previously caused an error because it was required
-      const errorTemplate = HyperConfig(
-        backgroundColor: Colors.red,
-        borderRadius: 8.0,
-        icon: Icon(Icons.error),
-      );
+    test(
+      'Should instantiate HyperConfig without a title (Template Pattern)',
+      () {
+        // Previously caused an error because it was required
+        const errorTemplate = HyperConfig(
+          backgroundColor: Colors.red,
+          borderRadius: 8.0,
+          icon: Icon(Icons.error),
+        );
 
-      expect(errorTemplate.title, isNull);
-      expect(errorTemplate.backgroundColor, Colors.red);
-    });
+        expect(errorTemplate.title, isNull);
+        expect(errorTemplate.backgroundColor, Colors.red);
+      },
+    );
 
     // ------------------------------------------------------ -------------------
     // Situation 2: Injecting and displaying the title using a template
     // -------------------------------------------------------------------------
-    testWidgets('Should display injected title when using template',
-        (WidgetTester tester) async {
+    testWidgets('Should display injected title when using template', (
+      WidgetTester tester,
+    ) async {
       // App setup
       await tester.pumpWidget(
         MaterialApp(
@@ -298,9 +310,13 @@ void main() {
 
       // 3. Verification
       expect(
-          find.text('Upload Complete'), findsOneWidget); // Title is displayed
-      expect(find.text('File has been saved.'),
-          findsOneWidget); // Message is also OK
+        find.text('Upload Complete'),
+        findsOneWidget,
+      ); // Title is displayed
+      expect(
+        find.text('File has been saved.'),
+        findsOneWidget,
+      ); // Message is also OK
       expect(find.byIcon(Icons.check), findsOneWidget); // Template icon is OK
 
       await tester.pumpAndSettle();
@@ -309,8 +325,9 @@ void main() {
     // ---------------------------------------------------------- ---------------
     // Scenario 3: Safety Check when title is completely null
     // ---------------------------------------------------------- ---------------
-    testWidgets('Should not crash when title is null',
-        (WidgetTester tester) async {
+    testWidgets('Should not crash when title is null', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           navigatorKey: HyperSnackbar.navigatorKey,
@@ -319,9 +336,7 @@ void main() {
       );
 
       // 1. No title configuration
-      const noTitleConfig = HyperConfig(
-        message: 'Message Only Notification',
-      );
+      const noTitleConfig = HyperConfig(message: 'Message Only Notification');
 
       // 2. Display as-is (to verify Text(config.title ?? '') in widget.dart works)
       HyperSnackbar.showFromConfig(noTitleConfig);
@@ -337,33 +352,37 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('displayDuration controls how long the snackbar stays visible',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(createTestApp(Container()));
+    testWidgets(
+      'displayDuration controls how long the snackbar stays visible',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(createTestApp(Container()));
 
-      HyperSnackbar.show(
-        title: 'Duration Test',
-        displayDuration: const Duration(seconds: 2),
-      );
+        HyperSnackbar.show(
+          title: 'Duration Test',
+          displayDuration: const Duration(seconds: 2),
+        );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100)); // animation in
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100)); // animation in
 
-      expect(find.text('Duration Test'), findsOneWidget);
+        expect(find.text('Duration Test'), findsOneWidget);
 
-      await tester.pump(const Duration(seconds: 1)); // wait 1s
+        await tester.pump(const Duration(seconds: 1)); // wait 1s
 
-      expect(find.text('Duration Test'), findsOneWidget); // still there
+        expect(find.text('Duration Test'), findsOneWidget); // still there
 
-      await tester.pump(const Duration(seconds: 1)); // wait another 1s
-      await tester
-          .pump(const Duration(milliseconds: 600)); // wait for exit animation
+        await tester.pump(const Duration(seconds: 1)); // wait another 1s
+        await tester.pump(
+          const Duration(milliseconds: 600),
+        ); // wait for exit animation
 
-      expect(find.text('Duration Test'), findsNothing); // should be gone
-    });
+        expect(find.text('Duration Test'), findsNothing); // should be gone
+      },
+    );
 
-    testWidgets('Colors are applied correctly to background and text',
-        (WidgetTester tester) async {
+    testWidgets('Colors are applied correctly to background and text', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       const bgColor = Colors.purple;
@@ -382,7 +401,9 @@ void main() {
       // In the implementation, color is now handled by Container decoration
       final containerFinder = find
           .ancestor(
-              of: find.byType(Material).last, matching: find.byType(Container))
+            of: find.byType(Material).last,
+            matching: find.byType(Container),
+          )
           .first;
       final containerWidget = tester.widget<Container>(containerFinder);
       expect((containerWidget.decoration as BoxDecoration).color, bgColor);
@@ -398,8 +419,9 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('Action button triggers callback and auto-dismisses',
-        (WidgetTester tester) async {
+    testWidgets('Action button triggers callback and auto-dismisses', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       bool actionTriggered = false;
@@ -427,13 +449,15 @@ void main() {
 
       expect(actionTriggered, isTrue);
 
-      await tester
-          .pump(const Duration(milliseconds: 600)); // wait for exit animation
+      await tester.pump(
+        const Duration(milliseconds: 600),
+      ); // wait for exit animation
       expect(find.text('Action Test'), findsNothing); // it should be dismissed
     });
 
-    testWidgets('Action button triggers callback without auto-dismissing',
-        (WidgetTester tester) async {
+    testWidgets('Action button triggers callback without auto-dismissing', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       bool actionTriggered = false;
@@ -461,16 +485,20 @@ void main() {
 
       expect(actionTriggered, isTrue);
 
-      await tester
-          .pump(const Duration(milliseconds: 600)); // wait for exit animation
-      expect(find.text('Action Test 2'),
-          findsOneWidget); // it should NOT be dismissed
+      await tester.pump(
+        const Duration(milliseconds: 600),
+      ); // wait for exit animation
+      expect(
+        find.text('Action Test 2'),
+        findsOneWidget,
+      ); // it should NOT be dismissed
 
       await tester.pumpAndSettle();
     });
 
-    testWidgets('Very long text in non-scrollable mode applies ellipsis',
-        (WidgetTester tester) async {
+    testWidgets('Very long text in non-scrollable mode applies ellipsis', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       final longText = 'A' * 1000;
@@ -495,8 +523,9 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('Very long text in scrollable mode allows scrolling',
-        (WidgetTester tester) async {
+    testWidgets('Very long text in scrollable mode allows scrolling', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       final longText = 'A\n' * 100;
@@ -529,15 +558,13 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('Progress bar renders correctly based on progressBarWidth',
-        (WidgetTester tester) async {
+    testWidgets('Progress bar renders correctly based on progressBarWidth', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       // 1. Line Effect
-      HyperSnackbar.show(
-        title: 'Line Progress',
-        progressBarWidth: 4.0,
-      );
+      HyperSnackbar.show(title: 'Line Progress', progressBarWidth: 4.0);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
@@ -547,10 +574,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // 2. Wipe Effect
-      HyperSnackbar.show(
-        title: 'Wipe Progress',
-        progressBarWidth: 0.0,
-      );
+      HyperSnackbar.show(title: 'Wipe Progress', progressBarWidth: 0.0);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
@@ -562,28 +586,30 @@ void main() {
     });
 
     testWidgets(
-        'useAdaptiveLoader shows platform-specific loader instead of icon',
-        (WidgetTester tester) async {
-      // Test for non-Cupertino platform (Android by default in test)
-      await tester.pumpWidget(createTestApp(Container()));
+      'useAdaptiveLoader shows platform-specific loader instead of icon',
+      (WidgetTester tester) async {
+        // Test for non-Cupertino platform (Android by default in test)
+        await tester.pumpWidget(createTestApp(Container()));
 
-      HyperSnackbar.show(
-        title: 'Loader Test',
-        icon: const Icon(Icons.star), // should be ignored
-        useAdaptiveLoader: true,
-      );
+        HyperSnackbar.show(
+          title: 'Loader Test',
+          icon: const Icon(Icons.star), // should be ignored
+          useAdaptiveLoader: true,
+        );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byIcon(Icons.star), findsNothing);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.byIcon(Icons.star), findsNothing);
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-      await tester.pumpAndSettle();
-    });
+        await tester.pumpAndSettle();
+      },
+    );
 
-    testWidgets('Convenience methods and animations coverage',
-        (WidgetTester tester) async {
+    testWidgets('Convenience methods and animations coverage', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       // 1. Test various convenience methods
@@ -596,7 +622,9 @@ void main() {
       HyperSnackbar.show(title: 'Initial', id: 'update_test');
       await tester.pump();
       HyperSnackbar.show(
-          title: 'Updated', id: 'update_test'); // Passes through _tryUpdate
+        title: 'Updated',
+        id: 'update_test',
+      ); // Passes through _tryUpdate
       await tester.pump();
       HyperSnackbar.dismissById('update_test'); // Passes through dismissById
 

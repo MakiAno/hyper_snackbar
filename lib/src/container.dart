@@ -45,8 +45,10 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
       duration: config.enterAnimationDuration,
     );
 
-    _animation =
-        CurvedAnimation(parent: _animationController, curve: config.enterCurve);
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: config.enterCurve,
+    );
 
     // 2. Controller for display duration management
     _durationController = AnimationController(
@@ -212,23 +214,22 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
       case HyperSnackAnimationType.scale:
         return ScaleTransition(
           scale: Tween<double>(begin: 0.6, end: 1.0).animate(_animation),
-          child: FadeTransition(
-            opacity: _animation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: _animation, child: child),
         );
       case HyperSnackAnimationType.left:
         return SlideTransition(
-          position:
-              Tween<Offset>(begin: const Offset(-1.0, 0.0), end: Offset.zero)
-                  .animate(_animation),
+          position: Tween<Offset>(
+            begin: const Offset(-1.0, 0.0),
+            end: Offset.zero,
+          ).animate(_animation),
           child: child,
         );
       case HyperSnackAnimationType.right:
         return SlideTransition(
-          position:
-              Tween<Offset>(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                  .animate(_animation),
+          position: Tween<Offset>(
+            begin: const Offset(1.0, 0.0),
+            end: Offset.zero,
+          ).animate(_animation),
           child: child,
         );
       case HyperSnackAnimationType.top:
@@ -249,8 +250,10 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   }
 
   Widget _applyExitAnimation(Widget child) {
-    final exitAnim =
-        CurvedAnimation(parent: _animationController, curve: config.exitCurve);
+    final exitAnim = CurvedAnimation(
+      parent: _animationController,
+      curve: config.exitCurve,
+    );
     switch (config.exitAnimationType) {
       case HyperSnackAnimationType.scale:
         return ScaleTransition(
@@ -262,21 +265,25 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
         );
       case HyperSnackAnimationType.left:
         return SlideTransition(
-          position:
-              Tween<Offset>(begin: Offset.zero, end: const Offset(-1.0, 0.0))
-                  .animate(exitAnim),
+          position: Tween<Offset>(
+            begin: Offset.zero,
+            end: const Offset(-1.0, 0.0),
+          ).animate(exitAnim),
           child: FadeTransition(
-              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
-              child: child),
+            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
+            child: child,
+          ),
         );
       case HyperSnackAnimationType.right:
         return SlideTransition(
-          position:
-              Tween<Offset>(begin: Offset.zero, end: const Offset(1.0, 0.0))
-                  .animate(exitAnim),
+          position: Tween<Offset>(
+            begin: Offset.zero,
+            end: const Offset(1.0, 0.0),
+          ).animate(exitAnim),
           child: FadeTransition(
-              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
-              child: child),
+            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
+            child: child,
+          ),
         );
       case HyperSnackAnimationType.top:
       case HyperSnackAnimationType.bottom:
@@ -284,16 +291,18 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           sizeFactor: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
           axisAlignment:
               (config.exitAnimationType == HyperSnackAnimationType.top)
-                  ? -1.0
-                  : 1.0,
+              ? -1.0
+              : 1.0,
           child: FadeTransition(
-              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
-              child: child),
+            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
+            child: child,
+          ),
         );
       case HyperSnackAnimationType.fade:
         return FadeTransition(
-            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
-            child: child);
+          opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
+          child: child,
+        );
     }
   }
 }

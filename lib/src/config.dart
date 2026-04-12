@@ -20,14 +20,7 @@ enum HyperSnackDisplayMode {
 }
 
 /// Defines the entrance and exit animation styles.
-enum HyperSnackAnimationType {
-  top,
-  bottom,
-  left,
-  right,
-  fade,
-  scale,
-}
+enum HyperSnackAnimationType { top, bottom, left, right, fade, scale }
 
 /// Represents an action button displayed within the snackbar.
 class HyperSnackAction {

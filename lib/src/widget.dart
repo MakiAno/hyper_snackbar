@@ -58,11 +58,13 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
     // Get padding from config
     final EdgeInsetsGeometry basePadding = config.padding;
     final double leftPad = basePadding is EdgeInsets ? basePadding.left : 16.0;
-    final double rightPad =
-        basePadding is EdgeInsets ? basePadding.right : 16.0;
+    final double rightPad = basePadding is EdgeInsets
+        ? basePadding.right
+        : 16.0;
     final double topPad = basePadding is EdgeInsets ? basePadding.top : 12.0;
-    final double bottomPad =
-        basePadding is EdgeInsets ? basePadding.bottom : 12.0;
+    final double bottomPad = basePadding is EdgeInsets
+        ? basePadding.bottom
+        : 12.0;
 
     // Check for the presence of each section
     final bool hasMessage = config.message != null;
@@ -104,7 +106,8 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
         }
       }
 
-      final isCupertino = Theme.of(context).platform == TargetPlatform.iOS ||
+      final isCupertino =
+          Theme.of(context).platform == TargetPlatform.iOS ||
           Theme.of(context).platform == TargetPlatform.macOS;
 
       // --- Loader ---
@@ -151,14 +154,15 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
         color: bgColor,
         borderRadius: BorderRadius.circular(config.borderRadius),
         border: config.border,
-        boxShadow: config.boxShadows ??
+        boxShadow:
+            config.boxShadows ??
             (config.elevation > 0
                 ? [
                     BoxShadow(
                       color: Colors.black.withAlpha(50),
                       blurRadius: config.elevation,
                       offset: Offset(0, config.elevation / 2),
-                    )
+                    ),
                   ]
                 : null),
       ),
@@ -194,9 +198,7 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                 onTap: config.onTap,
                 borderRadius: BorderRadius.circular(config.borderRadius),
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: screenHeight * 0.8,
-                  ),
+                  constraints: BoxConstraints(maxHeight: screenHeight * 0.8),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -225,7 +227,8 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                 Expanded(
                                   child: Text(
                                     config.title!,
-                                    style: config.titleStyle ??
+                                    style:
+                                        config.titleStyle ??
                                         TextStyle(
                                           color: txtColor,
                                           fontWeight: FontWeight.bold,
@@ -242,8 +245,11 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                 const SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: widget.onDismiss,
-                                  child: Icon(Icons.close,
-                                      size: 20, color: txtColor.withAlpha(153)),
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 20,
+                                    color: txtColor.withAlpha(153),
+                                  ),
                                 ),
                               ],
                             ],
@@ -279,7 +285,8 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                 thumbVisibility: true,
                                 child: SingleChildScrollView(
                                   controller: _scrollController,
-                                  physics: (config.scrollable ||
+                                  physics:
+                                      (config.scrollable ||
                                           config.maxLines == null)
                                       ? const BouncingScrollPhysics()
                                       : const NeverScrollableScrollPhysics(),
@@ -298,16 +305,19 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                           : Alignment.topLeft,
                                       child: Text(
                                         displayMessage, // Use stabilized message
-                                        style: config.messageStyle ??
+                                        style:
+                                            config.messageStyle ??
                                             TextStyle(
                                               color: txtColor.withAlpha(230),
                                               fontSize: 14,
                                             ),
-                                        maxLines: (config.scrollable ||
+                                        maxLines:
+                                            (config.scrollable ||
                                                 config.maxLines == null)
                                             ? null
                                             : config.maxLines,
-                                        overflow: (config.scrollable ||
+                                        overflow:
+                                            (config.scrollable ||
                                                 config.maxLines == null)
                                             ? TextOverflow.visible
                                             : TextOverflow.ellipsis,
@@ -352,13 +362,15 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                       style: TextButton.styleFrom(
                                         foregroundColor:
                                             config.action!.textColor ??
-                                                Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
                                         backgroundColor:
                                             config.action!.backgroundColor,
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
                                         minimumSize: Size.zero,
                                         tapTargetSize:
                                             MaterialTapTargetSize.shrinkWrap,
@@ -366,7 +378,8 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                       child: Text(
                                         config.action!.label,
                                         style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -394,8 +407,9 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                       return LinearProgressIndicator(
                         value: widget.durationAnimation!.value,
                         backgroundColor: Colors.transparent,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(progressColor),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          progressColor,
+                        ),
                         minHeight: config.progressBarWidth,
                         borderRadius: BorderRadius.zero,
                       );
@@ -413,7 +427,9 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
         borderRadius: BorderRadius.circular(config.borderRadius),
         child: BackdropFilter(
           filter: ui.ImageFilter.blur(
-              sigmaX: config.barBlur, sigmaY: config.barBlur),
+            sigmaX: config.barBlur,
+            sigmaY: config.barBlur,
+          ),
           child: materialContent,
         ),
       );
@@ -426,10 +442,7 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
           // Apply maxWidth if specified, otherwise it's infinite (existing behavior)
           maxWidth: config.maxWidth ?? double.infinity,
         ),
-        child: Container(
-          margin: config.margin,
-          child: materialContent,
-        ),
+        child: Container(margin: config.margin, child: materialContent),
       ),
     );
   }
