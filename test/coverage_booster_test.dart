@@ -60,8 +60,9 @@ void main() {
     });
 
     // 3. Update by ID (_tryUpdate) and Dismiss by ID (dismissById)
-    testWidgets('Update and Dismiss by ID coverage',
-        (WidgetTester tester) async {
+    testWidgets('Update and Dismiss by ID coverage', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       const String testId = 'unique_id';
@@ -84,8 +85,9 @@ void main() {
     });
 
     // 4. Coverage for using Widgets for title/message
-    testWidgets('Widget title and message coverage',
-        (WidgetTester tester) async {
+    testWidgets('Widget title and message coverage', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestApp(Container()));
 
       HyperSnackbar.show(
@@ -101,14 +103,18 @@ void main() {
     });
 
     // 5. Timer pause and resume by scrolling
-    testWidgets('Scroll pause and resume timer coverage',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(createTestApp(
-        ListView.builder(
-          itemCount: 100,
-          itemBuilder: (context, index) => ListTile(title: Text('Item $index')),
+    testWidgets('Scroll pause and resume timer coverage', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        createTestApp(
+          ListView.builder(
+            itemCount: 100,
+            itemBuilder: (context, index) =>
+                ListTile(title: Text('Item $index')),
+          ),
         ),
-      ));
+      );
 
       HyperSnackbar.show(
         title: 'Scroll Test',

@@ -180,7 +180,8 @@ class _PresetDemoPageState extends State<PresetDemoPage> {
 
               const SizedBox(height: 20),
               const _SectionHeader(
-                  text: "6. Max Width & Alignment (Override Brand Preset)"),
+                text: "6. Max Width & Alignment (Override Brand Preset)",
+              ),
               Row(
                 children: [
                   // alignment: left

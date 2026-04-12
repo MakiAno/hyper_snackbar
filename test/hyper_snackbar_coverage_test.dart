@@ -47,26 +47,29 @@ void main() {
     });
 
     // 3. Coverage for BuildContext extension methods (near L877-1005)
-    testWidgets('Extension method context.showHyperSnackbar coverage',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        navigatorKey: HyperSnackbar.navigatorKey,
-        home: Scaffold(
-          body: Builder(
-            builder: (context) => Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  context.showHyperSnackbar(
-                    title: 'Extension Title',
-                    message: 'Extension Message',
-                  );
-                },
-                child: const Text('Show'),
+    testWidgets('Extension method context.showHyperSnackbar coverage', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorKey: HyperSnackbar.navigatorKey,
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    context.showHyperSnackbar(
+                      title: 'Extension Title',
+                      message: 'Extension Message',
+                    );
+                  },
+                  child: const Text('Show'),
+                ),
               ),
             ),
           ),
         ),
-      ));
+      );
 
       await tester.tap(find.text('Show'));
       await tester.pump();

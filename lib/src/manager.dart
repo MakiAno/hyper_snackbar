@@ -62,8 +62,10 @@ class HyperSnackbar {
     TextStyle? messageStyle,
     BoxBorder? border,
     EdgeInsetsGeometry margin = EdgeInsets.zero,
-    EdgeInsetsGeometry padding =
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    EdgeInsetsGeometry padding = const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 12,
+    ),
     Color? backgroundColor,
     Color? textColor,
     double borderRadius = 12.0,
@@ -146,18 +148,19 @@ class HyperSnackbar {
     Widget? finalContent = effectiveContent;
     if (titleText != null || messageText != null) {
       finalContent = Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (titleText != null) titleText,
-            if (titleText != null && messageText != null)
-              const SizedBox(height: 4),
-            if (messageText != null) messageText,
-            if (effectiveContent != null) ...[
-              const SizedBox(height: 8),
-              effectiveContent
-            ]
-          ]);
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (titleText != null) titleText,
+          if (titleText != null && messageText != null)
+            const SizedBox(height: 4),
+          if (messageText != null) messageText,
+          if (effectiveContent != null) ...[
+            const SizedBox(height: 8),
+            effectiveContent,
+          ],
+        ],
+      );
     }
 
     return HyperConfig(
@@ -339,18 +342,19 @@ class HyperSnackbar {
     Widget? finalContent = effectiveContent;
     if (titleText != null || messageText != null) {
       finalContent = Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (titleText != null) titleText,
-            if (titleText != null && messageText != null)
-              const SizedBox(height: 4),
-            if (messageText != null) messageText,
-            if (effectiveContent != null) ...[
-              const SizedBox(height: 8),
-              effectiveContent
-            ]
-          ]);
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (titleText != null) titleText,
+          if (titleText != null && messageText != null)
+            const SizedBox(height: 4),
+          if (messageText != null) messageText,
+          if (effectiveContent != null) ...[
+            const SizedBox(height: 8),
+            effectiveContent,
+          ],
+        ],
+      );
     }
 
     // Compatibility handling for borders
@@ -587,7 +591,9 @@ class HyperSnackbar {
       if (_overlayEntry != null) {
         try {
           _overlayEntry?.remove();
-        } catch (_) {}
+        } catch (e) {
+          debugPrint('HyperSnackbar: Error removing overlay entry: $e');
+        }
         _overlayEntry = null;
         _isOverlayMounted = false;
       }
@@ -719,9 +725,13 @@ class HyperSnackbar {
   // ===========================================================================
 
   static bool _tryUpdate(
-      HyperConfig newConfig, List<Widget> list, StreamController stream) {
+    HyperConfig newConfig,
+    List<Widget> list,
+    StreamController stream,
+  ) {
     final index = list.indexWhere(
-        (w) => (w is HyperSnackBarContainer) && w.config.id == newConfig.id);
+      (w) => (w is HyperSnackBarContainer) && w.config.id == newConfig.id,
+    );
     if (index != -1) {
       final oldWidget = list[index] as HyperSnackBarContainer;
       final key = oldWidget.key as GlobalKey<HyperSnackBarContainerState>;
@@ -781,8 +791,10 @@ class HyperSnackbar {
     }
   }
 
-  static void _forceRemoveOldest(HyperSnackPosition position,
-      {bool newestOnTop = true}) {
+  static void _forceRemoveOldest(
+    HyperSnackPosition position, {
+    bool newestOnTop = true,
+  }) {
     final targetList =
         (position == HyperSnackPosition.top) ? _topEntries : _bottomEntries;
     if (targetList.isEmpty) return;
@@ -795,7 +807,9 @@ class HyperSnackbar {
   }
 
   static void _mountOverlayIfNeeded(
-      BuildContext? context, bool useLocalOverlay) {
+    BuildContext? context,
+    bool useLocalOverlay,
+  ) {
     // 1. Identify the target OverlayState.
     OverlayState? targetOverlay;
     if (context != null) {
@@ -817,7 +831,9 @@ class HyperSnackbar {
     if (_isOverlayMounted) {
       try {
         _overlayEntry?.remove();
-      } catch (_) {}
+      } catch (e) {
+        debugPrint('HyperSnackbar: Error removing overlay entry: $e');
+      }
       _overlayEntry = null;
       _isOverlayMounted = false;
       _currentOverlayState = null;
@@ -856,7 +872,9 @@ class HyperSnackbar {
     if (_overlayEntry != null) {
       try {
         _overlayEntry?.remove();
-      } catch (_) {}
+      } catch (e) {
+        debugPrint('HyperSnackbar: Error removing overlay entry: $e');
+      }
       _overlayEntry = null;
     }
 
@@ -938,7 +956,9 @@ class _HyperOverlayManager extends StatelessWidget {
               stream: topStream,
               initialData: initialTopData,
               builder: (context, s) => Column(
-                  mainAxisSize: MainAxisSize.min, children: s.data ?? []),
+                mainAxisSize: MainAxisSize.min,
+                children: s.data ?? [],
+              ),
             ),
           ),
         ),
@@ -952,7 +972,9 @@ class _HyperOverlayManager extends StatelessWidget {
               stream: bottomStream,
               initialData: initialBottomData,
               builder: (context, s) => Column(
-                  mainAxisSize: MainAxisSize.min, children: s.data ?? []),
+                mainAxisSize: MainAxisSize.min,
+                children: s.data ?? [],
+              ),
             ),
           ),
         ),

@@ -199,8 +199,9 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
 
     Color? progressColor;
     if (width == 0) {
-      progressColor =
-          isLightBg ? Colors.black.withAlpha(25) : Colors.white.withAlpha(38);
+      progressColor = isLightBg
+          ? Colors.black.withAlpha(25)
+          : Colors.white.withAlpha(38);
     } else if (width != null && width > 0) {
       progressColor = Colors.redAccent;
     }
@@ -217,8 +218,9 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       }
     }
 
-    EdgeInsets effectiveMargin =
-        _useMargin ? const EdgeInsets.all(12) : EdgeInsets.zero;
+    EdgeInsets effectiveMargin = _useMargin
+        ? const EdgeInsets.all(12)
+        : EdgeInsets.zero;
 
     final targetContext = _innerScaffoldKey.currentContext;
 
@@ -231,10 +233,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         textColor: contentColor,
         icon: _iconMode == _IconMode.none
             ? null
-            : Icon(
-                _getIconForColor(_selectedColor),
-                color: contentColor,
-              ),
+            : Icon(_getIconForColor(_selectedColor), color: contentColor),
         useAdaptiveLoader: _iconMode == _IconMode.loader,
         borderRadius: _borderRadius,
         elevation: _elevation,
@@ -263,8 +262,9 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         action: _showAction
             ? HyperSnackAction(
                 label: 'UNDO',
-                textColor:
-                    isLightBg ? Colors.blue.shade700 : Colors.amberAccent,
+                textColor: isLightBg
+                    ? Colors.blue.shade700
+                    : Colors.amberAccent,
                 onPressed: () {
                   _showUndoFeedback();
                 },
@@ -279,8 +279,9 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   void _showUndoFeedback() {
     final targetContext = _innerScaffoldKey.currentContext;
     if (targetContext != null) {
-      EdgeInsets margin =
-          _useMargin ? const EdgeInsets.all(12) : EdgeInsets.zero;
+      EdgeInsets margin = _useMargin
+          ? const EdgeInsets.all(12)
+          : EdgeInsets.zero;
 
       HyperSnackbar.show(
         context: targetContext,
@@ -724,9 +725,10 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                       visualDensity: VisualDensity.compact,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       backgroundColor: WidgetStateProperty.resolveWith(
-                          (states) => states.contains(WidgetState.selected)
-                              ? Colors.cyan.withAlpha(77)
-                              : Colors.transparent),
+                        (states) => states.contains(WidgetState.selected)
+                            ? Colors.cyan.withAlpha(77)
+                            : Colors.transparent,
+                      ),
                       foregroundColor: WidgetStateProperty.all(Colors.white),
                     ),
                     segments: const [
@@ -1312,10 +1314,12 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       if (isLightBg) {
         sb.writeln('  textColor: Colors.black87,');
         sb.writeln(
-            '  icon: Icon(Icons.${_getIconName()}, color: Colors.black87),');
+          '  icon: Icon(Icons.${_getIconName()}, color: Colors.black87),',
+        );
       } else {
         sb.writeln(
-            '  icon: Icon(Icons.${_getIconName()}, color: Colors.white),');
+          '  icon: Icon(Icons.${_getIconName()}, color: Colors.white),',
+        );
       }
     } else if (_iconMode == _IconMode.loader) {
       sb.writeln('  useAdaptiveLoader: true,');

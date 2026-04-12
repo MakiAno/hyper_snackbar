@@ -170,7 +170,7 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                       color: Colors.black.withAlpha(50),
                       blurRadius: config.elevation,
                       offset: Offset(0, config.elevation / 2),
-                    )
+                    ),
                   ]
                 : null),
       ),
@@ -273,8 +273,11 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                 const SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: widget.onDismiss,
-                                  child: Icon(Icons.close,
-                                      size: 20, color: txtColor.withAlpha(153)),
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 20,
+                                    color: txtColor.withAlpha(153),
+                                  ),
                                 ),
                               ],
                             ],
@@ -406,9 +409,9 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                       style: TextButton.styleFrom(
                                         foregroundColor:
                                             config.action!.textColor ??
-                                                Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
                                         backgroundColor:
                                             config.action!.backgroundColor,
                                         padding: const EdgeInsets.symmetric(
@@ -420,7 +423,8 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                       child: Text(
                                         config.action!.label,
                                         style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -472,7 +476,9 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
         borderRadius: BorderRadius.circular(config.borderRadius),
         child: BackdropFilter(
           filter: ui.ImageFilter.blur(
-              sigmaX: config.barBlur, sigmaY: config.barBlur),
+            sigmaX: config.barBlur,
+            sigmaY: config.barBlur,
+          ),
           child: materialContent,
         ),
       );
@@ -485,10 +491,7 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
           // Apply maxWidth if specified, otherwise it's infinite (existing behavior)
           maxWidth: config.maxWidth ?? double.infinity,
         ),
-        child: Container(
-          margin: config.margin,
-          child: materialContent,
-        ),
+        child: Container(margin: config.margin, child: materialContent),
       ),
     );
   }

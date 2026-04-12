@@ -26,10 +26,7 @@ class GetxLikeDemoPage extends StatelessWidget {
                   child: Center(
                     child: Text(
                       '$index',
-                      style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 10,
-                      ),
+                      style: TextStyle(color: Colors.grey[500], fontSize: 10),
                     ),
                   ),
                 );
@@ -99,7 +96,10 @@ class GetxLikeDemoPage extends StatelessWidget {
                         snackPosition: HyperSnackPosition.bottom,
                         overlayBlur: 10.0,
                         margin: const EdgeInsets.only(
-                            bottom: 40, left: 16, right: 16),
+                          bottom: 40,
+                          left: 16,
+                          right: 16,
+                        ),
                         duration: const Duration(seconds: 4),
                         backgroundColor: Colors.redAccent,
                         colorText: Colors.white,
@@ -141,17 +141,22 @@ class GetxLikeDemoPage extends StatelessWidget {
                         duration: const Duration(seconds: 6),
                         backgroundColor: Colors.deepOrange,
                         colorText: Colors.white,
-                        icon: const Icon(Icons.warning_amber_rounded,
-                            color: Colors.white),
+                        icon: const Icon(
+                          Icons.warning_amber_rounded,
+                          color: Colors.white,
+                        ),
                         shouldIconPulse: true,
                         showProgressIndicator: true,
                         progressBarWidth: 2.0,
                         mainButton: TextButton(
                           onPressed: () => HyperSnackbar.clearAll(),
-                          child: const Text('DISMISS',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            'DISMISS',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                         margin: const EdgeInsets.all(24),
                         borderRadius: 24,
@@ -160,7 +165,7 @@ class GetxLikeDemoPage extends StatelessWidget {
                             color: Colors.deepOrange.withAlpha(150),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
-                          )
+                          ),
                         ],
                         onTap: () {
                           debugPrint('Snackbar Tapped!');
