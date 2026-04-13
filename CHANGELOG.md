@@ -1,3 +1,7 @@
+## [0.10.3]
+
+* **Example:** Fixed a bug in the sample code.
+
 ## [0.10.2]
 
 ### 🛠 Improvements

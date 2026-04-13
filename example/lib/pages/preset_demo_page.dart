@@ -164,12 +164,14 @@ class _PresetDemoPageState extends State<PresetDemoPage> {
                   // Check queueing and position by rapid firing
                   HyperSnackbar.show(
                     title: 'Bottom Queue 1',
+                    displayMode: HyperSnackDisplayMode.queue,
                     preset: _brandPreset.copyWith(
                       position: HyperSnackPosition.bottom,
                     ),
                   );
                   HyperSnackbar.show(
                     title: 'Bottom Queue 2',
+                    displayMode: HyperSnackDisplayMode.queue,
                     preset: _darkPreset.copyWith(
                       position: HyperSnackPosition.bottom,
                     ),
