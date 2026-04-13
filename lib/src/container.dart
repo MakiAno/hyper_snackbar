@@ -305,8 +305,8 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           sizeFactor: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
           axisAlignment:
               (config.exitAnimationType == HyperSnackAnimationType.top)
-              ? -1.0
-              : 1.0,
+                  ? -1.0
+                  : 1.0,
           child: FadeTransition(
             opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
             child: child,

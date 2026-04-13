@@ -199,9 +199,8 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
 
     Color? progressColor;
     if (width == 0) {
-      progressColor = isLightBg
-          ? Colors.black.withAlpha(25)
-          : Colors.white.withAlpha(38);
+      progressColor =
+          isLightBg ? Colors.black.withAlpha(25) : Colors.white.withAlpha(38);
     } else if (width != null && width > 0) {
       progressColor = Colors.redAccent;
     }
@@ -218,9 +217,8 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       }
     }
 
-    EdgeInsets effectiveMargin = _useMargin
-        ? const EdgeInsets.all(12)
-        : EdgeInsets.zero;
+    EdgeInsets effectiveMargin =
+        _useMargin ? const EdgeInsets.all(12) : EdgeInsets.zero;
 
     final targetContext = _innerScaffoldKey.currentContext;
 
@@ -262,9 +260,8 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         action: _showAction
             ? HyperSnackAction(
                 label: 'UNDO',
-                textColor: isLightBg
-                    ? Colors.blue.shade700
-                    : Colors.amberAccent,
+                textColor:
+                    isLightBg ? Colors.blue.shade700 : Colors.amberAccent,
                 onPressed: () {
                   _showUndoFeedback();
                 },
@@ -279,9 +276,8 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   void _showUndoFeedback() {
     final targetContext = _innerScaffoldKey.currentContext;
     if (targetContext != null) {
-      EdgeInsets margin = _useMargin
-          ? const EdgeInsets.all(12)
-          : EdgeInsets.zero;
+      EdgeInsets margin =
+          _useMargin ? const EdgeInsets.all(12) : EdgeInsets.zero;
 
       HyperSnackbar.show(
         context: targetContext,

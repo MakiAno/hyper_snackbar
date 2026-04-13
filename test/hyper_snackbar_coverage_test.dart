@@ -9,8 +9,8 @@ void main() {
     });
 
     // 1. Coverage for HyperSnackPosition.bottom mapping logic (near L112-114)
-      testWidgets('HyperSnackPosition.bottom mapping coverage',
-          (WidgetTester tester) async {
+    testWidgets('HyperSnackPosition.bottom mapping coverage',
+        (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
         navigatorKey: HyperSnackbar.navigatorKey,
         home: const Scaffold(),
