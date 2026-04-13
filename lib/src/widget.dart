@@ -333,11 +333,12 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
                                           ? Alignment.centerLeft
                                           : Alignment.topLeft,
                                       child: Text(
-                                        displayMessage,
+                                        displayMessage, // Use stabilized message
                                         style: config.messageStyle ??
                                             TextStyle(
-                                                color: txtColor.withAlpha(230),
-                                                fontSize: 14),
+                                              color: txtColor.withAlpha(230),
+                                              fontSize: 14,
+                                            ),
                                         maxLines: (config.scrollable ||
                                                 config.maxLines == null)
                                             ? null
