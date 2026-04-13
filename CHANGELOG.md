@@ -1,3 +1,14 @@
+## [0.10.2]
+
+### 🛠 Improvements
+* **Error Visibility:** Improved internal error handling by surfacing caught exceptions via `debugPrint` instead of silently ignoring them, aiding in easier debugging.
+
+### 🧪 Testing
+* Miscellaneous corrections and updates to the test suite to ensure better stability.
+
+### 📝 Documentation
+* **README:** Fixed duplicate entries and cleaned up the API Reference section for better clarity.
+
 ## [0.10.1]
 
 ### ⚡ Performance Improvements
