@@ -501,7 +501,7 @@ class HyperSnackbar {
     final widget = HyperSnackBarContainer(
       key: uniqueKey,
       config: config,
-      onDismiss: () => removeNotification(config),
+      onDismiss: () => _removeNotification(config),
     );
 
     if (config.position == HyperSnackPosition.top) {
@@ -535,7 +535,7 @@ class HyperSnackbar {
     final widget = HyperSnackBarContainer(
       key: uniqueKey,
       config: config,
-      onDismiss: () => removeNotification(
+      onDismiss: () => _removeNotification(
         config,
         onComplete: () {
           _isQueueProcessing = false;
@@ -564,7 +564,7 @@ class HyperSnackbar {
               key.currentState!.mounted) {
             key.currentState!.dismiss();
           } else {
-            removeNotification(widget.config);
+            _removeNotification(widget.config);
           }
           return;
         }
@@ -747,7 +747,7 @@ class HyperSnackbar {
     return false;
   }
 
-  static void removeNotification(
+  static void _removeNotification(
     HyperConfig config, {
     bool immediate = false,
     VoidCallback? onComplete,
@@ -785,7 +785,7 @@ class HyperSnackbar {
             key.currentState!.mounted) {
           key.currentState!.dismiss();
         } else {
-          removeNotification(widget.config);
+          _removeNotification(widget.config);
         }
       }
     }
@@ -802,7 +802,7 @@ class HyperSnackbar {
     final oldestWidget = newestOnTop ? targetList.last : targetList.first;
 
     if (oldestWidget is HyperSnackBarContainer) {
-      removeNotification(oldestWidget.config, immediate: true);
+      _removeNotification(oldestWidget.config, immediate: true);
     }
   }
 
