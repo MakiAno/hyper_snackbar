@@ -363,9 +363,6 @@ All methods are static and can be called from anywhere.
 | `displayMode` | `HyperSnackDisplayMode` | `.stack` | `.stack` (overlays on top) or `.queue` (shows one by one). |
 | `newestOnTop` | `bool` | `true` | (Stack mode) If `true`, new snackbars appear on top of the stack. |
 | `maxVisibleCount` | `int` | `3` | Maximum number of snackbars visible at once (Stack mode). |
-| `userInputForm` | `Form?` | `null` | **(New)** Embed a `TextField` or `Form` directly inside the snackbar. |
-| `dismissDirection`| `DismissDirection?`| `null` | **(New)** Overrides default swipe direction (e.g., `horizontal`). |
-| `snackbarStatus` | `Function(Status)?`| `null` | **(New)** Lifecycle callback (`opening`, `open`, `closing`, `closed`). |
 
 ### 📝 Text Handling
 | Parameter | Type | Default | Description |
@@ -394,15 +391,8 @@ All methods are static and can be called from anywhere.
 | `progressBarWidth` | `double?` | `null` | Height of the progress bar. `0.0` creates a background "wipe" effect. `null` disables it. |
 | `progressBarColor` | `Color?` | `null` | Color of the progress bar. Defaults to a semi-transparent contrast color. |
 | `showProgressIndicator` | `bool` | `false` | Explicitly enable or disable the progress indicator. |
-| `progressBarWidth` | `double?` | `null` | Height of the progress bar. `0.0` creates a background "wipe" effect. |
-| `progressBarColor` | `Color?` | `null` | Color of the progress bar. |
 | `progressIndicatorBackgroundColor` | `Color?` | `null` | Custom background track color for the progress bar. |
 | `progressIndicatorValueColor` | `Animation<Color>?` | `null` | Custom active value color (e.g., `AlwaysStoppedAnimation(Colors.red)`). |
-| `showProgressIndicator` | `bool` | `false` | **(New)** Explicitly enable or disable the progress indicator. |
-| `progressBarWidth` | `double?` | `null` | Height of the progress bar. `0.0` creates a background "wipe" effect. |
-| `progressBarColor` | `Color?` | `null` | Color of the progress bar. |
-| `progressIndicatorBackgroundColor` | `Color?` | `null` | **(New)** Custom background track color for the progress bar. |
-| `progressIndicatorValueColor` | `Animation<Color>?` | `null` | **(New)** Custom active value color (e.g., `AlwaysStoppedAnimation(Colors.red)`). |
 
 ## 📄 License
 
