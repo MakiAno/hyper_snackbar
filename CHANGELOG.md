@@ -1,3 +1,14 @@
+## [0.11.0]
+
+### ✨ New Features
+* **Async Progress Controller:** Introduced `HyperSnackbar.showProgress()` which returns a `HyperSnackbarProgressController`. This allows you to smoothly synchronize a snackbar's progress bar with real asynchronous data streams (e.g. downloading files).
+  * Automatically coordinates transitions to `success()` or `error()` states with a configurable `transitionDelay` to ensure the final 100% animation has time to be seen before the snackbar switches.
+
+### 🐛 Bug Fixes & Stability
+* **Progress Bar Wipe Animation Fix:** Refactored the Wipe Effect (`progressBarWidth: 0.0`) to utilize `TweenAnimationBuilder`. This prevents the animation from jumping immediately to 100% and guarantees smooth progress visually interpolating.
+* **Red Screen Resolution:** Fixed a critical bug causing an assertion error (Red Screen) due to `LinearProgressIndicator` receiving a `minHeight` of `0.0` when used with the Wipe Effect.
+* **Auto-Dismiss Timer Stability:** Fixed an internal timer configuration glitch where passing `displayDuration: null` in an attempt to make the snackbar persistent would inadvertently reset to the default 4-second timeout. Fixed the internal implementation to safely utilize `Duration.zero` for permanent overlays.
+
 ## [0.10.3]
 
 * **Example:** Fixed a bug in the sample code.

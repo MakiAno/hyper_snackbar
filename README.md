@@ -26,7 +26,7 @@ Now with **Presets** and **GetX-style** aliases for easier migration!
 
 * **Flexible Positioning**: Top or Bottom.
 * **Display Modes**: Stack (overlay) or Queue (sequential).
-* **Rich Animations**: Slide, Fade, and **New! Scale (Elastic Zoom)**.
+* **Rich Animations**: Slide, Fade, and Scale (Elastic Zoom).
 * **Presets System**: Define reusable styles and inherit/override them easily.
 * **Progress Bar**: Line or Wipe effects.
 * **Interactive**: Tap callbacks, Action buttons, and Dismissible swipes.
@@ -40,7 +40,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hyper_snackbar: ^0.10.3
+  hyper_snackbar: ^0.11.0
 ```
 
 ## 🛠 Setup
@@ -197,6 +197,32 @@ HyperSnackbar.show(
 ### Advanced Features
 
 #### Progress Bar Effects
+#### Async Progress Control (New!)
+You can seamlessly synchronize the progress bar with real asynchronous operations. `showProgress` returns a controller that manages the UI without blocking your code.
+
+```dart
+// 1. Show the progress bar and get the controller
+final controller = HyperSnackbar.showProgress(
+  title: 'Downloading...',
+  message: 'Fetching files...',
+  progressBarWidth: 0.0, // Wipe effect
+  transitionDelay: const Duration(milliseconds: 300), // Delay before transitioning to success
+);
+
+// 2. Perform your async work
+for (int i = 1; i <= 5; i++) {
+  await Future.delayed(const Duration(seconds: 1));
+  controller.updateProgress(i * 0.2); // Updates from 0.0 to 1.0
+}
+
+// 3. Automatically transition to a success state!
+// The controller will wait for the 100% animation to finish before swapping.
+await controller.success(
+  title: 'Download Complete',
+  message: 'Files downloaded successfully.',
+);
+```
+
 Visualize the remaining duration.
 
 ```dart
@@ -227,7 +253,7 @@ HyperSnackbar.show(
 );
 ```
 
-#### Rich UI & User Input Forms (New!)
+#### Rich UI & User Input Forms
 Create highly engaging notifications with gradients, side indicators, and inline text inputs.
 
 ```dart
@@ -305,7 +331,8 @@ All methods are static and can be called from anywhere.
 | Method | Description |
 |---|---|
 | `show(...)` | Displays a fully customizable snackbar. |
-| `preset(...)` | **(New)** Creates a reusable configuration object. |
+| `preset(...)` | Creates a reusable configuration object. |
+| `showProgress(...)` | **(New)** Displays an async progress bar and returns a `HyperSnackbarProgressController`. |
 | `showSuccess(...)` | Preset: Green background, Check icon. |
 | `showError(...)` | Preset: Red background, Error icon. |
 | `showWarning(...)` | Preset: Orange background, Warning icon. |
@@ -322,7 +349,7 @@ All methods are static and can be called from anywhere.
 ### 🎨 General & Appearance
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `preset` | `HyperConfig?` | `null` | **(New)** Base configuration to apply/override. |
+| `preset` | `HyperConfig?` | `null` | Base configuration to apply/override. |
 | `title` | `String?` | `null` | The title of the snackbar. |
 | `message` | `String?` | `null` | The main message body. |
 | `icon` | `Widget?` | `null` | Custom icon widget displayed on the left. |
@@ -335,11 +362,11 @@ All methods are static and can be called from anywhere.
 | `margin` | `EdgeInsetsGeometry` | `zero` | Margin around the snackbar. |
 | `padding` | `EdgeInsetsGeometry` | `16, 12` | Internal padding. |
 | `useLocalOverlay`| `bool` | `false` | If false, renders on the root overlay. If true, renders on the nearest overlay. |
-| `maxWidth` | `double?` | `null` | **(New)** Maximum width of the snackbar. Ideal for Web/Desktop. |
-| `alignment` | `AlignmentGeometry` | `.center` | **(New)** Alignment of the snackbar when `maxWidth` is constrained. |
-| `backgroundGradient` | `Gradient?` | `null` | **(New)** Custom gradient for the background (e.g., `LinearGradient`). |
-| `leftBarIndicatorColor` | `Color?` | `null` | **(New)** Adds a colored accent bar to the left edge of the snackbar. |
-| `snackStyle` | `HyperSnackStyle`| `.floating` | **(New)** Use `.grounded` to remove margins and corner radii on the attached edge. |
+| `maxWidth` | `double?` | `null` | Maximum width of the snackbar. Ideal for Web/Desktop. |
+| `alignment` | `AlignmentGeometry` | `.center` | Alignment of the snackbar when `maxWidth` is constrained. |
+| `backgroundGradient` | `Gradient?` | `null` | Custom gradient for the background (e.g., `LinearGradient`). |
+| `leftBarIndicatorColor` | `Color?` | `null` | Adds a colored accent bar to the left edge of the snackbar. |
+| `snackStyle` | `HyperSnackStyle`| `.floating` | Use `.grounded` to remove margins and corner radii on the attached edge. |
 
 ### 👆 Actions & Interaction
 | Parameter | Type | Default | Description |
@@ -350,9 +377,9 @@ All methods are static and can be called from anywhere.
 | `onTap` | `VoidCallback?` | `null` | Callback when the snackbar itself is tapped. |
 | `showCloseButton` | `bool` | `true` | Whether to show the "X" close button. |
 | `enableSwipe` | `bool` | `true` | Allow dismissing the snackbar by swiping horizontally. |
-| `userInputForm` | `Form?` | `null` | **(New)** Embed a `TextField` or `Form` directly inside the snackbar. |
-| `dismissDirection`| `DismissDirection?`| `null` | **(New)** Overrides default swipe direction (e.g., `horizontal`). |
-| `snackbarStatus` | `Function(Status)?`| `null` | **(New)** Lifecycle callback (`opening`, `open`, `closing`, `closed`). |
+| `userInputForm` | `Form?` | `null` | Embed a `TextField` or `Form` directly inside the snackbar. |
+| `dismissDirection`| `DismissDirection?`| `null` | Overrides default swipe direction (e.g., `horizontal`). |
+| `snackbarStatus` | `Function(Status)?`| `null` | Lifecycle callback (`opening`, `open`, `closing`, `closed`). |
 
 ### ⏱️ Behavior & Positioning
 | Parameter | Type | Default | Description |

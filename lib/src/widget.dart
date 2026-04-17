@@ -68,14 +68,24 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
     final bool hasMessage = config.message != null;
     final bool hasFooter = config.content != null || config.action != null;
 
-    final bool showProgressBar =
-        config.progressBarWidth != null && widget.durationAnimation != null;
+    final bool hasNotifier = config.progressNotifier != null;
+    final bool showProgressBar = config.progressBarWidth != null &&
+        (widget.durationAnimation != null || hasNotifier);
     final bool isWipeEffect = showProgressBar && config.progressBarWidth == 0.0;
+
+    // Determine effective animation and line effect flags safely
     final Animation<double>? effectiveProgressAnimation =
         config.progressIndicatorController ?? widget.durationAnimation;
-    final bool isLineEffect = config.showProgressIndicator ||
-        (config.progressBarWidth != null && config.progressBarWidth! > 0.0);
-    // final bool isLineEffect = showProgressBar && config.progressBarWidth! > 0.0;
+    final bool isLineEffect = (config.showProgressIndicator ||
+            (config.progressBarWidth != null &&
+                config.progressBarWidth! > 0.0)) &&
+        !isWipeEffect;
+
+    // Use a safe width fallback (LinearProgressIndicator crashes on minHeight <= 0)
+    final double safeProgressBarWidth =
+        (config.progressBarWidth != null && config.progressBarWidth! > 0.0)
+            ? config.progressBarWidth!
+            : 4.0;
 
     // Progress bar color (default is faint white)
     final progressColor = config.progressBarColor ?? Colors.white.withAlpha(51);
@@ -186,21 +196,45 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
               // ===============================================
               if (isWipeEffect)
                 Positioned.fill(
-                  child: AnimatedBuilder(
-                    animation: widget.durationAnimation!,
-                    builder: (context, child) {
-                      final double fillValue = widget.durationAnimation!.value;
-
-                      return FractionallySizedBox(
-                        alignment: Alignment.centerLeft, // Align to the left
-                        widthFactor: fillValue.clamp(
-                            0.0, 1.0), // Expands from 0% to 100%
-                        heightFactor: 1.0,
-                        child: Container(
-                          color: config.progressBarColor ??
-                              Colors.white.withAlpha(77),
-                        ),
-                      );
+                  child: Builder(
+                    builder: (context) {
+                      final wipeColor =
+                          config.progressBarColor ?? Colors.white.withAlpha(77);
+                      if (hasNotifier) {
+                        return ValueListenableBuilder<double>(
+                          valueListenable: config.progressNotifier!,
+                          builder: (context, value, child) {
+                            return TweenAnimationBuilder<double>(
+                              tween: Tween<double>(
+                                  begin: 0.0, end: value.clamp(0.0, 1.0)),
+                              duration: const Duration(milliseconds: 250),
+                              curve: Curves.easeOut,
+                              builder: (context, animValue, child) {
+                                return FractionallySizedBox(
+                                  alignment: Alignment.centerLeft,
+                                  widthFactor: animValue.clamp(0.0, 1.0),
+                                  heightFactor: 1.0,
+                                  child: Container(color: wipeColor),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      } else {
+                        return AnimatedBuilder(
+                          animation: widget.durationAnimation!,
+                          builder: (context, child) {
+                            final double fillValue =
+                                widget.durationAnimation!.value;
+                            return FractionallySizedBox(
+                              alignment: Alignment.centerLeft,
+                              widthFactor: fillValue.clamp(0.0, 1.0),
+                              heightFactor: 1.0,
+                              child: Container(color: wipeColor),
+                            );
+                          },
+                        );
+                      }
                     },
                   ),
                 ),
@@ -442,27 +476,55 @@ class _HyperSnackBarContentState extends State<HyperSnackBarContent> {
               // ===============================================
               // 3. Thin Bar (Line Effect) - Width > 0
               // ===============================================
-              if ((config.showProgressIndicator || isLineEffect) &&
-                  effectiveProgressAnimation != null)
+              if (isLineEffect &&
+                  (effectiveProgressAnimation != null || hasNotifier))
                 Positioned(
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  child: AnimatedBuilder(
-                    // Use external controller if provided
-                    animation: effectiveProgressAnimation,
-                    builder: (context, child) {
-                      return LinearProgressIndicator(
-                        value: effectiveProgressAnimation.value,
-                        backgroundColor:
-                            config.progressIndicatorBackgroundColor ??
-                                Colors.transparent,
-                        // Use color animation if provided
-                        valueColor: config.progressIndicatorValueColor ??
-                            AlwaysStoppedAnimation<Color>(progressColor),
-                        minHeight: config.progressBarWidth ?? 4.0,
-                        borderRadius: BorderRadius.zero,
-                      );
+                  child: Builder(
+                    builder: (context) {
+                      final bgColor = config.progressIndicatorBackgroundColor ??
+                          Colors.transparent;
+                      final valueColor = config.progressIndicatorValueColor ??
+                          AlwaysStoppedAnimation<Color>(progressColor);
+
+                      if (hasNotifier) {
+                        return ValueListenableBuilder<double>(
+                          valueListenable: config.progressNotifier!,
+                          builder: (context, value, child) {
+                            return TweenAnimationBuilder<double>(
+                              tween: Tween<double>(
+                                  begin: 0.0, end: value.clamp(0.0, 1.0)),
+                              duration: const Duration(milliseconds: 250),
+                              curve: Curves.easeOut,
+                              builder: (context, animValue, child) {
+                                return LinearProgressIndicator(
+                                  value: animValue.clamp(0.0, 1.0),
+                                  backgroundColor: bgColor,
+                                  valueColor: valueColor,
+                                  minHeight: safeProgressBarWidth,
+                                  borderRadius: BorderRadius.zero,
+                                );
+                              },
+                            );
+                          },
+                        );
+                      } else {
+                        return AnimatedBuilder(
+                          animation: effectiveProgressAnimation!,
+                          builder: (context, child) {
+                            return LinearProgressIndicator(
+                              value: effectiveProgressAnimation.value
+                                  .clamp(0.0, 1.0),
+                              backgroundColor: bgColor,
+                              valueColor: valueColor,
+                              minHeight: safeProgressBarWidth,
+                              borderRadius: BorderRadius.zero,
+                            );
+                          },
+                        );
+                      }
                     },
                   ),
                 ),

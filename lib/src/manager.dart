@@ -111,6 +111,7 @@ class HyperSnackbar {
     Widget? messageText,
     List<BoxShadow>? boxShadows,
     bool? shouldIconPulse,
+    ValueNotifier<double>? progressNotifier, // Added
   }) {
     // Resolve Aliases
     final effectiveTextColor = textColor ?? colorText;
@@ -207,6 +208,7 @@ class HyperSnackbar {
       alignment: alignment,
       barBlur: barBlur,
       overlayBlur: overlayBlur,
+      progressNotifier: progressNotifier, // Added
     );
   }
 
@@ -292,6 +294,7 @@ class HyperSnackbar {
     // For GetX aliases
     Color? borderColor,
     double? borderWidth,
+    ValueNotifier<double>? progressNotifier, // Added
   }) {
     assert(
       (title != null && title.isNotEmpty) ||
@@ -440,6 +443,8 @@ class HyperSnackbar {
           progressIndicatorValueColor ?? baseConfig.progressIndicatorValueColor,
       overlayColor: overlayColor ?? baseConfig.overlayColor,
       userInputForm: userInputForm ?? baseConfig.userInputForm,
+      progressNotifier:
+          progressNotifier ?? baseConfig.progressNotifier, // Added
     );
 
     showFromConfig(config, context: context);
@@ -620,6 +625,7 @@ class HyperSnackbar {
     HyperSnackPosition? position,
     Duration? displayDuration,
     double? progressBarWidth,
+    String? id,
   }) {
     final successPreset = preset(
       backgroundColor: Colors.green.shade600,
@@ -636,6 +642,7 @@ class HyperSnackbar {
       position: position,
       displayDuration: displayDuration,
       progressBarWidth: progressBarWidth,
+      id: id,
     );
   }
 
@@ -647,6 +654,7 @@ class HyperSnackbar {
     HyperSnackPosition? position,
     Duration? displayDuration,
     double? progressBarWidth,
+    String? id,
   }) {
     final errorPreset = preset(
       backgroundColor: Colors.red.shade600,
@@ -663,6 +671,7 @@ class HyperSnackbar {
       position: position,
       displayDuration: displayDuration,
       progressBarWidth: progressBarWidth,
+      id: id,
     );
   }
 
@@ -674,6 +683,7 @@ class HyperSnackbar {
     HyperSnackPosition? position,
     Duration? displayDuration,
     double? progressBarWidth,
+    String? id,
   }) {
     final warningPreset = preset(
       backgroundColor: Colors.orange.shade700,
@@ -690,6 +700,7 @@ class HyperSnackbar {
       position: position,
       displayDuration: displayDuration,
       progressBarWidth: progressBarWidth,
+      id: id,
     );
   }
 
@@ -701,6 +712,7 @@ class HyperSnackbar {
     HyperSnackPosition? position,
     Duration? displayDuration,
     double? progressBarWidth,
+    String? id,
   }) {
     final infoPreset = preset(
       backgroundColor: Colors.blue.shade600,
@@ -717,7 +729,132 @@ class HyperSnackbar {
       position: position,
       displayDuration: displayDuration,
       progressBarWidth: progressBarWidth,
+      id: id,
     );
+  }
+
+  /// Returns a controller to manage a progress bar within a snackbar.
+  /// Used to synchronize a snackbar with asynchronous data streams.
+  static HyperSnackbarProgressController showProgress({
+    String? title,
+    String? message,
+    BuildContext? context,
+    HyperConfig? preset,
+    String? id,
+    double progressBarWidth = 4.0, // Default width for a progress bar
+    Color? progressBarColor,
+    Color? progressIndicatorBackgroundColor,
+    Animation<Color>? progressIndicatorValueColor,
+    HyperSnackPosition? position,
+    bool showProgressIndicator = true,
+    EdgeInsetsGeometry? margin,
+    EdgeInsetsGeometry? padding,
+    Color? backgroundColor,
+    Color? textColor,
+    double? borderRadius,
+    double? elevation,
+    Duration transitionDelay = const Duration(milliseconds: 300),
+    Widget? icon,
+    HyperSnackAction? action,
+    MainAxisAlignment? actionAlignment,
+    Widget? content,
+    VoidCallback? onTap,
+    TextStyle? titleStyle,
+    TextStyle? messageStyle,
+    BoxBorder? border,
+    List<BoxShadow>? boxShadows,
+    bool? showCloseButton,
+    bool? enableSwipe,
+    bool? newestOnTop,
+    int? maxVisibleCount,
+    HyperSnackDisplayMode? displayMode,
+    int? maxLines,
+    bool? scrollable,
+    double? messageMaxHeight,
+    Duration? enterAnimationDuration,
+    Duration? exitAnimationDuration,
+    Curve? enterCurve,
+    Curve? exitCurve,
+    HyperSnackAnimationType? enterAnimationType,
+    HyperSnackAnimationType? exitAnimationType,
+    bool? useAdaptiveLoader,
+    bool? useLocalOverlay,
+    double? maxWidth,
+    AlignmentGeometry? alignment,
+    double? barBlur,
+    double? overlayBlur,
+    Function(HyperSnackbarStatus)? snackbarStatus,
+    DismissDirection? dismissDirection,
+    Color? leftBarIndicatorColor,
+    Gradient? backgroundGradient,
+    Color? overlayColor,
+    Widget? userInputForm,
+    HyperSnackStyle? snackStyle,
+  }) {
+    final effectiveId = id ?? DateTime.now().millisecondsSinceEpoch.toString();
+    final notifier = ValueNotifier<double>(0.0);
+    final controller = HyperSnackbarProgressController._(
+        effectiveId, notifier, transitionDelay);
+
+    show(
+      title: title ?? 'Processing...',
+      message: message,
+      preset: preset,
+      context: context,
+      id: effectiveId,
+      displayDuration: Duration.zero,
+      showProgressIndicator: showProgressIndicator,
+      progressBarWidth: progressBarWidth,
+      progressBarColor: progressBarColor,
+      progressIndicatorBackgroundColor: progressIndicatorBackgroundColor,
+      progressIndicatorValueColor: progressIndicatorValueColor,
+      progressNotifier: notifier,
+      position: position,
+      margin: margin,
+      padding: padding,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      borderRadius: borderRadius,
+      elevation: elevation,
+      icon: icon,
+      action: action,
+      actionAlignment: actionAlignment,
+      content: content,
+      onTap: onTap,
+      titleStyle: titleStyle,
+      messageStyle: messageStyle,
+      border: border,
+      boxShadows: boxShadows,
+      showCloseButton: showCloseButton,
+      enableSwipe: enableSwipe,
+      newestOnTop: newestOnTop,
+      maxVisibleCount: maxVisibleCount,
+      displayMode: displayMode,
+      maxLines: maxLines,
+      scrollable: scrollable,
+      messageMaxHeight: messageMaxHeight,
+      enterAnimationDuration: enterAnimationDuration,
+      exitAnimationDuration: exitAnimationDuration,
+      enterCurve: enterCurve,
+      exitCurve: exitCurve,
+      enterAnimationType: enterAnimationType,
+      exitAnimationType: exitAnimationType,
+      useAdaptiveLoader: useAdaptiveLoader,
+      useLocalOverlay: useLocalOverlay,
+      maxWidth: maxWidth,
+      alignment: alignment,
+      barBlur: barBlur,
+      overlayBlur: overlayBlur,
+      snackbarStatus: snackbarStatus,
+      dismissDirection: dismissDirection,
+      leftBarIndicatorColor: leftBarIndicatorColor,
+      backgroundGradient: backgroundGradient,
+      overlayColor: overlayColor,
+      userInputForm: userInputForm,
+      snackStyle: snackStyle,
+    );
+
+    return controller;
   }
 
   // ===========================================================================
@@ -1114,6 +1251,72 @@ extension HyperSnackbarExtensions on BuildContext {
       shouldIconPulse: shouldIconPulse,
 
       context: this,
+    );
+  }
+}
+
+/// A controller used to manage the state of a progress snackbar created via `HyperSnackbar.showProgress`.
+class HyperSnackbarProgressController {
+  final String id;
+  final ValueNotifier<double> progressNotifier;
+  final Duration defaultTransitionDelay;
+
+  HyperSnackbarProgressController._(this.id, this.progressNotifier,
+      [this.defaultTransitionDelay = const Duration(milliseconds: 300)]);
+
+  /// Updates the progress of the snackbar's progress bar.
+  /// [value] should be between 0.0 and 1.0.
+  /// If set to `null`, the progress bar will become indeterminate.
+  void updateProgress(double value) {
+    progressNotifier.value = value.clamp(0.0, 1.0);
+  }
+
+  /// Dismisses this snackbar immediately.
+  void dismiss() {
+    HyperSnackbar.dismissById(id);
+  }
+
+  /// Replaces this snackbar with a success message, which then dismisses itself after the [displayDuration] ends.
+  ///
+  /// The [transitionDelay] ensures that the progress bar animation (which takes ~250ms)
+  /// completes visually and leaves a comfortable pause before the snackbar is replaced.
+  Future<void> success({
+    String? title,
+    String? message,
+    Duration? displayDuration = const Duration(seconds: 4),
+    Duration? transitionDelay,
+  }) async {
+    final delay = transitionDelay ?? defaultTransitionDelay;
+    if (delay > Duration.zero) {
+      await Future.delayed(delay);
+    }
+    HyperSnackbar.showSuccess(
+      title: title ?? 'Success',
+      message: message,
+      id: id,
+      displayDuration: displayDuration,
+    );
+  }
+
+  /// Replaces this snackbar with an error message, which then dismisses itself after the [displayDuration] ends.
+  ///
+  /// The [transitionDelay] ensures that the progress bar animation (which takes ~250ms)
+  /// completes visually and leaves a comfortable pause before the snackbar is replaced.
+  Future<void> error({
+    String? title,
+    String? message,
+    Duration? displayDuration = const Duration(seconds: 4),
+    Duration? transitionDelay,
+  }) async {
+    final delay = transitionDelay ?? defaultTransitionDelay;
+    if (delay > Duration.zero) {
+      await Future.delayed(delay);
+    }
+    HyperSnackbar.showError(
+      title: title ?? 'Error',
+      message: message,
+      id: id,
+      displayDuration: displayDuration,
     );
   }
 }

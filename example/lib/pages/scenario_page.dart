@@ -44,6 +44,13 @@ class _ScenarioPageState extends State<ScenarioPage> {
             Colors.blue,
             _showUploadScenario,
           ),
+          _buildScenarioItem(
+            '5. Async Task Progress',
+            'Syncs progress bar with real-world async tasks.',
+            Icons.downloading,
+            Colors.teal,
+            _showAsyncProgressScenario,
+          ),
         ],
       ),
     );
@@ -135,7 +142,6 @@ class _ScenarioPageState extends State<ScenarioPage> {
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
-    // 2. Finish
     HyperSnackbar.show(
       id: id,
       title: 'Upload Complete',
@@ -144,6 +150,39 @@ class _ScenarioPageState extends State<ScenarioPage> {
       icon: const Icon(Icons.check_circle, color: Colors.white),
       progressBarWidth: -1,
       displayDuration: const Duration(seconds: 3),
+    );
+  }
+
+  void _showAsyncProgressScenario() async {
+    final controller = HyperSnackbar.showProgress(
+      title: 'Downloading...',
+      message: 'Fetching remote files...',
+      progressBarWidth: 4.0,
+      progressBarColor: Colors.greenAccent,
+      position: HyperSnackPosition.top,
+      margin: const EdgeInsets.all(8.0),
+    );
+
+    // Simulate an async task taking 5 steps
+    for (int i = 1; i <= 5; i++) {
+      if (!mounted) {
+        controller.dismiss();
+        return;
+      }
+
+      // Update the progress first
+      controller.updateProgress(i * 0.2);
+
+      // Simulate some async work taking 1 second per step
+      await Future.delayed(const Duration(seconds: 1));
+    }
+
+    // Replace with a success snackbar that auto-dismisses
+    // (The controller will automatically wait 350ms to let the animation complete!)
+    // Add await since this is now an async method.
+    await controller.success(
+      title: 'Download Complete',
+      message: 'Files downloaded successfully.',
     );
   }
 

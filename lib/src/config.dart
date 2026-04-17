@@ -242,6 +242,7 @@ class HyperConfig {
   final Color? overlayColor;
   final Widget? userInputForm; // Equivalent to GetX's Form
   final HyperSnackStyle snackStyle;
+  final ValueNotifier<double>? progressNotifier; // Added
 
   const HyperConfig({
     this.title, // Removed required
@@ -298,6 +299,7 @@ class HyperConfig {
     this.overlayColor,
     this.userInputForm,
     this.snackStyle = HyperSnackStyle.floating,
+    this.progressNotifier,
   });
 
   /// Creates a copy of this [HyperConfig] but with the given fields replaced with the new values.
@@ -356,6 +358,7 @@ class HyperConfig {
     overlayColor,
     userInputForm,
     snackStyle = HyperSnackStyle.floating,
+    progressNotifier,
   }) {
     return HyperConfig(
       id: id ?? this.id,
@@ -421,6 +424,7 @@ class HyperConfig {
       overlayColor: overlayColor ?? this.overlayColor,
       userInputForm: userInputForm ?? this.userInputForm,
       snackStyle: snackStyle ?? this.snackStyle,
+      progressNotifier: progressNotifier ?? this.progressNotifier,
     );
   }
 }
