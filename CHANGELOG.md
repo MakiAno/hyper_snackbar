@@ -1,3 +1,8 @@
+## [0.11.1]
+
+### 🛠 Refactoring & Future Flutter Compatibility
+* **SizeTransition Refactoring:** Replaced `SizeTransition` with an `AnimatedBuilder` + `Align` + `ClipRect` pattern to resolve the deprecation of `axisAlignment` in newer Flutter versions (v3.41.0-1.0.pre and later), while maintaining 100% backwards compatibility and avoiding compilation errors in older Flutter SDKs.
+
 ## [0.11.0]
 
 ### ✨ New Features

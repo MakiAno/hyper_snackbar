@@ -247,15 +247,31 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           child: child,
         );
       case HyperSnackAnimationType.top:
-        return SizeTransition(
-          sizeFactor: _animation,
-          axisAlignment: -1.0,
+        return AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) {
+            return ClipRect(
+              child: Align(
+                alignment: AlignmentDirectional.topStart,
+                heightFactor: _animation.value,
+                child: child,
+              ),
+            );
+          },
           child: FadeTransition(opacity: _animation, child: child),
         );
       case HyperSnackAnimationType.bottom:
-        return SizeTransition(
-          sizeFactor: _animation,
-          axisAlignment: 1.0,
+        return AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) {
+            return ClipRect(
+              child: Align(
+                alignment: AlignmentDirectional.bottomStart,
+                heightFactor: _animation.value,
+                child: child,
+              ),
+            );
+          },
           child: FadeTransition(opacity: _animation, child: child),
         );
       case HyperSnackAnimationType.fade:
@@ -301,17 +317,29 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
         );
       case HyperSnackAnimationType.top:
       case HyperSnackAnimationType.bottom:
-        return SizeTransition(
-          sizeFactor: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
-          axisAlignment:
-              (config.exitAnimationType == HyperSnackAnimationType.top)
-                  ? -1.0
-                  : 1.0,
-          child: FadeTransition(
-            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
-            child: child,
-          ),
-        );
+        {
+          final sizeAnimation =
+              Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim);
+          return AnimatedBuilder(
+            animation: sizeAnimation,
+            builder: (context, child) {
+              return ClipRect(
+                child: Align(
+                  alignment:
+                      (config.exitAnimationType == HyperSnackAnimationType.top)
+                          ? AlignmentDirectional.topStart
+                          : AlignmentDirectional.bottomStart,
+                  heightFactor: sizeAnimation.value,
+                  child: child,
+                ),
+              );
+            },
+            child: FadeTransition(
+              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
+              child: child,
+            ),
+          );
+        }
       case HyperSnackAnimationType.fade:
         return FadeTransition(
           opacity: Tween<double>(begin: 1.0, end: 0.0).animate(exitAnim),
