@@ -1,3 +1,7 @@
+## [0.11.3]
+
+* **Docs:** Updated installation version in `README.md`.
+
 ## [0.11.2]
 
 ### 🐛 Bug Fixes & UI Polish
