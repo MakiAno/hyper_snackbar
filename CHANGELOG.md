@@ -1,3 +1,10 @@
+## [0.11.2]
+
+### 🐛 Bug Fixes & UI Polish
+* **Animation Alignment:** Fixed alignment logic for `top` and `bottom` entry animations. They now dynamically apply vertically symmetric effects depending on whether the snackbar is placed at the top or bottom of the screen.
+* **Fade Exit Animation:** Removed the unintended height-shrinking effect when using `HyperSnackAnimationType.fade` for the exit animation. The snackbar now purely fades out smoothly without visually wiping out.
+* **Stack Layout Rules:** Restored and corrected the `newestOnTop` configuration to strictly honor its literal visual meaning regardless of the vertical position, preventing unintuitive stack ordering.
+
 ## [0.11.1]
 
 ### 🛠 Refactoring & Future Flutter Compatibility

@@ -24,6 +24,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
   late HyperConfig config;
   late AnimationController _animationController;
   late Animation<double> _animation;
+  late Animation<double> _fadeAnimation;
 
   // Deprecated Timer, managing time with _durationController
   late AnimationController _durationController;
@@ -48,6 +49,10 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
     _animation = CurvedAnimation(
       parent: _animationController,
       curve: config.enterCurve,
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
     );
 
     // 2. Controller for display duration management
@@ -228,7 +233,7 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
       case HyperSnackAnimationType.scale:
         return ScaleTransition(
           scale: Tween<double>(begin: 0.6, end: 1.0).animate(_animation),
-          child: FadeTransition(opacity: _animation, child: child),
+          child: child,
         );
       case HyperSnackAnimationType.left:
         return SlideTransition(
@@ -252,13 +257,15 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           builder: (context, child) {
             return ClipRect(
               child: Align(
-                alignment: AlignmentDirectional.topStart,
+                alignment: config.position == HyperSnackPosition.top
+                    ? AlignmentDirectional.bottomStart
+                    : AlignmentDirectional.topStart,
                 heightFactor: _animation.value,
                 child: child,
               ),
             );
           },
-          child: FadeTransition(opacity: _animation, child: child),
+          child: child,
         );
       case HyperSnackAnimationType.bottom:
         return AnimatedBuilder(
@@ -266,16 +273,32 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
           builder: (context, child) {
             return ClipRect(
               child: Align(
-                alignment: AlignmentDirectional.bottomStart,
+                alignment: config.position == HyperSnackPosition.top
+                    ? AlignmentDirectional.topStart
+                    : AlignmentDirectional.bottomStart,
                 heightFactor: _animation.value,
                 child: child,
               ),
             );
           },
-          child: FadeTransition(opacity: _animation, child: child),
+          child: child,
         );
       case HyperSnackAnimationType.fade:
-        return FadeTransition(opacity: _animation, child: child);
+        return AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) {
+            return ClipRect(
+              child: Align(
+                alignment: config.position == HyperSnackPosition.top
+                    ? AlignmentDirectional.topStart
+                    : AlignmentDirectional.bottomStart,
+                heightFactor: _animation.value,
+                child: child,
+              ),
+            );
+          },
+          child: FadeTransition(opacity: _fadeAnimation, child: child),
+        );
     }
   }
 
@@ -327,8 +350,8 @@ class HyperSnackBarContainerState extends State<HyperSnackBarContainer>
                 child: Align(
                   alignment:
                       (config.exitAnimationType == HyperSnackAnimationType.top)
-                          ? AlignmentDirectional.topStart
-                          : AlignmentDirectional.bottomStart,
+                          ? AlignmentDirectional.bottomStart
+                          : AlignmentDirectional.topStart,
                   heightFactor: sizeAnimation.value,
                   child: child,
                 ),
